@@ -1,0 +1,99 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import PhoneFrame from './components/layout/PhoneFrame'
+
+// Global
+import SplashScreen from './pages/global/SplashScreen'
+import ComingSoon from './pages/global/ComingSoon'
+
+// Knowledge
+import K01_KnowledgeHome from './pages/knowledge/K01_KnowledgeHome'
+import K05_KnowledgeDetail from './pages/knowledge/K05_KnowledgeDetail'
+import K07_Uploading from './pages/knowledge/K07_Uploading'
+import K08_FileDetail from './pages/knowledge/K08_FileDetail'
+import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
+import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
+
+// Ask
+import Q01_AskHome from './pages/ask/Q01_AskHome'
+import Q03_SelectKnowledge from './pages/ask/Q03_SelectKnowledge'
+import Q04_AiAnswer from './pages/ask/Q04_AiAnswer'
+import Q05_AiAnswerMulti from './pages/ask/Q05_AiAnswerMulti'
+import Q06_WebSearchResults from './pages/ask/Q06_WebSearchResults'
+import Q07_WebArticle from './pages/ask/Q07_WebArticle'
+
+// Task
+import T01_TaskMode from './pages/task/T01_TaskMode'
+import T02_TaskResult from './pages/task/T02_TaskResult'
+import T03_GenerateConfirm from './pages/task/T03_GenerateConfirm'
+import T04_Generating from './pages/task/T04_Generating'
+import T05_DataSourceConfirm from './pages/task/T05_DataSourceConfirm'
+import T06_AddedToDesktop from './pages/task/T06_AddedToDesktop'
+import T07_AppRuntime from './pages/task/T07_AppRuntime'
+import T08_MyApps from './pages/task/T08_MyApps'
+
+// Notes
+import N02_NotesList from './pages/notes/N02_NotesList'
+import N04_AiWrite from './pages/notes/N04_AiWrite'
+import N05_NoteEdit from './pages/notes/N05_NoteEdit'
+import N06_NoteDetail from './pages/notes/N06_NoteDetail'
+
+// Profile
+import M01_ProfileHome from './pages/profile/M01_ProfileHome'
+import M02_ProfileEdit from './pages/profile/M02_ProfileEdit'
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <PhoneFrame>
+        <Routes>
+          {/* Splash */}
+          <Route path="/splash" element={<SplashScreen />} />
+
+          {/* Knowledge */}
+          <Route path="/knowledge" element={<K01_KnowledgeHome />} />
+          <Route path="/knowledge/detail" element={<K05_KnowledgeDetail />} />
+          <Route path="/knowledge/uploading" element={<K07_Uploading />} />
+          <Route path="/knowledge/file-detail" element={<K08_FileDetail />} />
+          <Route path="/knowledge/square" element={<K10_KnowledgeSquare />} />
+          <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
+
+          {/* Ask / Q */}
+          <Route path="/ask" element={<Q01_AskHome />} />
+          <Route path="/ask/select-kb" element={<Q03_SelectKnowledge />} />
+          <Route path="/ask/answer" element={<Q04_AiAnswer />} />
+          <Route path="/ask/answer-multi" element={<Q05_AiAnswerMulti />} />
+          <Route path="/ask/web-search" element={<Q06_WebSearchResults />} />
+          <Route path="/ask/web-article" element={<Q07_WebArticle />} />
+
+          {/* Task / PWA */}
+          <Route path="/ask/task-mode" element={<T01_TaskMode />} />
+          <Route path="/ask/task-result" element={<T02_TaskResult />} />
+          <Route path="/ask/task-generate-confirm" element={<T03_GenerateConfirm />} />
+          <Route path="/ask/task-generating" element={<T04_Generating />} />
+          <Route path="/ask/task-datasource" element={<T05_DataSourceConfirm />} />
+          <Route path="/ask/task-added-desktop" element={<T06_AddedToDesktop />} />
+          <Route path="/ask/task-app" element={<Navigate to="/pwa/run/app1" replace />} />
+          <Route path="/pwa/run/:id" element={<T07_AppRuntime />} />
+          <Route path="/profile/my-apps" element={<T08_MyApps />} />
+
+          {/* Notes */}
+          <Route path="/notes" element={<N02_NotesList />} />
+          <Route path="/notes/ai-write" element={<N04_AiWrite />} />
+          <Route path="/notes/edit" element={<N05_NoteEdit />} />
+          <Route path="/notes/detail" element={<N06_NoteDetail />} />
+
+          {/* Profile */}
+          <Route path="/profile" element={<M01_ProfileHome />} />
+          <Route path="/profile/edit" element={<M02_ProfileEdit />} />
+
+          {/* Utility */}
+          <Route path="/coming-soon" element={<ComingSoon />} />
+
+          {/* Default */}
+          <Route path="/" element={<Navigate to="/ask" replace />} />
+          <Route path="*" element={<Navigate to="/ask" replace />} />
+        </Routes>
+      </PhoneFrame>
+    </BrowserRouter>
+  )
+}
