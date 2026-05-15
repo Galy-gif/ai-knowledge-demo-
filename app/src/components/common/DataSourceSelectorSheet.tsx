@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, Database, PenLine } from 'lucide-react'
+import { Check, Database, Inbox, PenLine } from 'lucide-react'
 import BottomSheet from '../ui/BottomSheet'
 import { useKnowledge } from '../../context/KnowledgeContext'
 import { QUICK_NOTES_KB_ID, type KnowledgeBase, type KnowledgeFile } from '../../mock/data'
@@ -44,9 +44,11 @@ function BaseRow({
       <Checkbox checked={selected} />
       <div
         className="w-9 h-9 rounded-card flex items-center justify-center text-lg flex-shrink-0"
-        style={{ backgroundColor: `${base.color}22` }}
+        style={{ backgroundColor: base.icon === 'inbox' ? '#F8F8F8' : `${base.color}22` }}
       >
-        {base.icon === 'pen-line' ? <PenLine size={17} className="text-brand-orange" /> : base.icon}
+        {base.icon === 'pen-line' ? <PenLine size={17} className="text-brand-orange" />
+          : base.icon === 'inbox' ? <Inbox size={17} className="text-[#9CA3AF]" />
+          : base.icon}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 min-w-0">

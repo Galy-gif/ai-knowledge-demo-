@@ -11,6 +11,7 @@ import K01_KnowledgeHome from './pages/knowledge/K01_KnowledgeHome'
 import K05_KnowledgeDetail from './pages/knowledge/K05_KnowledgeDetail'
 import K07_Uploading from './pages/knowledge/K07_Uploading'
 import K08_FileDetail from './pages/knowledge/K08_FileDetail'
+import K09_FolderDetail from './pages/knowledge/K09_FolderDetail'
 import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
 import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
 import K13_RecentAll from './pages/knowledge/K13_RecentAll'
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/knowledge/detail" element={<K05_KnowledgeDetail />} />
           <Route path="/knowledge/uploading" element={<K07_Uploading />} />
           <Route path="/knowledge/file-detail" element={<K08_FileDetail />} />
+          <Route path="/knowledge/folder" element={<K09_FolderDetail />} />
           <Route path="/knowledge/square" element={<K10_KnowledgeSquare />} />
           <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
           <Route path="/knowledge/recent" element={<K13_RecentAll />} />

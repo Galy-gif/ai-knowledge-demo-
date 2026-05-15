@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, ChevronRight, PenLine, Plus, Search, X } from 'lucide-react'
+import { Check, ChevronRight, Inbox, PenLine, Plus, Search, X } from 'lucide-react'
 import BottomSheet from '../ui/BottomSheet'
 import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
@@ -37,9 +37,11 @@ function KnowledgeRow({ kb, selected, onClick }: { kb: KnowledgeBase; selected: 
     >
       <span
         className="w-8 h-8 rounded-card flex items-center justify-center text-base flex-shrink-0"
-        style={{ backgroundColor: kb.color + '22' }}
+        style={{ backgroundColor: kb.icon === 'inbox' ? '#F8F8F8' : kb.color + '22' }}
       >
-        {kb.icon === 'pen-line' ? <PenLine size={16} className="text-brand-orange" /> : kb.icon}
+        {kb.icon === 'pen-line' ? <PenLine size={16} className="text-brand-orange" />
+          : kb.icon === 'inbox' ? <Inbox size={16} className="text-[#9CA3AF]" />
+          : kb.icon}
       </span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 min-w-0">

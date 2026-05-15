@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronRight, Copy, FolderInput, Trash2 } from 'lucide-react'
+import { ChevronRight, Copy, FolderInput, Inbox, Trash2 } from 'lucide-react'
 import BottomSheet from '../ui/BottomSheet'
 import { useKnowledge } from '../../context/KnowledgeContext'
 import { useMultiSelect } from '../../context/MultiSelectContext'
@@ -136,9 +136,11 @@ export default function MultiSelectActionBar() {
               >
                 <div
                   className="w-10 h-10 rounded-card flex items-center justify-center text-lg flex-shrink-0"
-                  style={{ backgroundColor: kb.color + '22' }}
+                  style={{ backgroundColor: kb.icon === 'inbox' ? '#F8F8F8' : kb.color + '22' }}
                 >
-                  {kb.icon === 'pen-line' ? '✎' : kb.icon}
+                  {kb.icon === 'pen-line' ? '✎'
+                    : kb.icon === 'inbox' ? <Inbox size={20} className="text-[#9CA3AF]" />
+                    : kb.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-card-title text-ink-primary truncate">{kb.name}</p>

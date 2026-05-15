@@ -106,9 +106,9 @@ const PROJECT_GROUPS = [
     color: '#FF7A00',
     badgeClass: 'bg-[#FFF1E6] text-[#FF7A00]',
     items: [
-      { title: 'AI 浏览器竞品分析', subtitle: '12 篇资料 · 3 个任务', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
-      { title: '搜索结果页改版', subtitle: '8 篇资料 · 2 个待办', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
-      { title: '跨端导入流程', subtitle: '6 篇资料 · 本周推进', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
+      { id: 'folder_ai_browser', title: 'AI 浏览器竞品分析', subtitle: '12 篇资料 · 3 个任务', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
+      { id: 'folder_search_revamp', title: '搜索结果页改版', subtitle: '8 篇资料 · 2 个待办', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
+      { id: 'folder_cross_import', title: '跨端导入流程', subtitle: '6 篇资料 · 本周推进', icon: Folder, color: '#FF7A00', bg: '#FFF1E6' },
     ],
   },
   {
@@ -118,8 +118,8 @@ const PROJECT_GROUPS = [
     color: '#3B82F6',
     badgeClass: 'bg-blue-50 text-blue-600',
     items: [
-      { title: 'AI 浏览器交互趋势', subtitle: '18 篇资料 · 持续更新', icon: Globe2, color: '#2563EB', bg: '#DBEAFE' },
-      { title: '移动端知识管理范式', subtitle: '10 篇资料 · 长期跟踪', icon: FileText, color: '#2563EB', bg: '#DBEAFE' },
+      { id: 'folder_ai_trends', title: 'AI 浏览器交互趋势', subtitle: '18 篇资料 · 持续更新', icon: Globe2, color: '#2563EB', bg: '#DBEAFE' },
+      { id: 'folder_mobile_km', title: '移动端知识管理范式', subtitle: '10 篇资料 · 长期跟踪', icon: FileText, color: '#2563EB', bg: '#DBEAFE' },
     ],
   },
   {
@@ -129,9 +129,9 @@ const PROJECT_GROUPS = [
     color: '#10B981',
     badgeClass: 'bg-emerald-50 text-emerald-600',
     items: [
-      { title: '竞品截图与录屏', subtitle: '9 个文件 · 设计参考', icon: FileText, color: '#059669', bg: '#D1FAE5' },
-      { title: '搜索与来源追踪论文', subtitle: '5 篇文档 · 方法参考', icon: FileText, color: '#059669', bg: '#D1FAE5' },
-      { title: '浏览器插件调研', subtitle: '7 个网页 · 技术参考', icon: Globe2, color: '#059669', bg: '#D1FAE5' },
+      { id: 'folder_screenshots', title: '竞品截图与录屏', subtitle: '9 个文件 · 设计参考', icon: FileText, color: '#059669', bg: '#D1FAE5' },
+      { id: 'folder_papers', title: '搜索与来源追踪论文', subtitle: '5 篇文档 · 方法参考', icon: FileText, color: '#059669', bg: '#D1FAE5' },
+      { id: 'folder_plugins', title: '浏览器插件调研', subtitle: '7 个网页 · 技术参考', icon: Globe2, color: '#059669', bg: '#D1FAE5' },
     ],
   },
   {
@@ -141,11 +141,114 @@ const PROJECT_GROUPS = [
     color: '#9CA3AF',
     badgeClass: 'bg-gray-100 text-gray-500',
     items: [
-      { title: '早期需求访谈', subtitle: '4 篇资料 · 已完成', icon: Archive, color: '#6B7280', bg: '#F3F4F6' },
-      { title: 'V1 原型评审记录', subtitle: '3 个文件 · 已归档', icon: Archive, color: '#6B7280', bg: '#F3F4F6' },
+      { id: 'folder_early_interviews', title: '早期需求访谈', subtitle: '4 篇资料 · 已完成', icon: Archive, color: '#6B7280', bg: '#F3F4F6' },
+      { id: 'folder_v1_review', title: 'V1 原型评审记录', subtitle: '3 个文件 · 已归档', icon: Archive, color: '#6B7280', bg: '#F3F4F6' },
     ],
   },
 ] as const
+
+// ─── PARA mode folder mock files ──────────────────────────────────────────────
+
+export interface FolderMockFile {
+  id: string
+  title: string
+  type: KnowledgeFile['type']
+  meta: string
+  time: string
+}
+
+const PARA_FOLDER_FILES: Record<string, FolderMockFile[]> = {
+  folder_ai_browser: [
+    { id: 'fab_1', title: 'Arc 浏览器架构分析.pdf', type: 'pdf', meta: 'PDF · 18 页', time: '今天' },
+    { id: 'fab_2', title: '用户访谈 - 浏览器使用习惯.txt', type: 'txt', meta: '文本 · 4200 字', time: '昨天' },
+    { id: 'fab_3', title: '竞品功能对比表.docx', type: 'doc', meta: 'Word · 12 页', time: '3 天前' },
+    { id: 'fab_4', title: '关键技术调研.pdf', type: 'pdf', meta: 'PDF · 22 页', time: '4 天前' },
+    { id: 'fab_5', title: '移动端浏览器现状.docx', type: 'doc', meta: 'Word · 8 页', time: '5 天前' },
+    { id: 'fab_6', title: '用户研究方法论.pdf', type: 'pdf', meta: 'PDF · 16 页', time: '1 周前' },
+    { id: 'fab_7', title: 'Arc 产品体验录音.m4a', type: 'audio', meta: '音频 · 28 分钟', time: '1 周前' },
+    { id: 'fab_8', title: 'AI 浏览器市场趋势', type: 'url', meta: '网页 · 36Tech', time: '2 周前' },
+    { id: 'fab_9', title: '搜索体验截图合集', type: 'image', meta: '图片 · 24 张', time: '2 周前' },
+    { id: 'fab_10', title: '竞品导航分析.pdf', type: 'pdf', meta: 'PDF · 10 页', time: '3 周前' },
+    { id: 'fab_11', title: '浏览器用户画像洞察.docx', type: 'doc', meta: 'Word · 14 页', time: '3 周前' },
+    { id: 'fab_12', title: '下一代浏览器交互模式', type: 'url', meta: '网页 · Medium', time: '1 个月前' },
+  ],
+  folder_search_revamp: [
+    { id: 'fsr_1', title: '搜索结果页现状截图', type: 'image', meta: '图片 · 8 张', time: '今天' },
+    { id: 'fsr_2', title: '用户反馈整理.txt', type: 'txt', meta: '文本 · 1800 字', time: '昨天' },
+    { id: 'fsr_3', title: '来源卡片设计方案.docx', type: 'doc', meta: 'Word · 9 页', time: '3 天前' },
+    { id: 'fsr_4', title: '搜索交互参考 - Perplexity', type: 'url', meta: '网页 · Perplexity', time: '4 天前' },
+    { id: 'fsr_5', title: '流式输出技术调研.pdf', type: 'pdf', meta: 'PDF · 12 页', time: '5 天前' },
+    { id: 'fsr_6', title: '结果页设计评审录音.m4a', type: 'audio', meta: '音频 · 42 分钟', time: '1 周前' },
+    { id: 'fsr_7', title: '竞品搜索结果对比.docx', type: 'doc', meta: 'Word · 15 页', time: '1 周前' },
+    { id: 'fsr_8', title: '高保真原型 v2', type: 'image', meta: '图片 · 12 张', time: '2 周前' },
+  ],
+  folder_cross_import: [
+    { id: 'fci_1', title: '跨端导入流程图', type: 'image', meta: '图片 · 6 张', time: '今天' },
+    { id: 'fci_2', title: '剪贴板来源方案.docx', type: 'doc', meta: 'Word · 7 页', time: '昨天' },
+    { id: 'fci_3', title: '最近浏览导入调研.txt', type: 'txt', meta: '文本 · 2200 字', time: '3 天前' },
+    { id: 'fci_4', title: '系统分享菜单集成.pdf', type: 'pdf', meta: 'PDF · 8 页', time: '4 天前' },
+    { id: 'fci_5', title: '跨端同步技术选型.docx', type: 'doc', meta: 'Word · 11 页', time: '1 周前' },
+    { id: 'fci_6', title: '导入功能用户测试录音.m4a', type: 'audio', meta: '音频 · 35 分钟', time: '2 周前' },
+  ],
+  folder_ai_trends: [
+    { id: 'fat_1', title: 'AI 原生浏览器分析报告.pdf', type: 'pdf', meta: 'PDF · 32 页', time: '今天' },
+    { id: 'fat_2', title: 'Arc Search 深度拆解', type: 'url', meta: '网页 · The Verge', time: '昨天' },
+    { id: 'fat_3', title: '侧边栏 AI 助手模式对比.docx', type: 'doc', meta: 'Word · 14 页', time: '3 天前' },
+    { id: 'fat_4', title: 'AI 浏览器用户调研 Q2.pdf', type: 'pdf', meta: 'PDF · 20 页', time: '5 天前' },
+    { id: 'fat_5', title: '检索增强生成技术白皮书.pdf', type: 'pdf', meta: 'PDF · 28 页', time: '1 周前' },
+    { id: 'fat_6', title: 'Perplexity 功能演进记录', type: 'url', meta: '网页 · TechCrunch', time: '2 周前' },
+    { id: 'fat_7', title: 'AI 浏览器竞品矩阵 2026.docx', type: 'doc', meta: 'Word · 18 页', time: '3 周前' },
+    { id: 'fat_8', title: '语义搜索原理笔记', type: 'note', meta: '速记 · 1600 字', time: '3 周前' },
+    { id: 'fat_9', title: '未来浏览器交互预测', type: 'url', meta: '网页 · a16z', time: '1 个月前' },
+  ],
+  folder_mobile_km: [
+    { id: 'fmk_1', title: '移动端知识管理现状扫描.pdf', type: 'pdf', meta: 'PDF · 22 页', time: '昨天' },
+    { id: 'fmk_2', title: 'Readwise 产品拆解', type: 'url', meta: '网页 · Product Hunt', time: '3 天前' },
+    { id: 'fmk_3', title: '移动端收藏行为研究.docx', type: 'doc', meta: 'Word · 16 页', time: '1 周前' },
+    { id: 'fmk_4', title: '知识闭环的核心路径', type: 'note', meta: '速记 · 2100 字', time: '1 周前' },
+    { id: 'fmk_5', title: 'Notion Mobile 用户访谈.m4a', type: 'audio', meta: '音频 · 51 分钟', time: '2 周前' },
+    { id: 'fmk_6', title: '移动端知识管理产品矩阵.docx', type: 'doc', meta: 'Word · 12 页', time: '3 周前' },
+    { id: 'fmk_7', title: '从手机到电脑的工作流调研.pdf', type: 'pdf', meta: 'PDF · 18 页', time: '1 个月前' },
+  ],
+  folder_screenshots: [
+    { id: 'fsc_1', title: 'Arc 搜索界面截图合集', type: 'image', meta: '图片 · 18 张', time: '今天' },
+    { id: 'fsc_2', title: 'Perplexity 结果页对比截图', type: 'image', meta: '图片 · 12 张', time: '昨天' },
+    { id: 'fsc_3', title: '移动端竞品录屏合集.m4a', type: 'audio', meta: '音频 · 4 段', time: '3 天前' },
+    { id: 'fsc_4', title: 'Google 搜索新版截图', type: 'image', meta: '图片 · 9 张', time: '5 天前' },
+    { id: 'fsc_5', title: 'Brave Search 体验录屏.m4a', type: 'audio', meta: '音频 · 2 段', time: '1 周前' },
+    { id: 'fsc_6', title: '设计参考标注图', type: 'image', meta: '图片 · 6 张', time: '2 周前' },
+    { id: 'fsc_7', title: 'AI 结果页视觉对比', type: 'image', meta: '图片 · 15 张', time: '2 周前' },
+    { id: 'fsc_8', title: '交互细节对比合集', type: 'image', meta: '图片 · 21 张', time: '3 周前' },
+    { id: 'fsc_9', title: '暗色模式设计参考', type: 'image', meta: '图片 · 8 张', time: '1 个月前' },
+  ],
+  folder_papers: [
+    { id: 'fpa_1', title: 'Dense Passage Retrieval 论文.pdf', type: 'pdf', meta: 'PDF · 16 页', time: '3 天前' },
+    { id: 'fpa_2', title: 'RAG 综述 2025.pdf', type: 'pdf', meta: 'PDF · 38 页', time: '1 周前' },
+    { id: 'fpa_3', title: '信息溯源与可解释性研究.pdf', type: 'pdf', meta: 'PDF · 24 页', time: '2 周前' },
+    { id: 'fpa_4', title: '语义搜索精准率评估方法.pdf', type: 'pdf', meta: 'PDF · 20 页', time: '3 周前' },
+    { id: 'fpa_5', title: '多模态检索前沿进展.pdf', type: 'pdf', meta: 'PDF · 32 页', time: '1 个月前' },
+  ],
+  folder_plugins: [
+    { id: 'fpl_1', title: 'Kagi 插件功能拆解', type: 'url', meta: '网页 · TechCrunch', time: '昨天' },
+    { id: 'fpl_2', title: 'Readwise Reader 插件测评', type: 'url', meta: '网页 · Product Hunt', time: '3 天前' },
+    { id: 'fpl_3', title: '浏览器插件架构分析.pdf', type: 'pdf', meta: 'PDF · 14 页', time: '5 天前' },
+    { id: 'fpl_4', title: 'Chrome 插件市场调研.docx', type: 'doc', meta: 'Word · 10 页', time: '1 周前' },
+    { id: 'fpl_5', title: 'AI 助手类插件对比.docx', type: 'doc', meta: 'Word · 8 页', time: '2 周前' },
+    { id: 'fpl_6', title: '插件权限模型设计', type: 'url', meta: '网页 · Chrome Dev', time: '3 周前' },
+    { id: 'fpl_7', title: '端侧知识库插件 PoC', type: 'url', meta: '网页 · GitHub', time: '1 个月前' },
+  ],
+  folder_early_interviews: [
+    { id: 'fei_1', title: '早期用户访谈 01.m4a', type: 'audio', meta: '音频 · 44 分钟', time: '2 个月前' },
+    { id: 'fei_2', title: '访谈纪要汇总.docx', type: 'doc', meta: 'Word · 18 页', time: '2 个月前' },
+    { id: 'fei_3', title: '用户痛点分析.pdf', type: 'pdf', meta: 'PDF · 12 页', time: '3 个月前' },
+    { id: 'fei_4', title: '早期原型反馈整理.txt', type: 'txt', meta: '文本 · 3200 字', time: '3 个月前' },
+  ],
+  folder_v1_review: [
+    { id: 'fvr_1', title: 'V1 原型录屏 01.m4a', type: 'audio', meta: '音频 · 18 分钟', time: '3 个月前' },
+    { id: 'fvr_2', title: '设计评审会议纪要.docx', type: 'doc', meta: 'Word · 8 页', time: '3 个月前' },
+    { id: 'fvr_3', title: 'V1 交互问题清单.txt', type: 'txt', meta: '文本 · 2600 字', time: '4 个月前' },
+  ],
+}
 
 // ─── Second Brain mode static mock data ───────────────────────────────────────
 
@@ -757,6 +860,7 @@ function ProjectSection({
   onRenameCommit,
   getActions,
   longPressDisabled,
+  onItemClick,
 }: {
   group: typeof PROJECT_GROUPS[number]
   hiddenIds: string[]
@@ -768,6 +872,7 @@ function ProjectSection({
   onRenameCommit: (target: StructuredActionTarget) => void
   getActions: (target: StructuredActionTarget) => { actions: LongPressMenuAction[]; extraActions?: LongPressMenuAction[] }
   longPressDisabled?: boolean
+  onItemClick?: (id: string, title: string) => void
 }) {
   const [expanded, setExpanded] = useState(true)
   const visibleItems = group.items.filter(item => !hiddenIds.includes(`project:${group.id}:${item.title}`))
@@ -806,7 +911,8 @@ function ProjectSection({
               >
                 <button
                   type="button"
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left active:bg-surface-card ${
+                  onClick={() => onItemClick?.(item.id, item.title)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-transform duration-100 active:scale-[0.98] active:bg-surface-card ${
                   index < group.items.length - 1 ? 'border-b border-line-base' : ''
                 }`}
                 >
@@ -2327,6 +2433,12 @@ export default function K05_KnowledgeDetail() {
                   onRenameCommit={commitRenameStructured}
                   getActions={target => getStructuredLongPressActions(target)}
                   longPressDisabled={activeBase?.type === 'subscribed'}
+                  onItemClick={(id, title) => {
+                    const files = PARA_FOLDER_FILES[id] ?? []
+                    navigate('/knowledge/folder', {
+                      state: { folderId: id, folderTitle: title, kbName: activeBase?.name ?? '', files },
+                    })
+                  }}
                 />
               ))}
             </div>
