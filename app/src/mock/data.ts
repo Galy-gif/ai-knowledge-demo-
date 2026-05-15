@@ -15,11 +15,28 @@ export interface KnowledgeBase {
   color: string
   fileCount: number
   updatedAt: string
+  managementMode: KnowledgeManagementMode | null
   isSubscribed?: boolean
+  isSystem?: boolean
+  locked?: boolean
   type: 'personal' | 'subscribed'
 }
 
-export type FileType = 'pdf' | 'doc' | 'txt' | 'url' | 'image' | 'audio'
+export type KnowledgeManagementMode = 'project' | 'second_brain' | 'output' | 'idea' | 'ai' | 'free'
+
+export type FileType =
+  | 'pdf'
+  | 'doc'
+  | 'txt'
+  | 'url'
+  | 'image'
+  | 'audio'
+  | 'note'
+  | 'pdf_excerpt'
+  | 'doc_excerpt'
+  | 'web_excerpt'
+  | 'ai_excerpt'
+  | 'note_excerpt'
 
 export interface KnowledgeFile {
   id: string
@@ -31,7 +48,29 @@ export interface KnowledgeFile {
   wordCount?: number
   uploadedAt: string
   summary?: string
+  content?: string
+  workflowStage?: string
+  aiTopic?: string
+  aiConfidence?: 'high' | 'medium' | 'low'
+  aiSuggestion?: string
+  tags?: string[]
+  metadata?: Record<string, unknown>
+  createdAt?: string
+  updatedAt?: string
   toc?: TocItem[]
+}
+
+export type RecentActivity = 'updated' | 'visited'
+
+export interface RecentItem {
+  id: string
+  fileId: string
+  title: string
+  kbId: string
+  kbName: string
+  type: FileType
+  time: string
+  activity: RecentActivity
 }
 
 export interface TocItem {
@@ -66,25 +105,19 @@ export interface TeamKnowledgeBase {
   icon: string
 }
 
-export interface Note {
-  id: string
-  title: string
-  content: string
-  tags: string[]
-  createdAt: string
-  updatedAt: string
-  backlinks: string[]
-  wordCount: number
-}
+export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker'
 
 export interface LightApp {
   id: string
   name: string
   icon: string
   description: string
+  templateId?: string
   createdAt: string
   lastOpenedAt: string
+  lastUsedAt: string
   dataSource: string
+  runtimeType?: RuntimeType
 }
 
 export interface AiConversation {
@@ -116,14 +149,138 @@ export const mockUser: User = {
   bio: '产品设计师 · AI 工具爱好者',
 }
 
+export const QUICK_NOTES_KB_ID = 'kb_quick_notes'
+
+const quickNoteFiles: KnowledgeFile[] = [
+  {
+    id: 'n1',
+    kbId: QUICK_NOTES_KB_ID,
+    name: 'AI 结果页来源卡片重构',
+    type: 'note',
+    size: '680字',
+    wordCount: 680,
+    uploadedAt: '2小时前',
+    createdAt: '2小时前',
+    updatedAt: '2小时前',
+    tags: ['AI产品', '设计'],
+    summary: '统一 AI 回答页的来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。',
+    content: `## 背景
+
+当前 AI 回答页面混用了知识库来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
+
+## 核心洞察
+
+用户对 AI 回答的信任建立在"能看见出处"上。调研数据显示，展示来源后用户对回答的采信率提升 34%，追问率下降 18%——说明清晰的来源减少了用户的不确定感，而非鼓励追问。
+
+来源的展示时机同样关键：在答案渲染完成后才出现来源卡片，会让用户感觉信息是"事后补充"的，降低可信度。应与正文同步渐入。
+
+## 方案
+
+将知识库来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
+
+- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 知识库 / 🌐 网页）
+- **同步渐入**：在流式输出结束后 200ms 延迟滑入，避免"后补"感
+- **引用高亮**：正文中被引用的句子加橙黄色底线，点击可展开对应来源卡片
+
+## 风险与缓解
+
+最主要的风险是来源数量过多时卡片区域过长，挤压正文阅读体验。缓解方案：默认折叠超过 3 条的来源，以"查看全部 N 条来源"入口展开；单条来源卡片高度控制在 52px 以内，保持紧凑。
+
+## 下一步
+
+- [ ] 完成来源卡片组件设计稿评审（5月15日）
+- [ ] 与工程侧对齐流式输出 + 来源注入的时序方案
+- [ ] 在 Q04 页面接入真实来源数据做可用性测试`,
+  },
+  {
+    id: 'n2',
+    kbId: QUICK_NOTES_KB_ID,
+    name: '上下文标签在搜索链路中的价值',
+    type: 'note',
+    size: '280字',
+    wordCount: 280,
+    uploadedAt: '昨天',
+    createdAt: '昨天',
+    updatedAt: '昨天',
+    tags: ['学习笔记', 'AI产品'],
+    summary: '通过标签明确搜索范围，首答命中率提升并减少重复提问。',
+    content: `## 核心问题
+
+通过标签明确搜索范围，首答命中率提升并减少重复提问。
+
+## 数据支撑
+
+- 有标签的搜索首答满意率 +23%
+- 用户追问次数减少 1.8 次/会话`,
+  },
+  {
+    id: 'n3',
+    kbId: QUICK_NOTES_KB_ID,
+    name: 'AI 追问整理',
+    type: 'note',
+    size: '460字',
+    wordCount: 460,
+    uploadedAt: '刚刚',
+    createdAt: '刚刚',
+    updatedAt: '刚刚',
+    tags: ['速记', 'AI问答'],
+    summary: '从 AI 多轮追问中提炼出的知识库运营指标、内容更新节奏和后续行动建议。',
+    content: `## AI 追问整理
+
+围绕知识库运营效果，当前可以优先关注三个指标：
+
+- 内容使用率：每篇内容在近 30 天内被阅读、引用和追问的次数
+- 检索满意率：用户首次提问是否找到可用答案
+- 更新健康度：过期内容占比和核心文档更新时间
+
+## 下一步
+
+把这些指标放进周报模板里，并为每个知识库指定内容 Owner。`,
+  },
+]
+
+const freeMiscFiles: KnowledgeFile[] = [
+  { id: 'free1', kbId: 'kb_free_misc', name: '临时想法：移动端收藏入口', type: 'note', size: '260字', wordCount: 260, uploadedAt: '刚刚', summary: '随手记录移动端收藏入口应该更靠近输入区。' },
+  { id: 'free2', kbId: 'kb_free_misc', name: 'AI 搜索结果页截图.png', type: 'image', size: '1.2MB', uploadedAt: '10分钟前', summary: '一组搜索结果页截图，用于后续视觉参考。' },
+  { id: 'free3', kbId: 'kb_free_misc', name: 'Linear 工作流文章', type: 'url', size: '—', uploadedAt: '30分钟前', summary: '关于团队 issue 流转和状态设计的文章。' },
+  { id: 'free4', kbId: 'kb_free_misc', name: '会议录音片段.m4a', type: 'audio', size: '8MB', uploadedAt: '1小时前', summary: '下午讨论导入流程时的录音片段。' },
+  { id: 'free5', kbId: 'kb_free_misc', name: '桌面端信息架构草稿.pdf', type: 'pdf', size: '2.3MB', pageCount: 18, wordCount: 5200, uploadedAt: '2小时前', summary: '桌面端信息架构的早期草稿。' },
+  { id: 'free6', kbId: 'kb_free_misc', name: '周会待办清单.txt', type: 'txt', size: '12KB', wordCount: 860, uploadedAt: '今天 11:20', summary: '周会产生的待办项，未做分类。' },
+  { id: 'free7', kbId: 'kb_free_misc', name: '浏览器侧边栏灵感', type: 'note', size: '420字', wordCount: 420, uploadedAt: '今天 09:40', summary: '侧边栏可以承载当前网页摘要和知识库入口。' },
+  { id: 'free8', kbId: 'kb_free_misc', name: 'Notion 模板页面', type: 'url', size: '—', uploadedAt: '昨天', summary: '一个可参考的模板页面。' },
+  { id: 'free9', kbId: 'kb_free_misc', name: '用户反馈截图 0513.png', type: 'image', size: '780KB', uploadedAt: '昨天', summary: '用户在群里反馈空态引导太强的截图。' },
+  { id: 'free10', kbId: 'kb_free_misc', name: '产品命名备忘', type: 'note', size: '300字', wordCount: 300, uploadedAt: '昨天', summary: '关于自由收纳、我的速记等命名的备忘。' },
+  { id: 'free11', kbId: 'kb_free_misc', name: '竞品首页布局.docx', type: 'doc', size: '640KB', pageCount: 6, wordCount: 2100, uploadedAt: '2天前', summary: '几个竞品首页布局和首屏文案对比。' },
+  { id: 'free12', kbId: 'kb_free_misc', name: '导入来源 checklist.txt', type: 'txt', size: '9KB', wordCount: 720, uploadedAt: '2天前', summary: '粘贴链接、最近浏览、跨端导入等来源清单。' },
+  { id: 'free13', kbId: 'kb_free_misc', name: 'Claude 对话记录', type: 'url', size: '—', uploadedAt: '3天前', summary: '一次关于知识库分类逻辑的对话记录。' },
+  { id: 'free14', kbId: 'kb_free_misc', name: '设计评审录音.m4a', type: 'audio', size: '18MB', uploadedAt: '3天前', summary: '设计评审会上关于管理方式入口的讨论。' },
+  { id: 'free15', kbId: 'kb_free_misc', name: '状态机草图.png', type: 'image', size: '920KB', uploadedAt: '4天前', summary: '滑动、长按、多选的状态机手绘图。' },
+  { id: 'free16', kbId: 'kb_free_misc', name: '保存到库流程.pdf', type: 'pdf', size: '1.6MB', pageCount: 12, wordCount: 3600, uploadedAt: '4天前', summary: '统一保存到库流程说明。' },
+  { id: 'free17', kbId: 'kb_free_misc', name: '灵感：空状态应该更安静', type: 'note', size: '180字', wordCount: 180, uploadedAt: '5天前', summary: '空状态不要催促用户做决定。' },
+  { id: 'free18', kbId: 'kb_free_misc', name: '移动端底栏参考', type: 'url', size: '—', uploadedAt: '5天前', summary: '几个移动端底部输入条和 tab 的参考。' },
+  { id: 'free19', kbId: 'kb_free_misc', name: 'README 发布说明草稿.docx', type: 'doc', size: '430KB', pageCount: 4, wordCount: 1600, uploadedAt: '1周前', summary: '公开部署前的 README 文案草稿。' },
+  { id: 'free20', kbId: 'kb_free_misc', name: '临时素材包记录.txt', type: 'txt', size: '15KB', wordCount: 980, uploadedAt: '1周前', summary: '尚未决定归属的一批素材记录。' },
+]
+
 export const mockKnowledgeBases: KnowledgeBase[] = [
+  {
+    id: 'kb_unconfigured',
+    name: '未命名知识库',
+    icon: 'inbox',
+    color: '#9CA3AF',
+    fileCount: 0,
+    updatedAt: '刚刚',
+    managementMode: null,
+    type: 'personal',
+  },
   {
     id: 'kb1',
     name: '产品资料库',
     icon: '💼',
     color: '#FF7A00',
-    fileCount: 12,
+    fileCount: 14,
     updatedAt: '2小时前',
+    managementMode: 'ai',
     type: 'personal',
   },
   {
@@ -131,8 +288,9 @@ export const mockKnowledgeBases: KnowledgeBase[] = [
     name: '用户访谈库',
     icon: '🎙️',
     color: '#6366F1',
-    fileCount: 8,
+    fileCount: 9,
     updatedAt: '1天前',
+    managementMode: 'output',
     type: 'personal',
   },
   {
@@ -140,8 +298,51 @@ export const mockKnowledgeBases: KnowledgeBase[] = [
     name: '读书摘录',
     icon: '📖',
     color: '#10B981',
-    fileCount: 0,
+    fileCount: 1,
     updatedAt: '3天前',
+    managementMode: 'idea',
+    type: 'personal',
+  },
+  {
+    id: 'kb_project_browser',
+    name: 'AI 浏览器项目库',
+    icon: '🧭',
+    color: '#FF7A00',
+    fileCount: 12,
+    updatedAt: '刚刚',
+    managementMode: 'project',
+    type: 'personal',
+  },
+  {
+    id: 'kb_output_review',
+    name: '季度产品复盘',
+    icon: '📊',
+    color: '#FF7A00',
+    fileCount: 11,
+    updatedAt: '今天',
+    managementMode: 'output',
+    type: 'personal',
+  },
+  {
+    id: QUICK_NOTES_KB_ID,
+    name: '我的速记',
+    icon: 'pen-line',
+    color: '#FF7A00',
+    fileCount: quickNoteFiles.length,
+    updatedAt: '刚刚',
+    managementMode: 'idea',
+    type: 'personal',
+    isSystem: true,
+    locked: true,
+  },
+  {
+    id: 'kb_free_misc',
+    name: '杂物收藏',
+    icon: '📦',
+    color: '#FF7A00',
+    fileCount: freeMiscFiles.length,
+    updatedAt: '刚刚',
+    managementMode: null,
     type: 'personal',
   },
 ]
@@ -152,8 +353,9 @@ export const mockSubscribedKBs: KnowledgeBase[] = [
     name: 'ProductLab 团队',
     icon: '🏢',
     color: '#8B5CF6',
-    fileCount: 324,
+    fileCount: 325,
     updatedAt: '1小时前',
+    managementMode: null,
     isSubscribed: true,
     type: 'subscribed',
   },
@@ -164,12 +366,15 @@ export const mockSubscribedKBs: KnowledgeBase[] = [
     color: '#06B6D4',
     fileCount: 156,
     updatedAt: '昨天',
+    managementMode: null,
     isSubscribed: true,
     type: 'subscribed',
   },
 ]
 
 export const mockFiles: KnowledgeFile[] = [
+  ...quickNoteFiles,
+  ...freeMiscFiles,
   // 产品资料库 (kb1)
   {
     id: 'f1',
@@ -290,6 +495,33 @@ export const mockFiles: KnowledgeFile[] = [
     uploadedAt: '2周前',
     summary: 'AI 自动转写完成。访谈对象：产品经理（5年），核心观点：移动端知识管理工具最大缺口在于"随时捕捉+事后整理"的断层。',
   },
+  {
+    id: 'f14',
+    kbId: 'kb1',
+    name: 'YourPortal Research 报告',
+    type: 'url',
+    size: '—',
+    uploadedAt: '1小时前',
+    summary: '网页研究报告，梳理 AI 知识管理产品在搜索、问答与来源追踪上的体验趋势。',
+  },
+  {
+    id: 'f15',
+    kbId: 'kb1',
+    name: '周会纪要 05/11.m4a',
+    type: 'audio',
+    size: '16MB',
+    uploadedAt: '今天',
+    summary: '周会录音导入，重点包括知识库最近入口、多选入库和公开演示前的交互修正。',
+  },
+  {
+    id: 'f18',
+    kbId: 'kb1',
+    name: '产品架构图.png',
+    type: 'image',
+    size: '1.4MB',
+    uploadedAt: '4小时前',
+    summary: '知识库、问答、轻应用三大模块的信息架构图，标注了统一保存到库的核心路径。',
+  },
   // 用户访谈库 (kb2)
   {
     id: 'f10',
@@ -329,6 +561,37 @@ export const mockFiles: KnowledgeFile[] = [
     size: '18MB',
     uploadedAt: '5天前',
     summary: 'AI 转写完成。运营负责人，使用知识库协同管理团队 SOP，痛点在于多人协作时的版本冲突与权限混乱。',
+  },
+  {
+    id: 'f16',
+    kbId: 'kb2',
+    name: '用户访谈 02 录音.m4a',
+    type: 'audio',
+    size: '21MB',
+    uploadedAt: '昨天',
+    summary: '第二轮移动端用户访谈录音，已完成转写，围绕知识库选择反馈和跨知识库追问展开。',
+  },
+  {
+    id: 'f17',
+    kbId: 'kb2',
+    name: '用户调研问卷.docx',
+    type: 'doc',
+    size: '720KB',
+    pageCount: 9,
+    wordCount: 2600,
+    uploadedAt: '2天前',
+    summary: '用户调研问卷题目与答卷结构，覆盖知识库创建、内容导入、AI 追问三个核心场景。',
+  },
+  // 读书摘录 (kb3)
+  {
+    id: 'f_read1',
+    kbId: 'kb3',
+    name: '《认知觉醒》读书笔记',
+    type: 'note',
+    size: '6.8KB',
+    wordCount: 2100,
+    uploadedAt: '3天前',
+    summary: '关于注意力、反馈回路和主动学习的摘录，整理为可复用的产品学习笔记。',
   },
   // ProductLab 团队订阅库 (kb4)
   {
@@ -378,6 +641,16 @@ export const mockFiles: KnowledgeFile[] = [
     uploadedAt: '2周前',
     summary: '基于 ProductLab 内部实践总结的 AI 产品 PMF 评估框架，包含 8 个关键信号指标与评分模型。',
   },
+  {
+    id: 'f_pl5',
+    kbId: 'kb4',
+    name: 'ProductLab 增长方法论',
+    type: 'url',
+    size: '—',
+    wordCount: 9800,
+    uploadedAt: '今天 09:30',
+    summary: 'ProductLab 团队沉淀的增长方法论，覆盖实验假设、指标拆解、渠道验证和复盘模板。',
+  },
   // Design Systems Lab 订阅库 (kb5)
   {
     id: 'f_ds1',
@@ -415,6 +688,209 @@ export const mockFiles: KnowledgeFile[] = [
     wordCount: 1800,
     uploadedAt: '2周前',
     summary: '30项设计评审必查清单，覆盖视觉一致性、交互可达性、边界状态处理、响应式适配等维度。',
+  },
+]
+
+export const mockRecentItems: RecentItem[] = [
+  {
+    id: 'recent1',
+    fileId: 'f1',
+    title: '竞品分析报告.pdf',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'pdf',
+    time: '2 小时前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent2',
+    fileId: 'n3',
+    title: 'AI 追问整理',
+    kbId: QUICK_NOTES_KB_ID,
+    kbName: '我的速记',
+    type: 'note',
+    time: '刚刚',
+    activity: 'updated',
+  },
+  {
+    id: 'recent3',
+    fileId: 'f16',
+    title: '用户访谈 02 录音',
+    kbId: 'kb2',
+    kbName: '用户访谈库',
+    type: 'audio',
+    time: '昨天',
+    activity: 'visited',
+  },
+  {
+    id: 'recent4',
+    fileId: 'f_pl5',
+    title: 'ProductLab 增长方法论',
+    kbId: 'kb4',
+    kbName: 'ProductLab 团队',
+    type: 'url',
+    time: '今天 09:30',
+    activity: 'updated',
+  },
+  {
+    id: 'recent5',
+    fileId: 'f_read1',
+    title: '《认知觉醒》读书笔记',
+    kbId: 'kb3',
+    kbName: '读书摘录',
+    type: 'note',
+    time: '3 天前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent6',
+    fileId: 'f14',
+    title: 'YourPortal 行业报告',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'url',
+    time: '1 小时前',
+    activity: 'updated',
+  },
+  {
+    id: 'recent7',
+    fileId: 'f15',
+    title: '周会纪要 05/11',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'audio',
+    time: '今天 14:00',
+    activity: 'updated',
+  },
+  {
+    id: 'recent8',
+    fileId: 'n2',
+    title: '上下文标签策略',
+    kbId: QUICK_NOTES_KB_ID,
+    kbName: '我的速记',
+    type: 'note',
+    time: '昨天',
+    activity: 'visited',
+  },
+  {
+    id: 'recent9',
+    fileId: 'f17',
+    title: '用户调研问卷.docx',
+    kbId: 'kb2',
+    kbName: '用户访谈库',
+    type: 'doc',
+    time: '2 天前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent10',
+    fileId: 'f18',
+    title: '产品架构图.png',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'image',
+    time: '4 小时前',
+    activity: 'updated',
+  },
+  {
+    id: 'recent11',
+    fileId: 'f2',
+    title: '增长策略规划.docx',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'doc',
+    time: '今天 11:20',
+    activity: 'updated',
+  },
+  {
+    id: 'recent12',
+    fileId: 'f3',
+    title: '用户访谈记录.txt',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'txt',
+    time: '4 小时前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent13',
+    fileId: 'f4',
+    title: 'AI 产品设计原则.pdf',
+    kbId: 'kb1',
+    kbName: '产品资料库',
+    type: 'pdf',
+    time: '6 小时前',
+    activity: 'updated',
+  },
+  {
+    id: 'recent14',
+    fileId: 'f10',
+    title: '访谈纪要-张磊.pdf',
+    kbId: 'kb2',
+    kbName: '用户访谈库',
+    type: 'pdf',
+    time: '昨天 18:30',
+    activity: 'visited',
+  },
+  {
+    id: 'recent15',
+    fileId: 'f12',
+    title: '问卷数据汇总.docx',
+    kbId: 'kb2',
+    kbName: '用户访谈库',
+    type: 'doc',
+    time: '今天 10:10',
+    activity: 'updated',
+  },
+  {
+    id: 'recent16',
+    fileId: 'f13',
+    title: '访谈录音-王强.m4a',
+    kbId: 'kb2',
+    kbName: '用户访谈库',
+    type: 'audio',
+    time: '2 天前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent17',
+    fileId: 'f_pl1',
+    title: '需求拆解方法论.pdf',
+    kbId: 'kb4',
+    kbName: 'ProductLab 团队',
+    type: 'pdf',
+    time: '今天 08:45',
+    activity: 'updated',
+  },
+  {
+    id: 'recent18',
+    fileId: 'f_pl2',
+    title: '上线复盘模板 v3.docx',
+    kbId: 'kb4',
+    kbName: 'ProductLab 团队',
+    type: 'doc',
+    time: '1 天前',
+    activity: 'visited',
+  },
+  {
+    id: 'recent19',
+    fileId: 'f_ds1',
+    title: '组件设计规范 2026.pdf',
+    kbId: 'kb5',
+    kbName: 'Design Systems Lab',
+    type: 'pdf',
+    time: '3 天前',
+    activity: 'updated',
+  },
+  {
+    id: 'recent20',
+    fileId: 'f_ds3',
+    title: '设计评审检查清单.txt',
+    kbId: 'kb5',
+    kbName: 'Design Systems Lab',
+    type: 'txt',
+    time: '2 周前',
+    activity: 'visited',
   },
 ]
 
@@ -543,73 +1019,42 @@ export const mockTeams: Team[] = [
   },
 ]
 
-export const mockNotes: Note[] = [
-  {
-    id: 'n1',
-    title: 'AI 结果页来源卡片重构',
-    content: `## 背景
-
-当前 AI 回答页面混用了知识库来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
-
-## 核心洞察
-
-用户对 AI 回答的信任建立在"能看见出处"上。调研数据显示，展示来源后用户对回答的采信率提升 34%，追问率下降 18%——说明清晰的来源减少了用户的不确定感，而非鼓励追问。
-
-来源的展示时机同样关键：在答案渲染完成后才出现来源卡片，会让用户感觉信息是"事后补充"的，降低可信度。应与正文同步渐入。
-
-## 方案
-
-将知识库来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
-
-- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 知识库 / 🌐 网页）
-- **同步渐入**：在流式输出结束后 200ms 延迟滑入，避免"后补"感
-- **引用高亮**：正文中被引用的句子加橙黄色底线，点击可展开对应来源卡片
-
-## 风险与缓解
-
-最主要的风险是来源数量过多时卡片区域过长，挤压正文阅读体验。缓解方案：默认折叠超过 3 条的来源，以"查看全部 N 条来源"入口展开；单条来源卡片高度控制在 52px 以内，保持紧凑。
-
-## 下一步
-
-- [ ] 完成来源卡片组件设计稿评审（5月15日）
-- [ ] 与工程侧对齐流式输出 + 来源注入的时序方案
-- [ ] 在 Q04 页面接入真实来源数据做可用性测试`,
-    tags: ['AI产品', '设计'],
-    createdAt: '2小时前',
-    updatedAt: '2小时前',
-    backlinks: ['n2'],
-    wordCount: 680,
-  },
-  {
-    id: 'n2',
-    title: '上下文标签在搜索链路中的价值',
-    content: `## 核心问题\n\n通过标签明确搜索范围，首答命中率提升并减少重复提问。\n\n## 数据支撑\n\n- 有标签的搜索首答满意率 +23%\n- 用户追问次数减少 1.8 次/会话`,
-    tags: ['学习笔记', 'AI产品'],
-    createdAt: '昨天',
-    updatedAt: '昨天',
-    backlinks: ['n1'],
-    wordCount: 280,
-  },
-]
-
 export const mockApps: LightApp[] = [
   {
-    id: 'app1',
-    name: '资料速查工具',
-    icon: '📊',
-    description: '快速检索工作资料库中的核心数据',
+    id: 'app_words',
+    name: '我的英语单词本',
+    icon: '📖',
+    description: '生词库、记忆曲线、每日学习',
+    templateId: 'word-cards',
     createdAt: '3天前',
-    lastOpenedAt: '2小时前',
-    dataSource: '产品资料库',
+    lastOpenedAt: '昨天',
+    lastUsedAt: '昨天',
+    dataSource: '读书摘录',
+    runtimeType: 'learning_list',
   },
   {
-    id: 'app2',
-    name: '竞品动态监控',
-    icon: '🔍',
-    description: '持续追踪竞品更新，自动生成摘要',
+    id: 'app_invest',
+    name: 'Q4 投资跟踪',
+    icon: '📈',
+    description: '基金净值、收益曲线、持仓笔记',
+    templateId: 'fund-portfolio',
     createdAt: '1周前',
-    lastOpenedAt: '昨天',
-    dataSource: '竞品分析报告',
+    lastOpenedAt: '3天前',
+    lastUsedAt: '3天前',
+    dataSource: '财经资料库',
+    runtimeType: 'data_dashboard',
+  },
+  {
+    id: 'app_diet',
+    name: '减脂期饮食',
+    icon: '🥗',
+    description: '食物库、热量记录、营养分析',
+    templateId: 'diet-log',
+    createdAt: '2周前',
+    lastOpenedAt: '1周前',
+    lastUsedAt: '1周前',
+    dataSource: '健康计划',
+    runtimeType: 'daily_tracker',
   },
 ]
 
@@ -617,7 +1062,7 @@ export const mockAiSuggestions = [
   '如何在知识库中快速找到历史决策？',
   '帮我总结今天工作资料里的关键信息',
   '分析竞品报告里最值得关注的3个点',
-  '帮我把这篇文章整理成结构化笔记',
+  '帮我把这篇文章整理成结构化要点',
   'AI 知识管理工具的核心竞争力是什么？',
 ]
 

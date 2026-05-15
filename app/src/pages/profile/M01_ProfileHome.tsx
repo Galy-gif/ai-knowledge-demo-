@@ -11,12 +11,10 @@ import {
   HelpCircle,
   Info,
   Inbox,
-  BookOpen,
 } from 'lucide-react'
 import TabLayout from '../../components/layout/TabLayout'
 import ListItem from '../../components/common/ListItem'
 import { useUser } from '../../context/UserContext'
-import { useNotes } from '../../context/NotesContext'
 import { useKnowledge } from '../../context/KnowledgeContext'
 
 function SectionHeader({ title }: { title: string }) {
@@ -36,11 +34,9 @@ function SectionCard({ children }: { children: React.ReactNode }) {
 export default function M01_ProfileHome() {
   const navigate = useNavigate()
   const { user, showConfirm } = useUser()
-  const { notes } = useNotes()
   const { files } = useKnowledge()
 
   const totalFiles = files.length
-  const totalNotes = notes.length
 
   const handleLogout = () => {
     showConfirm({
@@ -80,7 +76,7 @@ export default function M01_ProfileHome() {
         {/* ── 我的数据 ── */}
         <div className="px-4">
           <SectionHeader title="我的数据" />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {/* 入库内容 */}
             <button
               onClick={() => navigate('/knowledge')}
@@ -91,18 +87,6 @@ export default function M01_ProfileHome() {
                 <p className="text-caption text-ink-placeholder mt-1.5">入库内容</p>
               </div>
               <Inbox size={22} className="text-ink-placeholder mt-1" />
-            </button>
-
-            {/* 笔记 */}
-            <button
-              onClick={() => navigate('/notes')}
-              className="bg-white rounded-card border border-line-base shadow-card px-5 py-4 flex items-start justify-between"
-            >
-              <div>
-                <p className="text-[28px] font-bold text-ink-primary leading-none">{totalNotes}</p>
-                <p className="text-caption text-ink-placeholder mt-1.5">笔记</p>
-              </div>
-              <BookOpen size={22} className="text-ink-placeholder mt-1" />
             </button>
           </div>
         </div>

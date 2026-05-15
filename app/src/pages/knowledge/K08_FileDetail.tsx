@@ -1,16 +1,31 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, Bookmark, LayoutList, MoreHorizontal, Send, Sparkles } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  Bold,
+  Bookmark,
+  ChevronLeft,
+  Hash,
+  Image,
+  Italic,
+  LayoutList,
+  Link,
+  List,
+  MoreHorizontal,
+  Send,
+  Sparkles,
+} from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
 import BottomFloatingPanel from '../../components/common/BottomFloatingPanel'
 import DocumentActionSheet from '../../components/common/DocumentActionSheet'
 import HighlightedText from '../../components/common/HighlightedText'
 import DocumentReader, { AnnotationListSheet, useDocumentReader } from '../../components/common/DocumentReader'
+import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
+import SmartGenerateBubble from '../../components/common/SmartGenerateBubble'
 import Toast from '../../components/common/Toast'
 import { useAnnotations } from '../../context/AnnotationContext'
-import { useKnowledge } from '../../context/KnowledgeContext'
+import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
-import { mockFiles } from '../../mock/data'
+import { type KnowledgeFile, mockFiles } from '../../mock/data'
 
 // ── Rich document content map ─────────────────────────────────────────────────
 const DOCS: Record<string, { summary: string; content: string }> = {
@@ -84,7 +99,7 @@ const DOCS: Record<string, { summary: string; content: string }> = {
 - 付费意愿：高，月均 ARPU 234 元
 
 **中度用户（日均使用 10–30 分钟，占比 51%）**
-- 核心场景：资料查找、笔记整理
+- 核心场景：资料查找、速记整理
 - 主要痛点：操作复杂、移动端体验
 - 付费意愿：中，月均 ARPU 68 元
 
@@ -154,28 +169,35 @@ Q4 重点：提升免费 → Pro 转化率（目标从 6.1% → 8.5%），核心
 function renderTable(lines: string[], hlTexts: string[], hlColors: Map<string, string>) {
   const dataLines = lines.filter(l => !l.match(/^\|[-| :]+\|/))
   if (dataLines.length === 0) return null
+  const [headerLine, ...bodyLines] = dataLines
+  const headerCells = headerLine.split('|').filter(c => c.trim() !== '')
+
   return (
     <div className="overflow-x-auto my-4 rounded-card border border-line-base">
       <table className="w-full min-w-full border-collapse">
-        {dataLines.map((row, ri) => {
-          const cells = row.split('|').filter(c => c.trim() !== '')
-          const isHeader = ri === 0
-          return (
-            <tr key={ri} className={isHeader ? 'bg-surface-card' : 'border-t border-line-base'}>
-              {cells.map((cell, ci) =>
-                isHeader ? (
-                  <th key={ci} className="px-3 py-2 text-left text-caption font-semibold text-ink-primary whitespace-nowrap">
-                    {cell.trim()}
-                  </th>
-                ) : (
+        <thead>
+          <tr className="bg-surface-card">
+            {headerCells.map((cell, ci) => (
+              <th key={ci} className="px-3 py-2 text-left text-caption font-semibold text-ink-primary whitespace-nowrap">
+                {cell.trim()}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {bodyLines.map((row, ri) => {
+            const cells = row.split('|').filter(c => c.trim() !== '')
+            return (
+              <tr key={ri} className="border-t border-line-base">
+                {cells.map((cell, ci) => (
                   <td key={ci} className="px-3 py-2 text-caption text-ink-secondary whitespace-nowrap">
                     <HighlightedText text={cell.trim()} highlights={hlTexts} colorMap={hlColors} />
                   </td>
-                )
-              )}
-            </tr>
-          )
-        })}
+                ))}
+              </tr>
+            )
+          })}
+        </tbody>
       </table>
     </div>
   )
@@ -200,7 +222,9 @@ function DocumentContent({ content }: { content: string }) {
       continue
     }
 
-    if (line.startsWith('## ')) {
+    if (line.startsWith('# ')) {
+      elements.push(<h1 key={i} className="text-[22px] font-semibold text-ink-primary mt-7 mb-3 first:mt-0">{line.slice(2)}</h1>)
+    } else if (line.startsWith('## ')) {
       elements.push(<h2 key={i} className="text-h2 font-semibold text-ink-primary mt-7 mb-3 first:mt-0">{line.slice(3)}</h2>)
     } else if (line.startsWith('### ')) {
       elements.push(<h3 key={i} className="text-card-title font-semibold text-ink-primary mt-5 mb-2">{line.slice(4)}</h3>)
@@ -239,21 +263,249 @@ function DocumentContent({ content }: { content: string }) {
   return <div>{elements}</div>
 }
 
+function summarizeNote(content: string) {
+  return content
+    .replace(/^#+\s*/gm, '')
+    .split('\n')
+    .map(line => line.replace(/^\s*[-*>]+\s*/, '').trim())
+    .find(Boolean)
+    ?.slice(0, 96) || '轻量速记内容，可继续编辑和作为 AI 上下文引用。'
+}
+
+function createNoteFile(kbId: string, title: string, content: string): KnowledgeFile {
+  const safeTitle = title.trim() || '无标题速记'
+  const safeContent = content.trim()
+  return {
+    id: `quick_note_${Date.now()}`,
+    kbId,
+    name: safeTitle,
+    type: 'note',
+    size: `${safeContent.length}字`,
+    wordCount: safeContent.length,
+    uploadedAt: '刚刚',
+    createdAt: '刚刚',
+    updatedAt: '刚刚',
+    tags: ['速记'],
+    summary: summarizeNote(safeContent),
+    content: safeContent,
+  }
+}
+
+function MarkdownNoteEditor({
+  file,
+  initialTitle,
+  initialContent,
+  onSave,
+  onCancel,
+}: {
+  file: KnowledgeFile | null
+  initialTitle: string
+  initialContent: string
+  onSave: (payload: { title: string; content: string }) => void
+  onCancel: () => void
+}) {
+  const [title, setTitle] = useState(initialTitle)
+  const [content, setContent] = useState(initialContent)
+  const [promptKind, setPromptKind] = useState<'link' | 'image' | null>(null)
+  const [promptValue, setPromptValue] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const selectionRef = useRef<{ start: number; end: number } | null>(null)
+
+  const autoResize = () => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }
+
+  useEffect(() => { autoResize() }, [content])
+
+  const focusTextarea = (start: number, end = start) => {
+    window.setTimeout(() => {
+      const el = textareaRef.current
+      if (!el) return
+      el.focus()
+      el.setSelectionRange(start, end)
+      autoResize()
+    }, 0)
+  }
+
+  const getSelection = () => {
+    const el = textareaRef.current
+    return {
+      start: el?.selectionStart ?? content.length,
+      end: el?.selectionEnd ?? content.length,
+    }
+  }
+
+  const replaceRange = (start: number, end: number, inserted: string, cursorStart?: number, cursorEnd?: number) => {
+    const next = content.slice(0, start) + inserted + content.slice(end)
+    setContent(next)
+    focusTextarea(cursorStart ?? start + inserted.length, cursorEnd ?? cursorStart ?? start + inserted.length)
+  }
+
+  const wrapSelection = (before: string, after: string, placeholder: string) => {
+    const { start, end } = getSelection()
+    const selected = content.slice(start, end) || placeholder
+    const inserted = `${before}${selected}${after}`
+    const selectionStart = start + before.length
+    replaceRange(start, end, inserted, selectionStart, selectionStart + selected.length)
+  }
+
+  const insertList = () => {
+    const { start, end } = getSelection()
+    const selected = content.slice(start, end)
+    const inserted = selected
+      ? selected.split('\n').map(line => line.trim().startsWith('- ') ? line : `- ${line}`).join('\n')
+      : '- '
+    replaceRange(start, end, inserted)
+  }
+
+  const insertHeading = () => {
+    const { start, end } = getSelection()
+    const selected = content.slice(start, end) || '标题'
+    const prefix = start > 0 && !content.slice(0, start).endsWith('\n') ? '\n' : ''
+    const inserted = `${prefix}# ${selected}`
+    const selectionStart = start + prefix.length + 2
+    replaceRange(start, end, inserted, selectionStart, selectionStart + selected.length)
+  }
+
+  const openUrlPrompt = (kind: 'link' | 'image') => {
+    selectionRef.current = getSelection()
+    setPromptValue('')
+    setPromptKind(kind)
+  }
+
+  const confirmUrlInsert = () => {
+    if (!promptKind || !promptValue.trim()) return
+    const { start, end } = selectionRef.current ?? getSelection()
+    const selected = content.slice(start, end)
+    const url = promptValue.trim()
+    const inserted = promptKind === 'link'
+      ? `[${selected || '链接文本'}](${url})`
+      : `![${selected || '图片描述'}](${url})`
+    setPromptKind(null)
+    setPromptValue('')
+    replaceRange(start, end, inserted)
+  }
+
+  const toolbarIcons = [
+    { Icon: Bold, label: '加粗', action: () => wrapSelection('**', '**', '加粗文字') },
+    { Icon: Italic, label: '斜体', action: () => wrapSelection('_', '_', '斜体文字') },
+    { Icon: List, label: '列表', action: insertList },
+    { Icon: Hash, label: '标题', action: insertHeading },
+    { Icon: Link, label: '链接', action: () => openUrlPrompt('link') },
+    { Icon: Image, label: '图片', action: () => openUrlPrompt('image') },
+  ]
+
+  return (
+    <div className="flex flex-col h-full relative bg-white">
+      <div className="flex items-center h-14 px-4 border-b border-line-base flex-shrink-0">
+        <button onClick={onCancel} className="p-1 -ml-1 mr-2 text-ink-secondary">
+          <ChevronLeft size={24} />
+        </button>
+        <span className="flex-1 text-caption text-ink-placeholder truncate">
+          {title || (file ? '编辑速记' : '新建速记')}
+        </span>
+        <button
+          onClick={() => onSave({ title, content })}
+          className="px-3.5 py-1.5 bg-brand-orange text-white text-caption font-medium rounded-btn"
+        >
+          保存
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="px-5 pt-4 pb-6">
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="标题"
+            className="w-full text-[22px] font-semibold text-ink-primary outline-none bg-transparent placeholder:text-ink-placeholder pb-3 mb-4 border-b border-line-base"
+          />
+          <textarea
+            ref={textareaRef}
+            value={content}
+            onChange={e => { setContent(e.target.value); autoResize() }}
+            placeholder="开始写速记..."
+            className="w-full text-body text-ink-primary outline-none bg-transparent placeholder:text-ink-placeholder resize-none leading-[1.75] min-h-[320px]"
+          />
+        </div>
+      </div>
+
+      <div className="flex-shrink-0 border-t border-line-base bg-white">
+        <div className="flex items-center px-3 py-2 gap-0.5">
+          {toolbarIcons.map(({ Icon, label, action }) => (
+            <button
+              key={label}
+              onClick={action}
+              title={label}
+              className="p-2 rounded text-ink-placeholder active:bg-surface-card transition-colors"
+            >
+              <Icon size={18} />
+            </button>
+          ))}
+          <div className="flex-1" />
+        </div>
+      </div>
+
+      <BottomSheet
+        open={promptKind !== null}
+        onClose={() => setPromptKind(null)}
+        title={promptKind === 'image' ? '插入图片' : '插入链接'}
+      >
+        <div className="px-5 py-3 space-y-3">
+          <input
+            value={promptValue}
+            onChange={e => setPromptValue(e.target.value)}
+            placeholder={promptKind === 'image' ? '输入图片 URL' : '输入链接 URL'}
+            className="w-full px-4 py-3 bg-surface-card rounded-card border border-line-base text-body text-ink-primary outline-none placeholder:text-ink-placeholder"
+            autoFocus
+          />
+          <button
+            onClick={confirmUrlInsert}
+            disabled={!promptValue.trim()}
+            className="w-full py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
+          >
+            插入
+          </button>
+        </div>
+      </BottomSheet>
+    </div>
+  )
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 export default function K08_FileDetail() {
   const navigate = useNavigate()
-  const { activeFile } = useKnowledge()
+  const { state } = useLocation()
+  const { activeFile, activeBase, bases, subscribedBases, addFile, updateFile, deleteFile, setActiveFile, quickNotesBase } = useKnowledge()
   const { showToast } = useUser()
   const { getAnnotationsByDoc } = useAnnotations()
 
-  const file = activeFile ?? mockFiles[0]
-  const doc  = DOCS[file.id] ?? DOCS['f1']
+  const routeState = (state as { createNote?: boolean; kbId?: string } | null) ?? {}
+  const creatingNote = !!routeState.createNote
+  const file = creatingNote
+    ? null
+    : (activeFile ?? mockFiles[0])
+  const isNoteFile = creatingNote || file?.type === 'note'
+  const doc = isNoteFile
+    ? {
+        summary: summarizeNote(file?.content ?? ''),
+        content: file?.content ?? '',
+      }
+    : (DOCS[file?.id ?? ''] ?? (file?.content
+        ? { summary: file.summary ?? '这是一份从工作流阶段打开的资料。', content: file.content }
+        : DOCS['f1']))
+  const docId = file?.id ?? 'new-quick-note'
+  const docType = isNoteFile ? 'note' : 'knowledge'
 
-  const docAnnotations = getAnnotationsByDoc(file.id, 'knowledge')
+  const docAnnotations = getAnnotationsByDoc(docId, docType)
 
   const [showTOC,         setShowTOC]         = useState(false)
   const [showAiAssist,    setShowAiAssist]    = useState(false)
   const [showActionSheet, setShowActionSheet] = useState(false)
+  const [showKbSheet,     setShowKbSheet]     = useState(false)
   const [showAnnotations, setShowAnnotations] = useState(false)
   const [showX02,         setShowX02]         = useState(false)
   const [showX03,         setShowX03]         = useState(false)
@@ -262,15 +514,106 @@ export default function K08_FileDetail() {
   const [aiInput,         setAiInput]         = useState('')
   const [bookmarked,      setBookmarked]      = useState(false)
   const [pendingText,     setPendingText]     = useState('')
+  const [savePayload,     setSavePayload]     = useState<SaveSourceContent>({ title: file?.name ?? '文档保存', body: doc.content, type: 'document' })
+  const [saveSheetTitle,  setSaveSheetTitle]  = useState('添加到知识库')
+  const [editingNote,     setEditingNote]     = useState(creatingNote)
+  const selectionSaveCountRef = useRef(0)
 
   const handleAction = (action: string, text: string) => {
     setPendingText(text)
     switch (action) {
-      case 'AI 追问': setX02Input(''); setShowX02(true); break
+      case 'AI 追问':
+      case '追问':
+        setX02Input(''); setShowX02(true); break
       case '翻译': setShowX03(true); break
       case '解释': setShowX04(true); break
+      case '入库': {
+        selectionSaveCountRef.current += 1
+        const excerptType: SaveSourceContent['type'] =
+          displayFile.type === 'pdf' ? 'pdf_excerpt' :
+          displayFile.type === 'note' ? 'note_excerpt' :
+          'doc_excerpt'
+        openKbSheet(
+          `《${displayFile.name}》节选 - 划线 ${selectionSaveCountRef.current}`,
+          text,
+          excerptType,
+          '保存划线内容',
+          {
+            originalFileId: displayFile.id,
+            originalFileName: displayFile.name,
+            excerpt: text,
+            pageNumber: undefined,
+            createdAt: new Date().toISOString(),
+          },
+        )
+        break
+      }
     }
   }
+
+  const openKbSheet = (
+    title: string,
+    body: string,
+    type: SaveSourceContent['type'] = 'document',
+    sheetTitle = '添加到知识库',
+    metadata?: SaveSourceContent['metadata'],
+  ) => {
+    setSavePayload({ title, body, type, metadata })
+    setSaveSheetTitle(sheetTitle)
+    setShowKbSheet(true)
+  }
+
+  const handleNoteSave = ({ title, content }: { title: string; content: string }) => {
+    const trimmedContent = content.trim()
+    if (!title.trim() && !trimmedContent) {
+      navigate('/knowledge/detail')
+      return
+    }
+    if (file && file.type === 'note') {
+      const safeTitle = title.trim() || '无标题速记'
+      updateFile(file.id, {
+        name: safeTitle,
+        content: trimmedContent,
+        summary: summarizeNote(trimmedContent),
+        size: `${trimmedContent.length}字`,
+        wordCount: trimmedContent.length,
+        updatedAt: '刚刚',
+        uploadedAt: file.uploadedAt,
+      })
+      showToast('已保存到「我的速记」')
+      setEditingNote(false)
+      return
+    }
+
+    const kbId = routeState.kbId ?? activeBase?.id ?? quickNotesBase.id
+    const targetName = activeBase?.id === kbId ? activeBase.name : quickNotesBase.name
+    const nextFile = createNoteFile(kbId, title, trimmedContent)
+    addFile(nextFile)
+    setActiveFile(nextFile)
+    showToast(`已保存到「${targetName}」`)
+    setEditingNote(false)
+    navigate('/knowledge/file-detail', { replace: true })
+  }
+
+  if (editingNote) {
+    return (
+      <MarkdownNoteEditor
+        file={file}
+        initialTitle={file?.name ?? ''}
+        initialContent={file?.content ?? ''}
+        onSave={handleNoteSave}
+        onCancel={() => {
+          if (creatingNote || !file) navigate('/knowledge/detail')
+          else setEditingNote(false)
+        }}
+      />
+    )
+  }
+
+  const displayFile = file ?? mockFiles[0]
+  const sourceBase = activeBase?.id === displayFile.kbId
+    ? activeBase
+    : [...bases, ...subscribedBases].find(base => base.id === displayFile.kbId)
 
   return (
     <div className="flex flex-col h-full relative bg-white">
@@ -280,7 +623,7 @@ export default function K08_FileDetail() {
         <button onClick={() => navigate(-1)} className="p-1 -ml-1 mr-2 text-ink-secondary">
           <ChevronLeft size={24} />
         </button>
-        <span className="flex-1 text-card-title text-ink-primary truncate">{file.name}</span>
+        <span className="flex-1 text-card-title text-ink-primary truncate">{displayFile.name}</span>
         <div className="flex items-center gap-1">
           <button
             onClick={() => { setBookmarked(v => !v); showToast(bookmarked ? '已取消收藏' : '已收藏') }}
@@ -297,10 +640,16 @@ export default function K08_FileDetail() {
         </div>
       </div>
 
+      {displayFile.workflowStage && (
+        <div className="flex-shrink-0 bg-[#FFF1E6] px-5 py-2 text-[13px] leading-5 text-[#4A4A4A]">
+          该资料在【{displayFile.workflowStage}】阶段
+        </div>
+      )}
+
       {/* ── Document content (wrapped in DocumentReader) ── */}
       <DocumentReader
-        docId={file.id}
-        docType="knowledge"
+        docId={docId}
+        docType={docType}
         bottomPx={72}
         onAction={handleAction}
         className="flex-1 overflow-y-auto scrollbar-hide"
@@ -308,13 +657,23 @@ export default function K08_FileDetail() {
         <div className="px-5 pt-5 pb-6">
           <div className="mb-5">
             <h1 className="text-[20px] font-semibold text-ink-primary mb-2">
-              {file.name.replace(/\.[^.]+$/, '')}
+              {displayFile.name.replace(/\.[^.]+$/, '')}
             </h1>
             <div className="flex items-center flex-wrap gap-x-3 gap-y-1">
-              {file.size !== '—' && <span className="text-caption text-ink-placeholder">{file.size}</span>}
-              {file.pageCount && <span className="text-caption text-ink-placeholder">{file.pageCount} 页</span>}
-              <span className="text-caption text-ink-placeholder">{file.uploadedAt}</span>
+              {displayFile.type === 'note' && <span className="text-caption text-brand-orange">速记</span>}
+              {displayFile.size !== '—' && <span className="text-caption text-ink-placeholder">{displayFile.size}</span>}
+              {displayFile.pageCount && <span className="text-caption text-ink-placeholder">{displayFile.pageCount} 页</span>}
+              <span className="text-caption text-ink-placeholder">{displayFile.uploadedAt}</span>
             </div>
+            {displayFile.tags && displayFile.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {displayFile.tags.map(tag => (
+                  <span key={tag} className="text-micro px-2 py-0.5 bg-surface-card text-ink-placeholder rounded-pill">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* AI Summary card */}
@@ -325,11 +684,11 @@ export default function K08_FileDetail() {
             </div>
             <p className="text-body text-ink-primary leading-relaxed">{doc.summary}</p>
             <div className="flex gap-2 mt-3">
-              {['复制摘要', '添加到笔记'].map(a => (
+              {['复制摘要', '保存到库'].map(a => (
                 <button
                   key={a}
                   onClick={() => {
-                    if (a === '添加到笔记') navigate('/notes/edit', { state: { prefilledContent: doc.summary } })
+                    if (a === '保存到库') openKbSheet(`${displayFile.name} 摘要`, doc.summary)
                     else { navigator.clipboard.writeText(doc.summary).catch(() => {}); showToast('摘要已复制') }
                   }}
                   className="px-2.5 py-1 bg-white/70 rounded-pill text-caption text-brand-orange border border-brand-orange/20"
@@ -344,8 +703,21 @@ export default function K08_FileDetail() {
         </div>
       </DocumentReader>
 
+      <SmartGenerateBubble
+        doc={{
+          id: displayFile.id,
+          title: displayFile.name,
+          type: displayFile.type,
+          wordCount: displayFile.wordCount,
+          summary: displayFile.summary,
+          content: doc.content,
+        }}
+        sourceKbId={sourceBase?.id ?? displayFile.kbId}
+        sourceKbName={sourceBase?.name}
+      />
+
       {/* ── Bottom Ask AI bar ── */}
-      <div className="flex-shrink-0 border-t border-line-base bg-white px-4 py-3">
+      <div className="flex-shrink-0 border-t border-line-base bg-white px-4 pt-2 pb-3">
         <button
           onClick={() => setShowAiAssist(true)}
           className="w-full flex items-center gap-2.5 px-4 py-3 bg-surface-card rounded-card border border-line-base text-left"
@@ -359,9 +731,9 @@ export default function K08_FileDetail() {
       {/* ── K09 TOC ── */}
       <BottomSheet open={showTOC} onClose={() => setShowTOC(false)} title="目录">
         <div className="px-5 py-3">
-          {file.toc && file.toc.length > 0 ? (
+          {displayFile.toc && displayFile.toc.length > 0 ? (
             <div className="space-y-0.5">
-              {file.toc.map(item => (
+              {displayFile.toc.map(item => (
                 <button
                   key={item.id}
                   onClick={() => setShowTOC(false)}
@@ -384,7 +756,7 @@ export default function K08_FileDetail() {
         <div className="px-5 py-3">
           <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-surface-card rounded-card border border-line-base">
             <span className="text-caption text-ink-placeholder">基于</span>
-            <span className="text-caption text-ink-primary font-medium truncate">{file.name}</span>
+            <span className="text-caption text-ink-primary font-medium truncate">{displayFile.name}</span>
           </div>
           <p className="text-caption text-ink-placeholder mb-3">你可以问</p>
           <div className="space-y-2 mb-5">
@@ -410,7 +782,7 @@ export default function K08_FileDetail() {
               className="flex-1 text-body text-ink-primary bg-transparent outline-none placeholder:text-ink-placeholder"
             />
             <button
-              onClick={() => { setShowAiAssist(false); navigate('/ask/answer', { state: { question: aiInput, fromFile: file.name } }) }}
+              onClick={() => { setShowAiAssist(false); navigate('/ask/answer', { state: { question: aiInput, fromFile: displayFile.name } }) }}
               className="w-8 h-8 bg-brand-orange rounded-full flex items-center justify-center flex-shrink-0"
             >
               <Send size={14} className="text-white" />
@@ -509,8 +881,14 @@ export default function K08_FileDetail() {
       <DocumentActionSheet
         open={showActionSheet}
         onClose={() => setShowActionSheet(false)}
-        docType="knowledge"
+        docType={isNoteFile ? 'note' : 'knowledge'}
         docContent={doc.content}
+        onEdit={isNoteFile ? () => setEditingNote(true) : undefined}
+        onSaveToKnowledgeBase={(content) => openKbSheet(displayFile.name, content ?? doc.content)}
+        onDelete={isNoteFile ? () => {
+          deleteFile(displayFile.id)
+          showToast('速记已删除')
+        } : undefined}
         annotationsCount={docAnnotations.length}
         onAnnotations={() => setShowAnnotations(true)}
       />
@@ -518,8 +896,16 @@ export default function K08_FileDetail() {
       <AnnotationListSheet
         open={showAnnotations}
         onClose={() => setShowAnnotations(false)}
-        docId={file.id}
-        docType="knowledge"
+        docId={docId}
+        docType={docType}
+      />
+
+      <SaveToKnowledgeBaseSheet
+        open={showKbSheet}
+        onClose={() => setShowKbSheet(false)}
+        sourceContent={savePayload}
+        title={saveSheetTitle}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」知识库` : `已保存到「${kb.name}」`}
       />
 
       <Toast />

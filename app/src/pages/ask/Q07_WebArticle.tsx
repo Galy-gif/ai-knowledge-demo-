@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Share2, BookmarkPlus, ChevronDown, ChevronUp, Send, ThumbsUp, ThumbsDown, Copy, Sparkles, Bookmark } from 'lucide-react'
+import { Share2, BookmarkPlus, ChevronDown, ChevronUp, Send, ThumbsUp, ThumbsDown, Copy, Sparkles, Bookmark, MoreHorizontal } from 'lucide-react'
 import BottomFloatingPanel from '../../components/common/BottomFloatingPanel'
 import HighlightedText from '../../components/common/HighlightedText'
-import SaveToKBSheet from '../../components/common/SaveToKBSheet'
+import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
+import SmartGenerateBubble from '../../components/common/SmartGenerateBubble'
 import DocumentReader, { AnnotationListSheet, useDocumentReader } from '../../components/common/DocumentReader'
+import DocumentActionSheet from '../../components/common/DocumentActionSheet'
 import Toast from '../../components/common/Toast'
 import { useAnnotations } from '../../context/AnnotationContext'
 import { useUser } from '../../context/UserContext'
+import type { SaveSourceContent } from '../../context/KnowledgeContext'
 
 const ARTICLE_CONTENT = `## 为什么话题需要保持上下文
 
@@ -88,7 +91,14 @@ export default function Q07_WebArticle() {
   const docAnnotations = getAnnotationsByDoc(docId, 'web')
 
   const [showAiPanel,    setShowAiPanel]    = useState(false)
-  const [showSaveSheet,  setShowSaveSheet]  = useState(false)
+  const [showKbSheet,    setShowKbSheet]    = useState(false)
+  const [showActionSheet, setShowActionSheet] = useState(false)
+  const [savePayload,    setSavePayload]    = useState<SaveSourceContent>({
+    title: DEFAULT_ARTICLE.title,
+    body: `# ${DEFAULT_ARTICLE.title}\n\n来源：${DEFAULT_ARTICLE.site}\n\n${ARTICLE_CONTENT}`,
+    type: 'web',
+  })
+  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到知识库')
   const [showAnnotations, setShowAnnotations] = useState(false)
   const [showX02,        setShowX02]        = useState(false)
   const [showX03,        setShowX03]        = useState(false)
@@ -102,10 +112,38 @@ export default function Q07_WebArticle() {
   const handleAction = (action: string, text: string) => {
     setPendingText(text)
     switch (action) {
-      case 'AI 追问': setX02Input(''); setShowX02(true); break
+      case 'AI 追问':
+      case '追问':
+        setX02Input(''); setShowX02(true); break
       case '翻译': setShowX03(true); break
       case '解释': setShowX04(true); break
+      case '入库':
+        openKbSheet(
+          `《${article.title}》节选`,
+          text,
+          'web_excerpt',
+          '保存划线内容',
+          {
+            originalUrl: window.location.href,
+            originalTitle: article.title,
+            excerpt: text,
+            createdAt: new Date().toISOString(),
+          },
+        )
+        break
     }
+  }
+
+  const openKbSheet = (
+    title: string,
+    body: string,
+    type: SaveSourceContent['type'] = 'web',
+    sheetTitle = '添加到知识库',
+    metadata?: SaveSourceContent['metadata'],
+  ) => {
+    setSavePayload({ title, body, type, metadata })
+    setSaveSheetTitle(sheetTitle)
+    setShowKbSheet(true)
   }
 
   return (
@@ -135,6 +173,12 @@ export default function Q07_WebArticle() {
             className="p-2 text-ink-secondary"
           >
             <Share2 size={20} />
+          </button>
+          <button
+            onClick={() => setShowActionSheet(true)}
+            className="p-2 text-ink-secondary"
+          >
+            <MoreHorizontal size={21} />
           </button>
         </div>
       </div>
@@ -173,15 +217,15 @@ export default function Q07_WebArticle() {
         <div className="px-5 py-5">
           <ArticleContent />
 
-          {/* Organise to note card */}
+          {/* Save card */}
           <button
-            onClick={() => navigate('/notes/edit', { state: { prefilledContent: `# ${article.title}\n\n来源：${article.site}\n\n` } })}
+            onClick={() => openKbSheet(article.title, `# ${article.title}\n\n来源：${article.site}\n\n${ARTICLE_CONTENT}`, 'web')}
             className="w-full mt-6 mb-2 flex items-center gap-3 px-4 py-4 rounded-card border-2 border-brand-orange/30 bg-brand-orange-light/50 text-left"
           >
             <Sparkles size={18} className="text-brand-orange flex-shrink-0" />
             <div>
-              <p className="text-body font-medium text-brand-orange">整理为笔记</p>
-              <p className="text-caption text-brand-orange/70">AI 帮你提炼要点，生成结构化笔记</p>
+              <p className="text-body font-medium text-brand-orange">保存到库</p>
+              <p className="text-caption text-brand-orange/70">选择目标知识库，默认保存到「我的速记」</p>
             </div>
           </button>
 
@@ -209,11 +253,11 @@ export default function Q07_WebArticle() {
               <span className="text-micro text-ink-placeholder">复制</span>
             </button>
             <button
-              onClick={() => setShowSaveSheet(true)}
+              onClick={() => openKbSheet(article.title, `# ${article.title}\n\n来源：${article.site}\n\n${ARTICLE_CONTENT}`, 'web')}
               className="flex flex-col items-center gap-1 text-ink-secondary"
             >
               <BookmarkPlus size={18} />
-              <span className="text-micro text-ink-placeholder">保存</span>
+              <span className="text-micro text-ink-placeholder">添加到库</span>
             </button>
             <button
               onClick={() => { navigator.clipboard.writeText(window.location.href).catch(() => {}); showToast('分享链接已复制') }}
@@ -226,18 +270,35 @@ export default function Q07_WebArticle() {
         </div>
       </DocumentReader>
 
+      {!showAiPanel && (
+        <SmartGenerateBubble
+          doc={{
+            id: docId,
+            title: article.title,
+            type: 'url',
+            wordCount: ARTICLE_CONTENT.length,
+            summary: `${article.site} · ${article.publishedAt}`,
+            content: ARTICLE_CONTENT,
+          }}
+          sourceKbId={selectedKbIds[0]}
+          sourceKbName={selectedKbNames[0]}
+        />
+      )}
+
       {/* ── Bottom AI bar (collapsed) ── */}
       {!showAiPanel && (
-        <button
-          onClick={() => setShowAiPanel(true)}
-          className="flex-shrink-0 mx-4 mb-4 flex items-center gap-3 px-4 py-3.5 bg-ink-primary rounded-card-lg shadow-float"
-        >
-          <div className="w-6 h-6 bg-brand-orange rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-micro font-bold">AI</span>
-          </div>
-          <span className="text-body text-white flex-1 text-left">问 AI 关于这篇内容…</span>
-          <ChevronUp size={16} className="text-white/60" />
-        </button>
+        <div className="flex-shrink-0 px-4 pb-4 pt-2 bg-white border-t border-line-base">
+          <button
+            onClick={() => setShowAiPanel(true)}
+            className="w-full flex items-center gap-3 px-4 py-3.5 bg-ink-primary rounded-card-lg shadow-float"
+          >
+            <div className="w-6 h-6 bg-brand-orange rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-micro font-bold">AI</span>
+            </div>
+            <span className="text-body text-white flex-1 text-left">问 AI 关于这篇内容…</span>
+            <ChevronUp size={16} className="text-white/60" />
+          </button>
+        </div>
       )}
 
       {/* ── Q08 AI Panel ── */}
@@ -256,7 +317,7 @@ export default function Q07_WebArticle() {
           </div>
 
           <div className="flex gap-2 px-5 py-3 overflow-x-auto scrollbar-hide">
-            {['总结全文', '提炼要点', '生成笔记'].map(a => (
+            {['总结全文', '提炼要点'].map(a => (
               <button
                 key={a}
                 onClick={() => navigate('/ask/answer', { state: { question: `${a}：${article.title}`, selectedKbIds, selectedKbNames } })}
@@ -266,7 +327,7 @@ export default function Q07_WebArticle() {
               </button>
             ))}
             <button
-              onClick={() => setShowSaveSheet(true)}
+              onClick={() => openKbSheet(article.title, `# ${article.title}\n\n来源：${article.site}\n\n${ARTICLE_CONTENT}`, 'web')}
               className="px-3 py-1.5 bg-brand-orange-light rounded-pill text-caption text-brand-orange whitespace-nowrap flex-shrink-0"
             >
               添加到知识库
@@ -295,7 +356,23 @@ export default function Q07_WebArticle() {
       )}
 
       {/* ── Q09 Save to KB ── */}
-      <SaveToKBSheet open={showSaveSheet} onClose={() => setShowSaveSheet(false)} />
+      <SaveToKnowledgeBaseSheet
+        open={showKbSheet}
+        onClose={() => setShowKbSheet(false)}
+        sourceContent={savePayload}
+        title={saveSheetTitle}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」知识库` : `已保存到「${kb.name}」`}
+      />
+
+      <DocumentActionSheet
+        open={showActionSheet}
+        onClose={() => setShowActionSheet(false)}
+        docType="web"
+        docContent={`# ${article.title}\n\n来源：${article.site}\n\n${ARTICLE_CONTENT}`}
+        onSaveToKnowledgeBase={(content) => openKbSheet(article.title, content ?? ARTICLE_CONTENT, 'web')}
+        annotationsCount={docAnnotations.length}
+        onAnnotations={() => setShowAnnotations(true)}
+      />
 
       {/* ── X02 AI追问 ── */}
       <BottomFloatingPanel open={showX02} onClose={() => setShowX02(false)} title="AI 追问">

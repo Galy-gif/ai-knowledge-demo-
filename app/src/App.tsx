@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import PhoneFrame from './components/layout/PhoneFrame'
+import MultiSelectActionBar from './components/common/MultiSelectActionBar'
 
 // Global
 import SplashScreen from './pages/global/SplashScreen'
@@ -12,6 +13,7 @@ import K07_Uploading from './pages/knowledge/K07_Uploading'
 import K08_FileDetail from './pages/knowledge/K08_FileDetail'
 import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
 import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
+import K13_RecentAll from './pages/knowledge/K13_RecentAll'
 
 // Ask
 import Q01_AskHome from './pages/ask/Q01_AskHome'
@@ -30,12 +32,8 @@ import T05_DataSourceConfirm from './pages/task/T05_DataSourceConfirm'
 import T06_AddedToDesktop from './pages/task/T06_AddedToDesktop'
 import T07_AppRuntime from './pages/task/T07_AppRuntime'
 import T08_MyApps from './pages/task/T08_MyApps'
-
-// Notes
-import N02_NotesList from './pages/notes/N02_NotesList'
-import N04_AiWrite from './pages/notes/N04_AiWrite'
-import N05_NoteEdit from './pages/notes/N05_NoteEdit'
-import N06_NoteDetail from './pages/notes/N06_NoteDetail'
+import T09_TemplateLibrary from './pages/task/T09_TemplateLibrary'
+import T10_TemplatePreview from './pages/task/T10_TemplatePreview'
 
 // Profile
 import M01_ProfileHome from './pages/profile/M01_ProfileHome'
@@ -56,6 +54,8 @@ export default function App() {
           <Route path="/knowledge/file-detail" element={<K08_FileDetail />} />
           <Route path="/knowledge/square" element={<K10_KnowledgeSquare />} />
           <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
+          <Route path="/knowledge/recent" element={<K13_RecentAll />} />
+          <Route path="/knowledge/recent-browsing" element={<ComingSoon />} />
 
           {/* Ask / Q */}
           <Route path="/ask" element={<Q01_AskHome />} />
@@ -69,18 +69,15 @@ export default function App() {
           <Route path="/ask/task-mode" element={<T01_TaskMode />} />
           <Route path="/ask/task-result" element={<T02_TaskResult />} />
           <Route path="/ask/task-generate-confirm" element={<T03_GenerateConfirm />} />
+          <Route path="/pwa/confirm" element={<T03_GenerateConfirm />} />
           <Route path="/ask/task-generating" element={<T04_Generating />} />
           <Route path="/ask/task-datasource" element={<T05_DataSourceConfirm />} />
           <Route path="/ask/task-added-desktop" element={<T06_AddedToDesktop />} />
-          <Route path="/ask/task-app" element={<Navigate to="/pwa/run/app1" replace />} />
+          <Route path="/ask/task-app" element={<Navigate to="/pwa/run/app_words" replace />} />
           <Route path="/pwa/run/:id" element={<T07_AppRuntime />} />
+          <Route path="/pwa/templates" element={<T09_TemplateLibrary />} />
+          <Route path="/pwa/template/:id" element={<T10_TemplatePreview />} />
           <Route path="/profile/my-apps" element={<T08_MyApps />} />
-
-          {/* Notes */}
-          <Route path="/notes" element={<N02_NotesList />} />
-          <Route path="/notes/ai-write" element={<N04_AiWrite />} />
-          <Route path="/notes/edit" element={<N05_NoteEdit />} />
-          <Route path="/notes/detail" element={<N06_NoteDetail />} />
 
           {/* Profile */}
           <Route path="/profile" element={<M01_ProfileHome />} />
@@ -93,6 +90,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/ask" replace />} />
           <Route path="*" element={<Navigate to="/ask" replace />} />
         </Routes>
+        <MultiSelectActionBar />
       </PhoneFrame>
     </BrowserRouter>
   )

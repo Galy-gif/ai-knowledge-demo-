@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, X, CheckCircle, Loader } from 'lucide-react'
 import { useKnowledge } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
+import { getFileTypeVisual } from '../../utils/fileTypeVisuals'
 
 interface UploadItem {
   id: string
@@ -21,15 +22,14 @@ const INITIAL_ITEMS: UploadItem[] = [
 ]
 
 function FileTypeIcon({ type }: { type: UploadItem['type'] }) {
-  const map = {
-    pdf:   { label: 'PDF', bg: 'bg-red-500',  text: 'text-white', emoji: '📄' },
-    doc:   { label: 'DOC', bg: 'bg-blue-500', text: 'text-white', emoji: '📝' },
-    audio: { label: '🎵',  bg: 'bg-violet-500', text: 'text-white', emoji: '🎵' },
-  }
-  const cfg = map[type]
+  const cfg = getFileTypeVisual(type)
+  const { Icon } = cfg
   return (
-    <div className={`w-12 h-12 rounded-card ${cfg.bg} flex items-center justify-center flex-shrink-0`}>
-      <span className="text-xl">{cfg.emoji}</span>
+    <div
+      className="w-12 h-12 rounded-card flex items-center justify-center flex-shrink-0"
+      style={{ backgroundColor: cfg.bg }}
+    >
+      <Icon size={22} style={{ color: cfg.color }} />
     </div>
   )
 }

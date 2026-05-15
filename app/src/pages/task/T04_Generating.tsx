@@ -14,8 +14,15 @@ const STEPS = [
 export default function T04_Generating() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const templateId: string | undefined = state?.templateId
+  const templateName: string | undefined = state?.templateName
+  const templateIcon: string | undefined = state?.templateIcon
+  const templateCoreFeatures: string | undefined = state?.templateCoreFeatures
+  const requirement: string | undefined = state?.requirement
   const selectedKbIds: string[] = state?.selectedKbIds ?? []
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
+  const sourcePath: string | undefined = state?.sourcePath
+  const sourceState = state?.sourceState
   const [currentStep, setCurrentStep] = useState(0)
   const [done, setDone] = useState(false)
 
@@ -25,7 +32,10 @@ export default function T04_Generating() {
         if (prev >= STEPS.length - 1) {
           clearInterval(timer)
           setDone(true)
-          setTimeout(() => navigate('/ask/task-datasource', { state: { selectedKbIds, selectedKbNames } }), 1000)
+          setTimeout(() => navigate('/ask/task-datasource', {
+            replace: true,
+            state: { requirement, templateId, templateName, templateIcon, templateCoreFeatures, selectedKbIds, selectedKbNames, sourcePath, sourceState },
+          }), 1000)
           return prev
         }
         return prev + 1

@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { useKnowledge } from '../../context/KnowledgeContext'
-import { Check } from 'lucide-react'
+import { Check, PenLine } from 'lucide-react'
 import { useState } from 'react'
 import { useUser } from '../../context/UserContext'
+import { QUICK_NOTES_KB_ID } from '../../mock/data'
 
 export default function Q03_SelectKnowledge() {
   const navigate = useNavigate()
@@ -36,7 +37,9 @@ export default function Q03_SelectKnowledge() {
         {allBases.map(kb => (
           <button key={kb.id} onClick={() => toggle(kb.id)}
             className={`w-full flex items-center gap-3 p-4 rounded-card border ${selectedIds.includes(kb.id) ? 'border-brand-orange bg-brand-orange-light' : 'border-line-base bg-white'}`}>
-            <span className="text-2xl">{kb.icon}</span>
+            <span className="w-10 h-10 rounded-card bg-surface-card flex items-center justify-center text-2xl flex-shrink-0">
+              {kb.id === QUICK_NOTES_KB_ID ? <PenLine size={19} className="text-brand-orange" /> : kb.icon}
+            </span>
             <div className="flex-1 text-left">
               <p className="text-card-title text-ink-primary">{kb.name}</p>
               <p className="text-caption text-ink-placeholder">{kb.fileCount} 个文件</p>

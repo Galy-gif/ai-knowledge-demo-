@@ -1,10 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { MessageCircle, BookOpen, FileText, User } from 'lucide-react'
+import { MessageCircle, BookOpen, User } from 'lucide-react'
 
 const tabs = [
   { label: '问一问', icon: MessageCircle, path: '/ask' },
   { label: '知识库', icon: BookOpen, path: '/knowledge' },
-  { label: '笔记', icon: FileText, path: '/notes' },
   { label: '我的', icon: User, path: '/profile' },
 ]
 
@@ -15,7 +14,7 @@ export default function BottomTabBar() {
   const isActive = (path: string) => pathname.startsWith(path)
 
   return (
-    <div className="flex items-end border-t border-line-base bg-white"
+    <div className="relative z-[var(--z-tabbar)] flex-shrink-0 flex items-end border-t border-line-base bg-white"
          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       {tabs.map(({ label, icon: Icon, path }) => {
         const active = isActive(path)

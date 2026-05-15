@@ -2,11 +2,17 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { CheckCircle, Database, RefreshCw } from 'lucide-react'
+import { getPwaTemplateById } from '../../mock/pwaTemplates'
 
 export default function T05_DataSourceConfirm() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const template = getPwaTemplateById(state?.templateId)
+  const templateName = state?.templateName ?? template?.name ?? '资料速查工具'
+  const templateIcon = state?.templateIcon ?? template?.icon ?? '📊'
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
+  const sourcePath: string | undefined = state?.sourcePath
+  const sourceState = state?.sourceState
   const dataSourceTitle = selectedKbNames.length === 0
     ? '未限定知识库'
     : selectedKbNames.length === 1
@@ -26,7 +32,7 @@ export default function T05_DataSourceConfirm() {
         {/* App preview */}
         <div className="bg-white rounded-card-lg border border-line-base overflow-hidden shadow-card">
           <div className="bg-brand-orange px-4 py-3">
-            <p className="text-white font-semibold">📊 资料速查工具</p>
+            <p className="text-white font-semibold">{templateIcon} {templateName}</p>
           </div>
           <div className="p-4 space-y-2">
             {['竞品分析报告.pdf', '增长策略规划.docx', '用户访谈记录.txt'].map(f => (
@@ -57,13 +63,24 @@ export default function T05_DataSourceConfirm() {
         </div>
 
         <button
-          onClick={() => navigate('/ask/task-added-desktop')}
+          onClick={() => navigate('/ask/task-added-desktop', {
+            state: {
+              requirement: state?.requirement,
+              templateId: state?.templateId,
+              templateName,
+              templateIcon,
+              selectedKbIds: state?.selectedKbIds,
+              selectedKbNames,
+              sourcePath,
+              sourceState,
+            },
+          })}
           className="w-full py-4 bg-brand-orange text-white rounded-btn text-body font-medium"
         >
           添加到桌面
         </button>
         <button
-          onClick={() => navigate('/pwa/run/app1')}
+          onClick={() => navigate('/pwa/run/app_words')}
           className="w-full py-3.5 text-ink-secondary text-body"
         >
           直接打开

@@ -4,6 +4,7 @@ export default function PhoneFrame({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-200 p-8">
       <div
+        data-phone-frame="true"
         className="relative bg-white overflow-hidden flex flex-col"
         style={{
           width: 390,

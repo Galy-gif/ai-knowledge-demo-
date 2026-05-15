@@ -1,9 +1,12 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import { RefreshCw } from 'lucide-react'
 
 export default function T06_AddedToDesktop() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const sourcePath = state?.sourcePath ?? '/knowledge'
+  const sourceState = state?.sourceState
 
   return (
     <PageLayout>
@@ -25,16 +28,16 @@ export default function T06_AddedToDesktop() {
 
         <div className="w-full space-y-3">
           <button
-            onClick={() => navigate('/pwa/run/app1')}
+            onClick={() => navigate('/pwa/run/app_words')}
             className="w-full py-4 bg-brand-orange text-white rounded-btn text-body font-medium"
           >
             立即打开
           </button>
           <button
-            onClick={() => navigate('/knowledge')}
+            onClick={() => navigate(sourcePath, { replace: true, state: sourceState })}
             className="w-full py-3.5 text-ink-secondary text-body"
           >
-            返回知识库
+            返回继续阅读
           </button>
         </div>
       </div>

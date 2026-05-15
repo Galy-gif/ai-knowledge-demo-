@@ -1,9 +1,8 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTextSelection } from '../../hooks/useTextSelection'
 import { useAnnotations, type AnnotationDocType, type AnnotationColor } from '../../context/AnnotationContext'
 import { useUser } from '../../context/UserContext'
-import SelectionMenu from './SelectionMenu'
+import SelectionMenu, { getSelectionFloatingStyle } from './SelectionMenu'
 import BottomSheet from '../ui/BottomSheet'
 
 // ── DocumentReaderContext ─────────────────────────────────────────────────────
@@ -94,7 +93,6 @@ export default function DocumentReader({
 }: DocumentReaderProps) {
   const { addAnnotation, removeAnnotation, getAnnotationsByDoc, findOverlapping } = useAnnotations()
   const { showToast } = useUser()
-  const navigate = useNavigate()
   const { selection, onSelect, dismiss } = useTextSelection()
 
   const docAnnotations = getAnnotationsByDoc(docId, docType)
@@ -123,10 +121,6 @@ export default function DocumentReader({
         if (matchingHL) removeAnnotation(matchingHL.id)
         showToast('已取消高亮')
         dismiss()
-        break
-      case '做笔记':
-        dismiss()
-        navigate('/notes/edit', { state: { prefilledContent: `> ${selection.text}\n\n` } })
         break
       default:
         dismiss()
@@ -172,6 +166,7 @@ export default function DocumentReader({
       <SelectionMenu
         visible={selection.visible && !pickingColor}
         text={selection.text}
+        rect={selection.rect}
         onAction={handleSelectionAction}
         onDismiss={() => { dismiss(); setPickingColor(false) }}
         bottomPx={bottomPx}
@@ -179,27 +174,23 @@ export default function DocumentReader({
       />
 
       {selection.visible && pickingColor && (
-        <div className="absolute inset-x-4 z-30" style={{ bottom: bottomPx }}>
-          <div className="bg-ink-primary rounded-card-lg px-4 py-3 shadow-float">
-            <p className="text-caption text-white/50 mb-3">选择高亮颜色</p>
-            <div className="flex items-center gap-6">
+        <div className="fixed inset-0 z-30" onClick={() => { setPickingColor(false); dismiss() }}>
+          <div
+            className="fixed animate-selection-menu-in rounded-[12px] border-[1.5px] border-[#FF7A00] bg-white/[0.88] px-3 py-2 shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-[20px] supports-[not(backdrop-filter:blur(1px))]:bg-white/[0.95]"
+            style={getSelectionFloatingStyle(selection.rect, 152, 44)}
+            onClick={event => event.stopPropagation()}
+          >
+            <div className="flex h-7 items-center gap-4">
               {COLOR_OPTIONS.map(({ color, bgClass, label }) => (
                 <button
                   key={color}
                   onClick={() => handleColorSelect(color)}
-                  className="flex flex-col items-center gap-1"
+                  aria-label={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-[8px] transition-transform active:scale-95"
                 >
-                  <div className={`w-7 h-7 rounded-full ${bgClass}`} />
-                  <span className="text-micro text-white/70">{label}</span>
+                  <span className={`h-6 w-6 rounded-full ${bgClass} shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]`} />
                 </button>
               ))}
-              <div className="flex-1" />
-              <button
-                onClick={() => { setPickingColor(false); dismiss() }}
-                className="text-caption text-white/50"
-              >
-                取消
-              </button>
             </div>
           </div>
         </div>

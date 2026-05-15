@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --z-content: 1;
+    --z-bottom-bar: 30;
+    --z-tabbar: 40;
+    --z-modal: 50;
+    --z-toast: 60;
+    --ask-ai-bottom-safe: 132px;
+    --ask-ai-bar-height: 76px;
+  }
+
   * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
@@ -32,5 +42,88 @@
   }
   .safe-bottom {
     padding-bottom: calc(env(safe-area-inset-bottom) + 0px);
+  }
+  @keyframes smart-bubble-breathe {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  @keyframes smart-bubble-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes header-search-expand {
+    from {
+      opacity: 0;
+      transform: translateX(40px) scaleX(0.82);
+      transform-origin: right center;
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scaleX(1);
+      transform-origin: right center;
+    }
+  }
+  @keyframes bottom-action-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes card-shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    50% {
+      transform: translateX(3px);
+    }
+    75% {
+      transform: translateX(-2px);
+    }
+  }
+  @keyframes selection-menu-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-smart-bubble-breathe {
+    animation: smart-bubble-breathe 3s ease-in-out infinite;
+  }
+  .animate-smart-bubble-card-in {
+    animation: smart-bubble-card-in 180ms ease-out both;
+  }
+  .animate-header-search-expand {
+    animation: header-search-expand 250ms ease-out both;
+  }
+  .animate-bottom-action-in {
+    animation: bottom-action-in 200ms ease-out both;
+  }
+  .animate-card-shake {
+    animation: card-shake 180ms ease-in-out both;
+  }
+  .animate-selection-menu-in {
+    animation: selection-menu-in 150ms ease-out both;
+    transform-origin: center center;
   }
 }

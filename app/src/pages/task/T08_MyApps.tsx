@@ -3,6 +3,13 @@ import { Plus, ChevronRight } from 'lucide-react'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { useApps } from '../../context/AppsContext'
+import type { RuntimeType } from '../../mock/data'
+
+const ICON_BG: Record<RuntimeType, string> = {
+  learning_list: '#DBEAFE',
+  data_dashboard: '#D1FAE5',
+  daily_tracker: '#EDE9FE',
+}
 
 export default function T08_MyApps() {
   const navigate = useNavigate()
@@ -32,13 +39,16 @@ export default function T08_MyApps() {
                   navigate(`/pwa/run/${app.id}`)
                 }}
                 className="w-full flex items-center gap-3 p-4 bg-white rounded-card border border-line-base shadow-card text-left">
-                <div className="w-12 h-12 bg-brand-orange-light rounded-card-lg flex items-center justify-center text-2xl flex-shrink-0">
+                <div
+                  className="w-12 h-12 rounded-card-lg flex items-center justify-center text-2xl flex-shrink-0"
+                  style={{ backgroundColor: app.runtimeType ? ICON_BG[app.runtimeType] : '#FFF1E6' }}
+                >
                   {app.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-card-title text-ink-primary">{app.name}</p>
                   <p className="text-caption text-ink-placeholder mt-0.5 truncate">{app.description}</p>
-                  <p className="text-micro text-ink-placeholder mt-1">上次打开 {app.lastOpenedAt}</p>
+                  <p className="text-micro text-ink-placeholder mt-1">上次打开 {app.lastOpenedAt} · 来自「{app.dataSource}」</p>
                 </div>
                 <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
               </button>

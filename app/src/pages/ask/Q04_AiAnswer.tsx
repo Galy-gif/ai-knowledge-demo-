@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { BookmarkPlus, ChevronLeft, FileText, Send, ThumbsDown, ThumbsUp, CheckCircle2 } from 'lucide-react'
+import { BookmarkPlus, ChevronLeft, Copy, Send, Share2, ThumbsDown, ThumbsUp, CheckCircle2 } from 'lucide-react'
 import StreamingText from '../../components/common/StreamingText'
-import SaveToKBSheet from '../../components/common/SaveToKBSheet'
+import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
 import Toast from '../../components/common/Toast'
 import BottomFloatingPanel from '../../components/common/BottomFloatingPanel'
 import HighlightedText from '../../components/common/HighlightedText'
 import DocumentReader, { useDocumentReader } from '../../components/common/DocumentReader'
-import { useNotes } from '../../context/NotesContext'
 import { useUser } from '../../context/UserContext'
+import type { SaveSourceContent } from '../../context/KnowledgeContext'
 
 const FULL_ANSWER = `## 知识库知识管理应该怎么运营？
 
@@ -84,7 +84,6 @@ function MarkdownContent({ text }: { text: string }) {
 export default function Q04_AiAnswer() {
   const { state } = useLocation()
   const navigate = useNavigate()
-  const { setPrefillContent } = useNotes()
 
   const { showToast } = useUser()
   const question = (state as { question?: string })?.question ?? '增长策略知识库应该怎么运营？'
@@ -93,7 +92,9 @@ export default function Q04_AiAnswer() {
   const [phase, setPhase] = useState<'steps' | 'answer'>('steps')
   const [activeStep, setActiveStep] = useState(0)
   const [input, setInput] = useState('')
-  const [showSaveSheet, setShowSaveSheet] = useState(false)
+  const [showKbSheet, setShowKbSheet] = useState(false)
+  const [savePayload, setSavePayload] = useState<SaveSourceContent>({ title: 'AI 回答整理', body: FULL_ANSWER, type: 'ai-answer' })
+  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到知识库')
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
   const [pendingText, setPendingText] = useState('')
   const [showX02, setShowX02] = useState(false)
@@ -116,10 +117,38 @@ export default function Q04_AiAnswer() {
   const handleAction = (action: string, text: string) => {
     setPendingText(text)
     switch (action) {
-      case 'AI 追问': setX02Input(''); setShowX02(true); break
+      case 'AI 追问':
+      case '追问':
+        setX02Input(''); setShowX02(true); break
       case '翻译': setShowX03(true); break
       case '解释': setShowX04(true); break
+      case '入库':
+        openKbSheet(
+          `关于「${question}」的回答节选`,
+          text,
+          'ai_excerpt',
+          '保存划线内容',
+          {
+            originalQuestion: question,
+            excerpt: text,
+            conversationId: 'q04',
+            createdAt: new Date().toISOString(),
+          },
+        )
+        break
     }
+  }
+
+  const openKbSheet = (
+    title: string,
+    body: string,
+    type: SaveSourceContent['type'] = 'ai-answer',
+    sheetTitle = '添加到知识库',
+    metadata?: SaveSourceContent['metadata'],
+  ) => {
+    setSavePayload({ title, body, type, metadata })
+    setSaveSheetTitle(sheetTitle)
+    setShowKbSheet(true)
   }
 
   return (
@@ -220,16 +249,22 @@ export default function Q04_AiAnswer() {
                       </button>
                       <div className="flex-1" />
                       <button
-                        onClick={() => setShowSaveSheet(true)}
+                        onClick={() => { navigator.clipboard.writeText(FULL_ANSWER).catch(() => {}); showToast('已复制') }}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-surface-card rounded-pill text-caption text-ink-secondary"
+                      >
+                        <Copy size={14} />复制
+                      </button>
+                      <button
+                        onClick={() => openKbSheet('AI 回答整理', FULL_ANSWER)}
                         className="flex items-center gap-1.5 px-3 py-2 bg-surface-card rounded-pill text-caption text-ink-secondary"
                       >
                         <BookmarkPlus size={14} />添加到库
                       </button>
                       <button
-                        onClick={() => { setPrefillContent(FULL_ANSWER); navigate('/notes/edit') }}
+                        onClick={() => { navigator.clipboard.writeText(window.location.href).catch(() => {}); showToast('分享链接已复制') }}
                         className="flex items-center gap-1.5 px-3 py-2 bg-surface-card rounded-pill text-caption text-ink-secondary"
                       >
-                        <FileText size={14} />加入笔记
+                        <Share2 size={14} />分享
                       </button>
                     </div>
 
@@ -280,7 +315,13 @@ export default function Q04_AiAnswer() {
         </div>
       </div>
 
-      <SaveToKBSheet open={showSaveSheet} onClose={() => setShowSaveSheet(false)} />
+      <SaveToKnowledgeBaseSheet
+        open={showKbSheet}
+        onClose={() => setShowKbSheet(false)}
+        sourceContent={savePayload}
+        title={saveSheetTitle}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」知识库` : `已保存到「${kb.name}」`}
+      />
 
       {/* ── X02 AI追问 ── */}
       <BottomFloatingPanel open={showX02} onClose={() => setShowX02(false)} title="AI 追问">

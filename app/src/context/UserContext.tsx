@@ -37,7 +37,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const showToast = (msg: string, type: ToastMsg['type'] = 'success') => {
     const id = Date.now()
     setToast({ id, text: msg, type })
-    setTimeout(() => setToast(null), 2000)
+    setTimeout(() => setToast(null), 3000)
   }
 
   const showConfirm = (cfg: ConfirmConfig) => setConfirm(cfg)
