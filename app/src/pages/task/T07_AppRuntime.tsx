@@ -242,6 +242,67 @@ function DailyTrackerForm() {
   )
 }
 
+// ── Form 4: Fitness Tracker ───────────────────────────────────────────────────
+
+const TRAININGS = [
+  { time: '8:00 晨间拉伸', items: '颈肩拉伸 + 腰部活动', duration: '7 分钟', count: '3 项动作' },
+  { time: '18:30 上肢力量', items: '哑铃推举 + 划船 + 三头肌', duration: '25 分钟', count: '6 项动作' },
+  { time: '19:00 核心训练', items: '平板支撑 + 卷腹 + 俄转', duration: '13 分钟', count: '4 项动作' },
+]
+
+function FitnessTrackerForm() {
+  const current = 45
+  const target = 60
+  const pct = Math.round((current / target) * 100)
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-card p-4" style={{ background: 'linear-gradient(135deg, #FFF1E6 0%, #FFFFFF 100%)', border: '1px solid #FFD9B3' }}>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-caption font-medium text-[#7C2D12]">12 月 5 日 · 周四</p>
+          <button className="text-micro font-medium px-2.5 py-1 rounded-pill" style={{ backgroundColor: '#FF7A00', color: '#fff' }}>
+            + 记录训练
+          </button>
+        </div>
+        <p className="text-[26px] font-bold text-[#7C2D12] leading-none mb-2">
+          训练时长 {current} <span className="text-base font-normal opacity-75">/ {target} 分钟</span>
+        </p>
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#FED7AA' }}>
+          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#FF7A00' }} />
+        </div>
+        <p className="text-micro opacity-60 mt-2" style={{ color: '#7C2D12' }}>已完成 {pct}% · 还差 {target - current} 分钟达成今日目标</p>
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
+        <p className="text-micro text-ink-placeholder font-medium mb-4">训练指标完成度</p>
+        <div className="flex justify-around">
+          <CircleRing pct={90} color="#FF7A00" label="力量训练" value="18 组" />
+          <CircleRing pct={73} color="#EF4444" label="有氧时长" value="22 分" />
+          <CircleRing pct={50} color="#F59E0B" label="拉伸时长" value="5 分" />
+        </div>
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
+          <p className="text-micro text-ink-placeholder font-medium">今日训练记录</p>
+        </div>
+        {TRAININGS.map((t, i) => (
+          <div key={t.time} className={`flex items-start gap-3 px-4 py-3 ${i !== TRAININGS.length - 1 ? 'border-b border-line-base' : ''}`}>
+            <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 bg-brand-orange" />
+            <div className="flex-1">
+              <p className="text-micro text-ink-placeholder mb-0.5">{t.time} · {t.count}</p>
+              <p className="text-caption text-ink-primary">{t.items}</p>
+            </div>
+            <p className="text-caption font-medium flex-shrink-0 text-brand-orange">{t.duration}</p>
+          </div>
+        ))}
+      </div>
+
+      <AiTip text="上肢训练已完成 90%，建议明天换下肢训练日。本周累计训练 280 分钟，达成阶段目标。" />
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function T07_AppRuntime() {
@@ -278,7 +339,7 @@ export default function T07_AppRuntime() {
       form = <DataDashboardForm />
       break
     case 'daily_tracker':
-      form = <DailyTrackerForm />
+      form = app.id === 'app_fitness' ? <FitnessTrackerForm /> : <DailyTrackerForm />
       break
     default:
       form = <LearningListForm />

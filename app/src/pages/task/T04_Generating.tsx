@@ -3,13 +3,46 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 
-const STEPS = [
+interface Step { label: string; desc: string }
+
+const DEFAULT_STEPS: Step[] = [
   { label: '解析需求', desc: '理解任务目标与数据范围' },
   { label: '读取知识库', desc: '从工作资料中提取关键数据' },
   { label: '设计界面', desc: '生成专属交互界面' },
   { label: '编写逻辑', desc: '实现检索与对比功能' },
   { label: '测试验证', desc: '确保功能可用性' },
 ]
+
+const TEMPLATE_STEPS: Record<string, Step[]> = {
+  'diet-log': [
+    { label: '分析需求', desc: '理解你的饮食打卡需求' },
+    { label: '构建结构', desc: '搭建热量与营养记录框架' },
+    { label: '连接数据', desc: '对接「健康计划」知识库' },
+    { label: '生成界面', desc: '设计日常打卡视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
+  'fitness-planner': [
+    { label: '分析需求', desc: '理解你的训练跟踪需求' },
+    { label: '构建结构', desc: '搭建训练量与身体指标框架' },
+    { label: '连接数据', desc: '对接「健身资料」知识库' },
+    { label: '生成界面', desc: '设计训练打卡视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
+  'fund-portfolio': [
+    { label: '分析需求', desc: '理解你的投资跟踪需求' },
+    { label: '构建结构', desc: '搭建资产与持仓数据框架' },
+    { label: '连接数据', desc: '对接「财经资料库」' },
+    { label: '生成界面', desc: '设计资产看板视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
+  'interview-bank': [
+    { label: '分析需求', desc: '理解你的备考需求' },
+    { label: '构建结构', desc: '搭建题目与掌握度框架' },
+    { label: '连接数据', desc: '对接「面试资料」知识库' },
+    { label: '生成界面', desc: '设计题库学习视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
+}
 
 export default function T04_Generating() {
   const navigate = useNavigate()
@@ -19,38 +52,48 @@ export default function T04_Generating() {
   const templateIcon: string | undefined = state?.templateIcon
   const templateCoreFeatures: string | undefined = state?.templateCoreFeatures
   const requirement: string | undefined = state?.requirement
+  const targetRuntimeType: string | undefined = state?.targetRuntimeType
+  const resultAppName: string | undefined = state?.resultAppName
+  const resultAppId: string | undefined = state?.resultAppId
+  const resultMainColor: string | undefined = state?.resultMainColor
   const selectedKbIds: string[] = state?.selectedKbIds ?? []
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
+
+  const steps = TEMPLATE_STEPS[templateId ?? ''] ?? DEFAULT_STEPS
+
   const [currentStep, setCurrentStep] = useState(0)
   const [done, setDone] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStep(prev => {
-        if (prev >= STEPS.length - 1) {
+        if (prev >= steps.length - 1) {
           clearInterval(timer)
           setDone(true)
           setTimeout(() => navigate('/ask/task-datasource', {
             replace: true,
-            state: { requirement, templateId, templateName, templateIcon, templateCoreFeatures, selectedKbIds, selectedKbNames, sourcePath, sourceState },
+            state: {
+              requirement, templateId, templateName, templateIcon, templateCoreFeatures,
+              targetRuntimeType, resultAppName, resultAppId, resultMainColor,
+              selectedKbIds, selectedKbNames, sourcePath, sourceState,
+            },
           }), 1000)
           return prev
         }
         return prev + 1
       })
-    }, 800)
+    }, 1500)
     return () => clearInterval(timer)
   }, [])
 
-  const progress = Math.round((currentStep / (STEPS.length - 1)) * 100)
+  const progress = Math.round((currentStep / (steps.length - 1)) * 100)
 
   return (
     <PageLayout>
       <TopHeader title="正在生成" />
       <div className="flex flex-col items-center px-8 py-8 gap-6">
-        {/* Progress circle */}
         <div className="relative w-32 h-32">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="42" fill="none" stroke="#EEEEEE" strokeWidth="6" />
@@ -67,10 +110,9 @@ export default function T04_Generating() {
           </div>
         </div>
 
-        {/* Current step */}
         <div className="text-center">
-          <p className="text-h2 text-ink-primary">{STEPS[currentStep]?.label}</p>
-          <p className="text-body text-ink-secondary mt-1">{STEPS[currentStep]?.desc}</p>
+          <p className="text-h2 text-ink-primary">{steps[currentStep]?.label}</p>
+          <p className="text-body text-ink-secondary mt-1">{steps[currentStep]?.desc}</p>
           {selectedKbNames.length > 0 && (
             <p className="text-caption text-ink-placeholder mt-2">
               基于 {selectedKbNames.length === 1 ? selectedKbNames[0] : `${selectedKbNames.length} 个知识库`}
@@ -78,9 +120,8 @@ export default function T04_Generating() {
           )}
         </div>
 
-        {/* Steps list */}
         <div className="w-full space-y-3">
-          {STEPS.map((step, i) => (
+          {steps.map((step, i) => (
             <div key={step.label} className="flex items-center gap-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-micro font-medium ${
                 i < currentStep ? 'bg-brand-orange text-white' :

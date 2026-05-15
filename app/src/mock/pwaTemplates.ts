@@ -11,6 +11,10 @@ export interface PwaTemplate {
   requirement: string
   keywords: string[]
   recommended?: boolean
+  targetRuntimeType?: string
+  resultAppName?: string
+  resultAppId?: string
+  resultMainColor?: string
 }
 
 export const pwaTemplateCategories = ['全部', '财经', '健康', '职场', '教育', '生活'] as const
@@ -36,8 +40,12 @@ export const pwaTemplates: PwaTemplate[] = [
     name: '基金组合助手',
     description: '跟踪基金持仓与收益',
     coreFeatures: '基金净值、收益曲线、持仓笔记',
-    requirement: '帮我生成一个基金组合助手，支持基金净值、收益曲线和持仓笔记。',
+    requirement: '帮我做一个基金持仓跟踪应用，显示总资产和涨跌',
     keywords: ['基金', '理财', '净值', '收益', '持仓', '组合'],
+    targetRuntimeType: 'data_dashboard',
+    resultAppName: 'Q4 投资跟踪',
+    resultAppId: 'app_invest',
+    resultMainColor: 'green',
   },
   {
     id: 'fitness-planner',
@@ -47,9 +55,13 @@ export const pwaTemplates: PwaTemplate[] = [
     name: '健身计划助手',
     description: '制定与跟踪训练目标',
     coreFeatures: '动作库、训练计划、打卡记录',
-    requirement: '帮我生成一个健身计划助手，支持动作库、训练计划和打卡记录。',
+    requirement: '帮我做一个训练打卡的应用，跟踪每日训练量和身体指标',
     keywords: ['健身', '运动', '训练', '动作', '打卡', '肌肉'],
     recommended: true,
+    targetRuntimeType: 'daily_tracker',
+    resultAppName: '我的训练计划',
+    resultAppId: 'app_fitness',
+    resultMainColor: 'orange',
   },
   {
     id: 'diet-log',
@@ -59,8 +71,12 @@ export const pwaTemplates: PwaTemplate[] = [
     name: '饮食记录本',
     description: '记录每日饮食与营养',
     coreFeatures: '食物库、热量记录、营养分析',
-    requirement: '帮我生成一个饮食记录本，支持食物库、热量记录和营养分析。',
+    requirement: '帮我做一个每日饮食打卡的应用，记录三餐热量和营养',
     keywords: ['饮食', '热量', '营养', '减脂', '食物', '卡路里'],
+    targetRuntimeType: 'daily_tracker',
+    resultAppName: '减脂期饮食',
+    resultAppId: 'app_diet',
+    resultMainColor: 'purple',
   },
   {
     id: 'interview-bank',
@@ -70,9 +86,13 @@ export const pwaTemplates: PwaTemplate[] = [
     name: '面试题库',
     description: '整理题目与备考笔记',
     coreFeatures: '题目集、刷题进度、复盘笔记',
-    requirement: '帮我生成一个面试题库，支持题目集、刷题进度和复盘笔记。',
+    requirement: '帮我做一个面试题库应用，分类整理题目并标记掌握度',
     keywords: ['面试', '题库', '刷题', '简历', '求职', '复盘'],
     recommended: true,
+    targetRuntimeType: 'learning_list',
+    resultAppName: '我的面试题库',
+    resultAppId: 'app_interview',
+    resultMainColor: 'blue',
   },
   {
     id: 'word-cards',

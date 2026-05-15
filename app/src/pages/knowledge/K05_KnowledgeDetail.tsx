@@ -89,7 +89,7 @@ const MANAGEMENT_OPTIONS: Array<{
 const MODE_LABELS: Record<string, string> = {
   project: 'PARA',
   second_brain: '第二大脑',
-  output: 'CODE',
+  output: '从资料变成果',
   idea: '卡片盒笔记法',
   ai: '自动整理与维护',
 }
@@ -146,6 +146,88 @@ const PROJECT_GROUPS = [
     ],
   },
 ] as const
+
+// ─── Second Brain mode static mock data ───────────────────────────────────────
+
+interface SBCard {
+  id: string
+  title: string
+  subtitle: string
+  time: string
+}
+
+interface SBGroup {
+  id: string
+  label: string
+  count: number
+  typeLabel: string
+  icon: typeof Globe2
+  iconColor: string
+  cards: SBCard[]
+}
+
+const SECOND_BRAIN_GROUPS: SBGroup[] = [
+  {
+    id: 'web',
+    label: '网页',
+    count: 12,
+    typeLabel: '网页',
+    icon: Globe2,
+    iconColor: '#2563EB',
+    cards: [
+      { id: 'sb_w1', title: 'AI Native 浏览器的未来', subtitle: '知乎', time: '今天' },
+      { id: 'sb_w2', title: '用户访谈方法论合集', subtitle: 'Notion', time: '昨天' },
+      { id: 'sb_w3', title: '竞品 Arc 的技术架构拆解', subtitle: 'Medium', time: '3 天前' },
+      { id: 'sb_w4', title: '硅谷 PM 的工作日常', subtitle: '微信', time: '1 周前' },
+      { id: 'sb_w5', title: 'Perplexity 产品路线图分析', subtitle: 'ProductHunt', time: '1 周前' },
+    ],
+  },
+  {
+    id: 'doc',
+    label: '文档',
+    count: 8,
+    typeLabel: '文档',
+    icon: FileText,
+    iconColor: '#EF4444',
+    cards: [
+      { id: 'sb_d1', title: 'Q3 产品复盘.pdf', subtitle: '24 页', time: '今天' },
+      { id: 'sb_d2', title: '用户访谈逐字稿.docx', subtitle: 'Word', time: '昨天' },
+      { id: 'sb_d3', title: '竞品分析报告 v2.pdf', subtitle: '32 页', time: '3 天前' },
+      { id: 'sb_d4', title: '增长实验手册.docx', subtitle: '18 页', time: '5 天前' },
+      { id: 'sb_d5', title: '产品设计原则摘录.pdf', subtitle: '11 页', time: '1 周前' },
+    ],
+  },
+  {
+    id: 'note',
+    label: '灵感与速记',
+    count: 6,
+    typeLabel: '速记',
+    icon: PenLine,
+    iconColor: '#FF7A00',
+    cards: [
+      { id: 'sb_n1', title: '移动端 AI 浏览器的核心矛盾：克制 vs 主动...', subtitle: '速记', time: '今天' },
+      { id: 'sb_n2', title: '今天和老张聊：知识管理工具的护城河...', subtitle: '速记', time: '昨天' },
+      { id: 'sb_n3', title: '想到一个新功能：划词后自动找相似内容...', subtitle: '速记', time: '2 天前' },
+      { id: 'sb_n4', title: '为什么搜索框不应该在首屏正中间...', subtitle: '速记', time: '3 天前' },
+      { id: 'sb_n5', title: '关于知识管理产品留存率的一些假设...', subtitle: '速记', time: '4 天前' },
+    ],
+  },
+  {
+    id: 'audio',
+    label: '会议与录音',
+    count: 3,
+    typeLabel: '录音',
+    icon: Mic,
+    iconColor: '#8B5CF6',
+    cards: [
+      { id: 'sb_a1', title: '周会 - 产品方向讨论', subtitle: '录音 47 分钟', time: '昨天' },
+      { id: 'sb_a2', title: '用户访谈 03', subtitle: '录音 32 分钟', time: '5 天前' },
+      { id: 'sb_a3', title: '脑暴会议白板', subtitle: '5 张图片', time: '1 周前' },
+      { id: 'sb_a4', title: '产品评审 - 导航重构', subtitle: '录音 51 分钟', time: '1 周前' },
+      { id: 'sb_a5', title: 'Q3 OKR 对齐会', subtitle: '录音 38 分钟', time: '2 周前' },
+    ],
+  },
+]
 
 type OutputStageId = 'collecting' | 'organizing' | 'extracting' | 'finished'
 type StructuredActionKind = 'project' | 'output' | 'idea' | 'ai'
@@ -2247,6 +2329,59 @@ export default function K05_KnowledgeDetail() {
                   longPressDisabled={activeBase?.type === 'subscribed'}
                 />
               ))}
+            </div>
+          )}
+
+          {isSecondBrainMode && (
+            <div className="relative z-[var(--z-content)] flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-4">
+              {/* Today's intake card */}
+              <div className="mx-4 mt-3 flex items-center gap-3 rounded-[12px] bg-[#F8F8F8] px-4 py-[14px]">
+                <Inbox size={24} className="flex-shrink-0 text-[#9CA3AF]" />
+                <div>
+                  <p className="text-[14px] font-semibold leading-5 text-[#1A1A1A]">今日新进 8 条</p>
+                  <p className="mt-0.5 text-[11px] text-ink-secondary">网页 3 · PDF 1 · 灵感 2 · 截图 2</p>
+                </div>
+              </div>
+
+              {/* Horizontal scroll groups by content type */}
+              {SECOND_BRAIN_GROUPS.map(group => {
+                const Icon = group.icon
+                return (
+                  <div key={group.id} className="mt-5">
+                    <div className="mb-2 flex items-center justify-between px-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] font-medium text-ink-primary">{group.label}</span>
+                        <span className="rounded-full bg-[#F3F4F6] px-2 py-0.5 text-[11px] text-[#6B7280]">{group.count}</span>
+                      </div>
+                      <button type="button" className="text-[12px] text-ink-secondary">全部 →</button>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-1">
+                      {group.cards.map(card => (
+                        <div key={card.id} className="w-[200px] flex-shrink-0 rounded-[12px] border border-[#EEEEEE] bg-white p-3">
+                          <div className="mb-2 flex items-center gap-1.5">
+                            <Icon size={16} style={{ color: group.iconColor }} />
+                            <span className="text-[11px] text-ink-secondary">{group.typeLabel}</span>
+                          </div>
+                          <p className="line-clamp-2 text-[13px] font-medium leading-5 text-[#1A1A1A]">{card.title}</p>
+                          <p className="mt-1 text-[11px] text-[#9CA3AF]">{card.subtitle} · {card.time}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+
+              {/* AI reuse suggestion card */}
+              <div className="mx-4 mt-5 rounded-[12px] bg-[#FFF1E6] p-[14px]">
+                <div className="flex items-start gap-3">
+                  <Sparkles size={18} className="mt-0.5 flex-shrink-0 text-[#FF7A00]" />
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-[#1A1A1A]">3 条素材可以组合使用</p>
+                    <p className="mt-1 text-[12px] leading-[1.5] text-ink-secondary">你近 7 天存的「AI 浏览器架构」「用户访谈洞察」「竞品对比」可以组合写一篇分析报告</p>
+                    <button type="button" className="mt-2 text-[13px] font-medium text-[#FF7A00]">查看建议 →</button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

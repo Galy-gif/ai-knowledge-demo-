@@ -66,6 +66,7 @@ const MODE_META: Record<AskMode, {
 
 const SUGGESTION_ICONS = [Sparkles, Search, FileText]
 const MODE_ORDER: AskMode[] = ['ai', 'web', 'task']
+
 const DEFAULT_HOME_TEMPLATE_IDS = ['diet-log', 'fitness-planner', 'fund-portfolio', 'interview-bank']
 
 const TEMPLATE_TONES: Record<PwaTemplate['category'], { bg: string; color: string }> = {
@@ -136,11 +137,28 @@ export default function Q01_AskHome() {
       state: {
         requirement: template.requirement,
         templateId: template.id,
+        templateName: template.name,
+        templateIcon: template.icon,
+        templateCoreFeatures: template.coreFeatures,
+        targetRuntimeType: template.targetRuntimeType,
+        resultAppName: template.resultAppName,
+        resultAppId: template.resultAppId,
+        resultMainColor: template.resultMainColor,
         fromSource: 'q01_template_grid',
         selectedKbIds: askSelectedBaseIds,
         selectedKbNames,
       },
     })
+  }
+
+  const refreshTemplates = () => {
+    setRefreshingTemplates(true)
+    window.setTimeout(() => {
+      setHomeTemplates(pickFourTemplates())
+    }, 150)
+    window.setTimeout(() => {
+      setRefreshingTemplates(false)
+    }, 300)
   }
 
   const handleSend = () => {
@@ -156,16 +174,6 @@ export default function Q01_AskHome() {
   const handleModeChange = (nextMode: AskMode) => {
     setMode(nextMode)
     setShowModeMenu(false)
-  }
-
-  const refreshTemplates = () => {
-    setRefreshingTemplates(true)
-    window.setTimeout(() => {
-      setHomeTemplates(pickFourTemplates())
-    }, 150)
-    window.setTimeout(() => {
-      setRefreshingTemplates(false)
-    }, 300)
   }
 
   return (

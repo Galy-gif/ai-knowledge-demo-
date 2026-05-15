@@ -1,8 +1,8 @@
 # AI Knowledge Demo
 
-一个移动端 AI 知识管理产品 Demo，包含知识库、问一问、任务轻应用、笔记和个人中心等核心流程。
+一个移动端 AI 知识管理产品 Demo，包含知识库、问一问、任务轻应用、我的速记和个人中心等核心流程。
 
-一句话介绍：把资料、网页、笔记和团队知识库接入 AI，让用户可以随时提问、整理、沉淀并生成轻应用。
+一句话介绍：把资料、网页、速记和团队知识库接入 AI，让用户可以随时提问、整理、沉淀并生成轻应用。
 
 ## 本地启动
 
@@ -25,7 +25,7 @@ npm run dev
 7. Output Directory 填 `dist`。
 8. 点击 `Deploy`。
 
-`app/vercel.json` 已配置 SPA 路由重写，刷新 `/ask`、`/notes/edit`、`/pwa/run/app1` 等页面不会 404。
+`app/vercel.json` 已配置 SPA 路由重写，刷新 `/ask`、`/knowledge/file-detail`、`/pwa/run/app1` 等页面不会 404。
 
 ## 构建
 

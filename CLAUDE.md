@@ -29,7 +29,7 @@ A mobile AI knowledge management app demo. No backend, no localStorage — all s
 
 ### Page naming convention
 
-Pages use module-prefix + number: `K` = Knowledge, `Q` = Ask/AI, `T` = Task/LightApp, `N` = Notes, `M` = My/Profile, `G` = Global. File names mirror the ID, e.g. `K01_KnowledgeHome.tsx`.
+Pages use module-prefix + number: `K` = Knowledge, `Q` = Ask/AI, `T` = Task/LightApp, `M` = My/Profile, `G` = Global. `N` note pages have been retired; lightweight user-created content now lives inside the system knowledge base "我的速记". File names mirror the ID, e.g. `K01_KnowledgeHome.tsx`.
 
 ### Layout system — critical rules
 
@@ -37,40 +37,34 @@ There are three layout patterns. Choosing the wrong one breaks scrolling or Bott
 
 | Pattern | When to use | Example |
 |---|---|---|
-| `TabLayout` | Top-level tab pages (has bottom nav bar) | N02, Q01, M01 |
-| `PageLayout` | Simple secondary pages with no sticky bottom element | M02, K03 |
-| Raw `flex flex-col h-full relative bg-white` | Pages with a sticky toolbar/header + `flex-1 overflow-y-auto` content + fixed bottom bar | N05, N06, Q04 |
+| `TabLayout` | Top-level tab pages (has bottom nav bar) | Q01, K01, M01 |
+| `PageLayout` | Simple secondary pages with no sticky bottom element | M02, ComingSoon |
+| Raw `flex flex-col h-full relative bg-white` | Pages with a sticky toolbar/header + `flex-1 overflow-y-auto` content + fixed bottom bar | K08, Q04, Q05 |
 
 **Never wrap a page that contains a BottomSheet inside `PageLayout`**. `PageLayout`'s inner div is `relative`, so `BottomSheet`'s `absolute inset-0` only covers the scrollable content region, not the header. Pages using BottomSheet that need a custom header must use the raw flex pattern and mount `<Toast />` / `<ConfirmDialog />` directly.
 
 ### Contexts
 
-All providers wrap the app in `src/main.tsx` in this order: `UserProvider > KnowledgeProvider > NotesProvider > AppsProvider`.
+All providers wrap the app in `src/main.tsx` in this order: `UserProvider > AnnotationsProvider > KnowledgeProvider > AppsProvider`.
 
 - **UserContext** — `user`, `showToast(msg, type?)`, `showConfirm(cfg)` / `hideConfirm()`. Toast auto-dismisses after 2 s. ConfirmDialog supports a `danger` flag (red confirm button).
-- **NotesContext** — `notes[]`, CRUD (`addNote`, `updateNote`, `deleteNote`), `activeNote` / `setActiveNote` (set before navigating to N06), `prefillContent` / `setPrefillContent` (cross-module prefill pathway).
-- **KnowledgeContext** — `bases[]`, `files[]`, `teams[]` with subscription toggle.
+- **KnowledgeContext** — `bases[]`, `files[]`, `teams[]` with subscription toggle, `quickNotesBase`, `addFile`, `updateFile`, `deleteFile`. "我的速记" is a locked system knowledge base, but it is still treated as a normal save target.
 - **AppsContext** — `apps[]` with add/remove.
+- **AnnotationsContext** — document highlights/selection annotations for knowledge, web, note, and AI answer content.
+
+All user-generated lightweight content goes through the unified "保存到库" flow. `SaveToKnowledgeBaseSheet` defaults to "我的速记" and lets the user choose another knowledge base. There is no independent notes module and no `NotesContext`.
 
 ### Navigation state API (between pages)
 
 Data passes between pages via React Router's Navigation State API (`navigate('/path', { state: { ... } })`), read with `useLocation().state`. Key contracts:
 
-**N05 (NoteEdit)** accepts:
+**K08 (FileDetail)** accepts note creation state:
 ```ts
-{ noteId?: string }            // edit mode if present; omit for create
-{ prefillTitle?: string }      // pre-fill title field
-{ prefilledContent?: string }  // pre-fill body (from AI answer, web save, etc.)
-{ aiGenerated?: boolean, template?: string }  // triggers streaming typewriter
+{ createNote?: boolean, kbId?: string } // opens the Markdown editor for a new note-type KnowledgeFile
 ```
-N05 also reads `NotesContext.prefillContent` as a secondary prefill source (and clears it on mount). Edit mode (`noteId` present) calls `updateNote`; create mode calls `addNote`.
+When K08 opens a `KnowledgeFile` with `type: 'note'`, the right-side `...` menu includes `编辑`. Saving edits calls `KnowledgeContext.updateFile`; creating a new quick note calls `KnowledgeContext.addFile`.
 
-**N06 (NoteDetail)** navigates to N05 with:
-```ts
-{ noteId: note.id, prefillTitle: note.title, prefilledContent: note.content }
-```
-
-**N02 → N06**: calls `setActiveNote(note)` before `navigate('/notes/detail')`.
+Use `SaveToKnowledgeBaseSheet` for all "添加到库 / 保存到知识库 / 保存到库" actions. Include `QUICK_NOTES_KB_ID` as the first personal target and select it by default. Do not reintroduce a separate note-saving sheet.
 
 ### BottomSheet
 
@@ -89,7 +83,9 @@ Orange (`brand-orange`) is used sparingly: primary action buttons, avatar backgr
 
 ### Mock data
 
-All data lives in `src/mock/data.ts`. Types are defined there too. The file exports: `mockUser`, `mockKnowledgeBases`, `mockSubscribedKBs`, `mockFiles`, `mockTeams`, `mockNotes`, `mockApps`, `mockAiSuggestions`, `mockWebResults`.
+All data lives in `src/mock/data.ts`. Types are defined there too. The file exports: `QUICK_NOTES_KB_ID`, `mockUser`, `mockKnowledgeBases`, `mockSubscribedKBs`, `mockFiles`, `mockTeams`, `mockApps`, `mockAiSuggestions`, `mockWebResults`.
+
+`KnowledgeFile.type` includes `note`. Note-type files are knowledge base files, not a separate feature module. The default "我的速记" base is locked/system-owned and seeded with migrated note-type files.
 
 ### Streaming text effect
 
@@ -139,4 +135,4 @@ const { selection, onSelect, dismiss } = useTextSelection()
 </BottomFloatingPanel>
 ```
 
-`SelectionMenu` and `BottomFloatingPanel` require the page root to be `relative`.
+`SelectionMenu` and `BottomFloatingPanel` require the page root to be `relative`. The selection menu has no save action; it only keeps copy/highlight/translate/explain/follow-up. Saving should happen through the page-level "添加到库 / 保存到库" controls using `SaveToKnowledgeBaseSheet`.
