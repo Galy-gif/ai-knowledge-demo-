@@ -16,7 +16,6 @@ import { useMultiSelect } from '../../context/MultiSelectContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type KnowledgeFile, type KnowledgeManagementMode } from '../../mock/data'
 import { getFileTypeVisual } from '../../utils/fileTypeVisuals'
-import K06_UploadSource from './K06_UploadSource'
 
 const TYPE_FILTERS = ['全部', '速记', '文档', '网页', '音频', '图片'] as const
 const FILE_TYPE_LABELS: Record<KnowledgeFile['type'], string> = {
@@ -1842,7 +1841,7 @@ export default function K05_KnowledgeDetail() {
   } = useMultiSelect()
 
   const [activeFilter, setActiveFilter] = useState<string>('全部')
-  const [showUpload, setShowUpload] = useState(false)  // K06
+  const openUploadSheet = () => navigate('/knowledge/upload')
   const [showAskPanel, setShowAskPanel] = useState(false)
   const [openSwipeId, setOpenSwipeId] = useState<string | null>(null)
   const [movingFile, setMovingFile] = useState<KnowledgeFile | null>(null)
@@ -2399,7 +2398,7 @@ export default function K05_KnowledgeDetail() {
         {showEmptyState ? (
           <KnowledgeEmptyState
             mode={activeBase?.managementMode}
-            onAdd={() => setShowUpload(true)}
+            onAdd={() => openUploadSheet()}
             onChooseMode={openManagementModeSheet}
           />
         ) : (
@@ -2789,7 +2788,7 @@ export default function K05_KnowledgeDetail() {
             <Mic size={17} className="text-ink-placeholder flex-shrink-0" />
           </button>
           <button
-            onClick={() => setShowUpload(true)}
+            onClick={() => openUploadSheet()}
             aria-label="添加内容"
             className="w-11 h-11 bg-brand-orange rounded-full flex items-center justify-center shadow-card flex-shrink-0"
           >
@@ -2807,8 +2806,6 @@ export default function K05_KnowledgeDetail() {
         scopeName={activeBase?.name ?? '知识库'}
         scopeId={activeBase?.id ?? ''}
       />
-
-      <K06_UploadSource open={showUpload} onClose={() => setShowUpload(false)} />
 
       <BottomSheet
         open={showMoreMenu}
@@ -2843,7 +2840,7 @@ export default function K05_KnowledgeDetail() {
             type="button"
             onClick={() => {
               setShowMoreMenu(false)
-              setShowUpload(true)
+              openUploadSheet()
             }}
             className="w-full rounded-[12px] border border-[#EEEEEE] bg-white px-4 py-3 text-left text-[14px] leading-5 text-ink-primary"
           >

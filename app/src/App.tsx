@@ -9,6 +9,7 @@ import ComingSoon from './pages/global/ComingSoon'
 // Knowledge
 import K01_KnowledgeHome from './pages/knowledge/K01_KnowledgeHome'
 import K05_KnowledgeDetail from './pages/knowledge/K05_KnowledgeDetail'
+import K06_UploadSource from './pages/knowledge/K06_UploadSource'
 import K07_Uploading from './pages/knowledge/K07_Uploading'
 import K08_FileDetail from './pages/knowledge/K08_FileDetail'
 import K09_FolderDetail from './pages/knowledge/K09_FolderDetail'
@@ -58,6 +59,7 @@ export default function App() {
           {/* Knowledge */}
           <Route path="/knowledge" element={<K01_KnowledgeHome />} />
           <Route path="/knowledge/detail" element={<K05_KnowledgeDetail />} />
+          <Route path="/knowledge/upload" element={<K06_UploadSource />} />
           <Route path="/knowledge/uploading" element={<K07_Uploading />} />
           <Route path="/knowledge/file-detail" element={<K08_FileDetail />} />
           <Route path="/knowledge/folder" element={<K09_FolderDetail />} />

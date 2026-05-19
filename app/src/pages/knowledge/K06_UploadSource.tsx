@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
 import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
+import Toast from '../../components/common/Toast'
+import ConfirmDialog from '../../components/common/ConfirmDialog'
 import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type FileType, type KnowledgeFile } from '../../mock/data'
@@ -327,7 +329,7 @@ function BottomActionBar({
   )
 }
 
-export default function K06_UploadSource({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function K06_UploadSource() {
   const navigate = useNavigate()
   const { activeBase, setActiveFile, addFile, quickNotesBase } = useKnowledge()
   const { showToast } = useUser()
@@ -346,40 +348,30 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   const currentKbId = activeBase?.id ?? QUICK_NOTES_KB_ID
   const currentKbName = activeBase?.name ?? quickNotesBase.name
 
-  const resetAndClose = () => {
-    setSelectedShortcutIds([])
-    setShowCloudPicker(false)
-    onClose()
-  }
-
-  const navigateTo = (route: string) => {
-    resetAndClose()
-    setTimeout(() => navigate(route), 80)
-  }
+  const handleBack = () => navigate(-1)
 
   const handleSourcePick = (item: SourceIcon) => {
     if (item.key === 'cloud') {
       setShowCloudPicker(true)
       return
     }
-    if (item.route) navigateTo(item.route)
+    if (item.route) navigate(item.route)
   }
 
   const handleCloudPick = (provider: CloudProvider) => {
     setShowCloudPicker(false)
     if (provider.connected) {
-      navigateTo(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+      navigate(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
       return
     }
     showToast(`正在连接${provider.name}...`)
     setTimeout(() => {
       showToast(`已连接${provider.name}`)
-      navigateTo(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+      navigate(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
     }, 1000)
   }
 
   const handleNewQuickNote = () => {
-    resetAndClose()
     setActiveFile(null)
     navigate('/knowledge/file-detail', { state: { createNote: true, kbId: currentKbId } })
   }
@@ -434,18 +426,19 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   }
 
   return (
-    <>
+    <div className="flex flex-col h-full relative bg-transparent">
       <BottomSheet
-        open={open}
-        onClose={resetAndClose}
+        open
+        onClose={handleBack}
         title="添加内容"
         titleAlign="center"
         titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
         heightClassName="h-[80%] max-h-[80%]"
         headerLeft={
           <button
-            onClick={resetAndClose}
-            className="text-body text-ink-secondary px-1"
+            type="button"
+            onClick={handleBack}
+            className="text-body text-ink-secondary px-2 py-1 -ml-2 -my-1"
           >
             取消
           </button>
@@ -463,7 +456,7 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
             selectedIds={selectedShortcutIds}
             savedIds={savedBrowsingIds}
             onToggle={toggleShortcut}
-            onSeeAll={() => navigateTo('/knowledge/add-from/browser-history')}
+            onSeeAll={() => navigate('/knowledge/add-from/browser-history')}
           />
 
           <IconStripSection title="自动同步" items={AUTO_SOURCES} onPick={handleSourcePick} />
@@ -508,6 +501,9 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
           setShowLinkSaveSheet(false)
         }}
       />
-    </>
+
+      <Toast />
+      <ConfirmDialog />
+    </div>
   )
 }
