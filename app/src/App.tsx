@@ -15,6 +15,11 @@ import K09_FolderDetail from './pages/knowledge/K09_FolderDetail'
 import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
 import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
 import K13_RecentAll from './pages/knowledge/K13_RecentAll'
+import K14_AddFromSource from './pages/knowledge/K14_AddFromSource'
+import K15_AddFromUpload from './pages/knowledge/K15_AddFromUpload'
+import K16_AddFromThirdParty from './pages/knowledge/K16_AddFromThirdParty'
+import K17_AddFromAiChat from './pages/knowledge/K17_AddFromAiChat'
+import K18_AddFromScan from './pages/knowledge/K18_AddFromScan'
 import W01_WatchManage from './pages/watch/W01_WatchManage'
 import W02_TodayItems from './pages/watch/W02_TodayItems'
 
@@ -62,7 +67,11 @@ export default function App() {
           <Route path="/knowledge/recent" element={<K13_RecentAll />} />
           <Route path="/knowledge/watch" element={<W01_WatchManage />} />
           <Route path="/watch/today" element={<W02_TodayItems />} />
-          <Route path="/knowledge/recent-browsing" element={<ComingSoon />} />
+          <Route path="/knowledge/add-from/upload" element={<K15_AddFromUpload />} />
+          <Route path="/knowledge/add-from/third-party" element={<K16_AddFromThirdParty />} />
+          <Route path="/knowledge/add-from/ai-chat" element={<K17_AddFromAiChat />} />
+          <Route path="/knowledge/add-from/scan" element={<K18_AddFromScan />} />
+          <Route path="/knowledge/add-from/:source" element={<K14_AddFromSource />} />
 
           {/* Ask / Q */}
           <Route path="/ask" element={<Q01_AskHome />} />

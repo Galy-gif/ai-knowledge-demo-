@@ -2,22 +2,12 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Check,
-  ChevronLeft,
   ChevronRight,
-  FileDown,
   FileText,
   Globe2,
   Image as ImageIcon,
   Link as LinkIcon,
-  Mic,
-  MessagesSquare,
   PenLine,
-  Search,
-  Smartphone,
-  Sparkles,
-  StickyNote,
-  Radio,
-  type LucideIcon,
 } from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
 import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
@@ -26,79 +16,45 @@ import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type FileType, type KnowledgeFile } from '../../mock/data'
 import { getFileTypeVisual } from '../../utils/fileTypeVisuals'
 
-type SourceKind = 'search' | 'browser' | 'ai-chat' | 'third-party' | 'wechat' | 'download' | 'system-note' | 'recording'
-type View = 'sources' | SourceKind
-type BrowserSaveMode = 'full' | 'selection'
-
-interface SourceItem {
-  kind: SourceKind
-  Icon: LucideIcon
+interface SourceCard {
+  key: string
+  route: string
+  emoji: string
+  bg: string
   title: string
   desc: string
 }
 
-const SOURCE_GROUPS: Array<{ title: string; cols?: 2 | 3; items: SourceItem[] }> = [
-  {
-    title: '收藏自浏览器',
-    items: [
-      { kind: 'search', Icon: Search, title: 'AI 搜索结果', desc: '搜索结果入库' },
-      { kind: 'browser', Icon: Globe2, title: '浏览的网页', desc: '最近访问网页' },
-      { kind: 'ai-chat', Icon: Sparkles, title: 'AI 助手回答', desc: '历史对话回答' },
-    ],
-  },
-  {
-    title: '跨端导入',
-    items: [
-      { kind: 'third-party', Icon: Smartphone, title: '第三方 App', desc: '公众号小红书' },
-      { kind: 'wechat', Icon: MessagesSquare, title: '微信导入', desc: '微信收到的文章' },
-      { kind: 'download', Icon: FileDown, title: '下载文件', desc: '本地文件 PDF 等' },
-    ],
-  },
-  {
-    title: '设备来源',
-    items: [
-      { kind: 'system-note', Icon: StickyNote, title: '系统便签', desc: '设备备忘录' },
-      { kind: 'recording', Icon: Mic, title: '录音', desc: '语音备忘录' },
-    ],
-  },
+const AUTO_SOURCES: SourceCard[] = [
+  { key: 'browser-history', route: '/knowledge/add-from/browser-history', emoji: '🌐', bg: '#DBEAFE', title: '浏览器历史', desc: '浏览过的网页' },
+  { key: 'wechat', route: '/knowledge/add-from/wechat', emoji: '💬', bg: '#D1FAE5', title: '微信收藏', desc: '收藏的文章/链接' },
+  { key: 'cloud', route: '__cloud__', emoji: '☁️', bg: '#EDE9FE', title: '网盘', desc: '5 种主流网盘' },
+  { key: 'email', route: '/knowledge/add-from/email', emoji: '✉️', bg: '#FEF3C7', title: '邮件附件', desc: '邮箱里的附件' },
+  { key: 'screenshot', route: '/knowledge/add-from/screenshot', emoji: '📸', bg: '#FCE7F3', title: '系统截图', desc: '自动同步相册截图' },
+  { key: 'download', route: '/knowledge/add-from/download', emoji: '📁', bg: '#FFF1E6', title: '下载文件', desc: '系统下载目录' },
 ]
 
-const RECENT_SEARCH_RESULTS = [
-  { id: 's1', title: 'AI 知识库产品的来源溯源设计', source: 'yourportal.ai', time: '10分钟前' },
-  { id: 's2', title: '移动端知识管理工具体验趋势', source: 'uxnotes.cn', time: '32分钟前' },
-  { id: 's3', title: 'Perplexity 工作流如何影响企业检索', source: 'productthinking.com', time: '今天 14:20' },
-  { id: 's4', title: '知识库召回率优化方法合集', source: 'search-hub.com', time: '昨天' },
-  { id: 's5', title: '团队 SOP 沉淀的轻量实践', source: 'teamflow.dev', time: '2天前' },
+const MANUAL_SOURCES: SourceCard[] = [
+  { key: 'upload', route: '/knowledge/add-from/upload', emoji: '📤', bg: '#DBEAFE', title: '上传文件', desc: '从设备选文件' },
+  { key: 'third-party', route: '/knowledge/add-from/third-party', emoji: '🔗', bg: '#D1FAE5', title: '第三方 App 分享', desc: '从其他 App 分享' },
+  { key: 'ai-chat', route: '/knowledge/add-from/ai-chat', emoji: '🤖', bg: '#EDE9FE', title: 'AI 对话保存', desc: '保存 ChatGPT/Claude 对话' },
+  { key: 'scan', route: '/knowledge/add-from/scan', emoji: '📷', bg: '#FEF3C7', title: '扫一扫', desc: '扫码或拍照' },
 ]
 
-const RECENT_BROWSING = [
-  { id: 'b1', favicon: 'Y', title: '搜索问答产品的对话保持策略', url: 'https://yourportal.ai/articles/dialog-retention' },
-  { id: 'b2', favicon: 'U', title: 'AI 知识库产品的内容召回优化实践', url: 'https://uxnotes.cn/kb-recall' },
-  { id: 'b3', favicon: 'P', title: '从 Notion AI 到 Perplexity', url: 'https://productthinking.com/km-evolution' },
-  { id: 'b4', favicon: 'D', title: '多模态搜索体验设计案例', url: 'https://design-lab.dev/search-experience' },
-  { id: 'b5', favicon: 'G', title: '增长团队知识库运营方法', url: 'https://growthops.io/kb-ops' },
-]
+interface CloudProvider {
+  id: string
+  name: string
+  emoji: string
+  bg: string
+  connected: boolean
+}
 
-const MOCK_FILES = [
-  { id: 'd1', name: 'Q4 产品路线图.pdf', type: 'pdf' as FileType, size: '2.1MB' },
-  { id: 'd2', name: '访谈纪要-移动端.md', type: 'txt' as FileType, size: '38KB' },
-  { id: 'd3', name: '竞品功能清单.xlsx', type: 'doc' as FileType, size: '812KB' },
-  { id: 'd4', name: '白板截图.png', type: 'image' as FileType, size: '1.4MB' },
-  { id: 'd5', name: '运营 SOP 草案.docx', type: 'doc' as FileType, size: '640KB' },
-]
-
-const RECORDINGS = [
-  { id: 'r1', title: '用户访谈-张磊', duration: '18:24', date: '今天 16:20' },
-  { id: 'r2', title: '产品评审会摘录', duration: '42:08', date: '昨天' },
-  { id: 'r3', title: '灵感速记-来源卡片', duration: '03:36', date: '2天前' },
-  { id: 'r4', title: '电话沟通-团队权限', duration: '11:12', date: '5天前' },
-]
-
-const RECENT_AI_CONVERSATIONS = [
-  { id: 'a1', title: '知识库运营指标整理', time: '刚刚', summary: '围绕内容使用率、检索满意率、更新健康度整理回答。' },
-  { id: 'a2', title: '竞品报告要点提炼', time: '今天 13:20', summary: '总结 Notion、Confluence、Perplexity 的差异和机会点。' },
-  { id: 'a3', title: '网页来源卡片方案', time: '昨天', summary: '解释来源卡片、引用高亮和溯源可信度设计。' },
-  { id: 'a4', title: '任务模式模板匹配', time: '2天前', summary: '梳理轻应用模板库与关键词匹配流程。' },
+const CLOUD_PROVIDERS: CloudProvider[] = [
+  { id: 'baidu', name: '百度网盘', emoji: '🅑', bg: '#DBEAFE', connected: true },
+  { id: 'aliyun', name: '阿里云盘', emoji: '🅐', bg: '#E0F2FE', connected: true },
+  { id: 'icloud', name: 'iCloud Drive', emoji: '☁️', bg: '#F3F4F6', connected: false },
+  { id: 'onedrive', name: 'OneDrive', emoji: '🅞', bg: '#DBEAFE', connected: false },
+  { id: 'gdrive', name: 'Google Drive', emoji: '🅖', bg: '#FEF3C7', connected: false },
 ]
 
 const RECENT_BROWSER_DOWNLOADS: Array<{
@@ -119,20 +75,19 @@ const RECENT_BROWSER_DOWNLOADS: Array<{
 
 function getShortcutVisual(type: FileType) {
   if (type === 'url') {
-    return { Icon: Globe2, gradient: 'linear-gradient(135deg, #ECFEFF 0%, #DBEAFE 100%)', color: '#0284C7' }
+    return { Icon: Globe2, color: '#0284C7' }
   }
   if (type === 'pdf') {
-    return { Icon: FileText, gradient: 'linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%)', color: '#E74C3C' }
+    return { Icon: FileText, color: '#E74C3C' }
   }
   if (type === 'doc') {
-    return { Icon: FileText, gradient: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)', color: '#2B7BD6' }
+    return { Icon: FileText, color: '#2B7BD6' }
   }
   if (type === 'image') {
-    return { Icon: ImageIcon, gradient: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)', color: '#10B981' }
+    return { Icon: ImageIcon, color: '#10B981' }
   }
-
   const cfg = getFileTypeVisual(type)
-  return { Icon: cfg.Icon, gradient: `linear-gradient(135deg, ${cfg.bg} 0%, #FFFFFF 100%)`, color: cfg.color }
+  return { Icon: cfg.Icon, color: cfg.color }
 }
 
 function getLinkTitle(url: string) {
@@ -198,36 +153,41 @@ function PasteLinkInput({
   )
 }
 
-function SourceGridItem({ item, onClick }: { item: SourceItem; onClick: () => void }) {
-  const { Icon } = item
+function SourceGridCard({ card, onClick }: { card: SourceCard; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="h-[88px] rounded-card bg-[#F8F8F8] px-2.5 py-2.5 text-left active:bg-surface-card transition-colors"
+      className="h-[84px] rounded-card bg-white border border-[#EEEEEE] px-2.5 py-2 text-center active:scale-[0.96] transition-transform"
     >
-      <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center mb-2">
-        <Icon size={16} strokeWidth={1.8} className="text-brand-orange" />
+      <div
+        className="w-9 h-9 rounded-card mx-auto mb-1 flex items-center justify-center text-[20px]"
+        style={{ backgroundColor: card.bg }}
+      >
+        {card.emoji}
       </div>
-      <p className="text-caption font-medium text-ink-primary truncate">{item.title}</p>
-      <p className="text-micro text-ink-placeholder mt-0.5 truncate">{item.desc}</p>
+      <p className="text-[13px] leading-4 font-semibold text-ink-primary truncate">{card.title}</p>
+      <p className="text-[11px] leading-3 text-ink-placeholder mt-0.5 truncate">{card.desc}</p>
     </button>
   )
 }
 
-function SourceGroup({ title, items, children, onSourceClick }: {
+function SourceGroup({ title, subtitle, items, onClick }: {
   title: string
-  items: SourceItem[]
-  children?: ReactNode
-  onSourceClick: (kind: SourceKind) => void
+  subtitle: string
+  items: SourceCard[]
+  onClick: (card: SourceCard) => void
 }) {
   return (
     <section className="mb-5">
-      <p className="text-caption text-ink-secondary mb-2">{title}</p>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="mb-2">
+        <p className="text-[13px] leading-5 font-semibold text-ink-primary">{title}</p>
+        <p className="text-[11px] leading-4 text-ink-placeholder mt-0.5">{subtitle}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
         {items.map(item => (
-          <SourceGridItem key={item.kind} item={item} onClick={() => onSourceClick(item.kind)} />
+          <SourceGridCard key={item.key} card={item} onClick={() => onClick(item)} />
         ))}
-        {children}
       </div>
     </section>
   )
@@ -266,16 +226,12 @@ function SelectableCard({
   meta,
   type,
   state,
-  disabled,
-  shaking,
   onClick,
 }: {
   title: string
   meta: string
   type: FileType
   state: SelectableCardState
-  disabled?: boolean
-  shaking?: boolean
   onClick: () => void
 }) {
   const visual = getShortcutVisual(type)
@@ -291,7 +247,7 @@ function SelectableCard({
         selected
           ? 'scale-[0.98] border-[1.5px] border-brand-orange shadow-[0_4px_12px_rgba(255,122,0,0.15)]'
           : 'border-[#EEEEEE]'
-      } ${saved ? 'opacity-60 cursor-default' : disabled ? 'cursor-default' : 'active:scale-[0.98]'} ${shaking ? 'animate-card-shake' : ''}`}
+      } ${saved ? 'opacity-60 cursor-default' : 'active:scale-[0.98]'}`}
     >
       <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center mb-2">
         <Icon size={16} className="text-brand-orange" strokeWidth={1.8} />
@@ -352,37 +308,50 @@ function BottomActionBar({
   )
 }
 
-function SelectCheck({ selected }: { selected: boolean }) {
+function CloudPickerSheet({
+  open,
+  onClose,
+  onPick,
+}: {
+  open: boolean
+  onClose: () => void
+  onPick: (provider: CloudProvider) => void
+}) {
+  if (!open) return null
   return (
-    <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${
-      selected ? 'bg-brand-orange border-brand-orange' : 'border-line-base bg-white'
-    }`}>
-      {selected && <Check size={12} className="text-white" />}
-    </div>
-  )
-}
-
-function GuideView({ title, steps, onDone }: { title: string; steps: string[]; onDone: () => void }) {
-  return (
-    <div className="px-5 py-3">
-      <h4 className="text-h2 text-ink-primary mb-2">{title}</h4>
-      <p className="text-caption text-ink-placeholder mb-4">按下面步骤把内容导入当前知识库。</p>
-      <div className="space-y-3 mb-5">
-        {steps.map((step, index) => (
-          <div key={step} className="flex gap-3 p-3 bg-white rounded-card border border-line-base">
-            <div className="w-6 h-6 rounded-full bg-brand-orange text-white text-caption font-semibold flex items-center justify-center flex-shrink-0">
-              {index + 1}
-            </div>
-            <p className="text-body text-ink-secondary">{step}</p>
-          </div>
-        ))}
+    <div className="absolute inset-0 z-50 flex flex-col justify-end">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-t-card-xl shadow-sheet pb-6">
+        <div className="flex items-center justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-ink-placeholder/40 rounded-pill" />
+        </div>
+        <div className="px-5 pt-2 pb-3">
+          <p className="text-h2 text-ink-primary">从哪个网盘添加？</p>
+          <p className="text-caption text-ink-placeholder mt-1">已连接的网盘可直接浏览文件</p>
+        </div>
+        <div className="px-5 grid grid-cols-2 gap-2">
+          {CLOUD_PROVIDERS.map(p => (
+            <button
+              key={p.id}
+              onClick={() => onPick(p)}
+              className="h-[84px] rounded-card bg-white border border-[#EEEEEE] px-2.5 py-2 text-center active:scale-[0.96] transition-transform"
+            >
+              <div
+                className="w-9 h-9 rounded-card mx-auto mb-1 flex items-center justify-center text-[16px] font-bold"
+                style={{ backgroundColor: p.bg }}
+              >
+                {p.emoji}
+              </div>
+              <p className="text-[13px] leading-4 font-semibold text-ink-primary truncate">{p.name}</p>
+              <p className={`text-[11px] leading-3 mt-0.5 truncate ${
+                p.connected ? 'text-[#10B981]' : 'text-ink-placeholder'
+              }`}>
+                {p.connected ? '已连接' : '未连接'}
+              </p>
+            </button>
+          ))}
+        </div>
       </div>
-      <button
-        onClick={onDone}
-        className="w-full py-3 bg-brand-orange text-white rounded-btn text-body font-medium"
-      >
-        我知道了
-      </button>
     </div>
   )
 }
@@ -391,15 +360,6 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   const navigate = useNavigate()
   const { activeBase, setActiveFile, addFile, quickNotesBase } = useKnowledge()
   const { showToast } = useUser()
-  const [view, setView] = useState<View>('sources')
-  const [selectedSearch, setSelectedSearch] = useState<string[]>([])
-  const [selectedPages, setSelectedPages] = useState<string[]>([])
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([])
-  const [selectedRecordings, setSelectedRecordings] = useState<string[]>([])
-  const [selectedAiChats, setSelectedAiChats] = useState<string[]>([])
-  const [pageSaveModes, setPageSaveModes] = useState<Record<string, BrowserSaveMode>>({})
-  const [pageSnippets, setPageSnippets] = useState<Record<string, string>>({})
-  const [importing, setImporting] = useState(false)
   const [linkValue, setLinkValue] = useState('')
   const [showLinkSaveSheet, setShowLinkSaveSheet] = useState(false)
   const [linkContent, setLinkContent] = useState<SaveSourceContent>({
@@ -409,131 +369,42 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   })
   const [selectedShortcutIds, setSelectedShortcutIds] = useState<string[]>([])
   const [savedBrowsingIds, setSavedBrowsingIds] = useState<string[]>([])
+  const [showCloudPicker, setShowCloudPicker] = useState(false)
   const isQuickNotes = activeBase?.id === QUICK_NOTES_KB_ID
 
   const currentKbId = activeBase?.id ?? QUICK_NOTES_KB_ID
   const currentKbName = activeBase?.name ?? quickNotesBase.name
 
   const resetAndClose = () => {
-    setView('sources')
-    setSelectedSearch([])
-    setSelectedPages([])
-    setSelectedFiles([])
-    setSelectedRecordings([])
-    setSelectedAiChats([])
-    setPageSaveModes({})
-    setPageSnippets({})
     setSelectedShortcutIds([])
-    setImporting(false)
+    setShowCloudPicker(false)
     onClose()
   }
 
-  const addMockFile = (payload: Omit<KnowledgeFile, 'id' | 'kbId' | 'uploadedAt'>) => {
-    const id = `file_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
-    addFile({
-      id,
-      kbId: currentKbId,
-      uploadedAt: '刚刚',
-      ...payload,
-    })
-    return id
-  }
-
-  const finishImport = (count: number, createFiles: () => string[]) => {
-    if (count === 0 || importing) return
-    setImporting(true)
-    window.setTimeout(() => {
-      const ids = createFiles()
-      showToast(`已入库 ${count} 项到「${currentKbName}」`)
-      window.setTimeout(() => {
-        if (ids.length > 0) {
-          window.dispatchEvent(new CustomEvent('knowledge-files-added', { detail: { ids } }))
-        }
-        resetAndClose()
-      }, 1500)
-    }, 800)
-  }
-
-  const importSearch = () => {
-    const items = RECENT_SEARCH_RESULTS.filter(item => selectedSearch.includes(item.id))
-    finishImport(items.length, () =>
-      items.map(item => addMockFile({
-          name: item.title,
-          type: 'url',
-          size: '—',
-          summary: `来自 ${item.source} 的搜索结果，已作为网页来源保存。`,
-          content: `# ${item.title}\n\n来源：${item.source}\n\n这条搜索结果已保存到当前知识库，后续可以继续追问和整理。`,
-          wordCount: 520,
-        })
-      )
-    )
-  }
-
-  const setPageMode = (id: string, mode: BrowserSaveMode) => {
-    setPageSaveModes(prev => {
-      if ((prev[id] ?? 'full') === mode) return prev
-      return { ...prev, [id]: mode }
-    })
-  }
-
-  const updatePageSnippet = (id: string, value: string) => {
-    setPageSnippets(prev => ({ ...prev, [id]: value }))
-  }
-
-  const importPages = () => {
-    const items = RECENT_BROWSING.filter(item => selectedPages.includes(item.id))
-    finishImport(items.length, () =>
-      items.map(item => {
-        const mode = pageSaveModes[item.id] ?? 'full'
-        const snippet = pageSnippets[item.id]?.trim()
-        return addMockFile({
-          name: `${item.title}${mode === 'selection' ? ' · 选段' : ''}`,
-          type: 'url',
-          size: '—',
-          summary: `${mode === 'selection' ? '选段' : '整页'}保存自 ${item.url}`,
-          content: mode === 'selection'
-            ? `# ${item.title} · 选段\n\n来源：${item.url}\n\n${snippet || '这是一段 mock 选段内容，保存后可在知识库中继续编辑和追问。'}`
-            : `# ${item.title}\n\n来源：${item.url}\n\n已保存完整网页内容，AI 会自动提取正文、关键观点和来源信息。`,
-          wordCount: mode === 'selection' ? (snippet?.length || 120) : 1300,
-        })
-      })
-    )
-  }
-
-  const uploadSelectedFiles = () => {
+  const navigateToSource = (route: string) => {
     resetAndClose()
-    navigate('/knowledge/uploading')
+    setTimeout(() => navigate(route), 80)
   }
 
-  const importRecordings = () => {
-    const items = RECORDINGS.filter(item => selectedRecordings.includes(item.id))
-    finishImport(items.length, () =>
-      items.map(item => addMockFile({
-        name: `${item.title}.m4a`,
-        type: 'audio',
-        size: item.duration,
-        summary: `录音导入完成，日期：${item.date}。AI 转写将在上传后自动生成。`,
-      }))
-    )
+  const handleSourceClick = (card: SourceCard) => {
+    if (card.route === '__cloud__') {
+      setShowCloudPicker(true)
+      return
+    }
+    navigateToSource(card.route)
   }
 
-  const importAiChats = () => {
-    const items = RECENT_AI_CONVERSATIONS.filter(item => selectedAiChats.includes(item.id))
-    finishImport(items.length, () =>
-      items.map(item => addMockFile({
-        name: item.title,
-        type: 'note',
-        size: `${item.summary.length}字`,
-        wordCount: item.summary.length,
-        summary: item.summary,
-        content: `# ${item.title}\n\n${item.summary}`,
-        tags: ['AI对话'],
-      }))
-    )
-  }
-
-  const toggle = (id: string, selected: string[], setSelected: (ids: string[]) => void) => {
-    setSelected(selected.includes(id) ? selected.filter(item => item !== id) : [...selected, id])
+  const handleCloudPick = (provider: CloudProvider) => {
+    setShowCloudPicker(false)
+    if (provider.connected) {
+      navigateToSource(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+      return
+    }
+    showToast(`正在连接${provider.name}...`)
+    setTimeout(() => {
+      showToast(`已连接${provider.name}`)
+      navigateToSource(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+    }, 1000)
   }
 
   const handleNewQuickNote = () => {
@@ -545,6 +416,17 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   const openLinkSaveSheet = (content: SaveSourceContent) => {
     setLinkContent(content)
     setShowLinkSaveSheet(true)
+  }
+
+  const addMockFile = (payload: Omit<KnowledgeFile, 'id' | 'kbId' | 'uploadedAt'>) => {
+    const id = `file_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+    addFile({
+      id,
+      kbId: currentKbId,
+      uploadedAt: '刚刚',
+      ...payload,
+    })
+    return id
   }
 
   const addRecentBrowsingItem = (item: typeof RECENT_BROWSER_DOWNLOADS[number]) => {
@@ -577,319 +459,11 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
 
   const confirmShortcutSelection = () => {
     if (selectedShortcutCount === 0) return
-
     selectedBrowsingItems.forEach(addRecentBrowsingItem)
     setSavedBrowsingIds(prev => [...new Set([...prev, ...selectedBrowsingItems.map(item => item.id)])])
     setSelectedShortcutIds([])
     showToast(`已添加 ${selectedShortcutCount} 项到「${currentKbName}」`)
   }
-
-  const renderContent = () => {
-    if (view === 'search') {
-      return (
-        <div className="px-5 py-3">
-          <p className="text-caption text-ink-placeholder mb-3">最近搜索结果</p>
-          {RECENT_SEARCH_RESULTS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => toggle(item.id, selectedSearch, setSelectedSearch)}
-              className="w-full flex items-center gap-3 px-4 py-3 mb-2 bg-white rounded-card border border-line-base text-left"
-            >
-              <SelectCheck selected={selectedSearch.includes(item.id)} />
-              <div className="flex-1 min-w-0">
-                <p className="text-card-title text-ink-primary truncate">{item.title}</p>
-                <p className="text-caption text-ink-placeholder mt-0.5">{item.source} · {item.time}</p>
-              </div>
-            </button>
-          ))}
-          <button
-            onClick={importSearch}
-            disabled={selectedSearch.length === 0 || importing}
-            className="w-full mt-2 py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
-          >
-            {importing ? '入库中...' : `入库 ${selectedSearch.length} 项`}
-          </button>
-        </div>
-      )
-    }
-
-    if (view === 'browser') {
-      return (
-        <div className="px-5 py-3">
-          <p className="text-caption text-ink-placeholder mb-3">最近浏览</p>
-          {RECENT_BROWSING.map(item => {
-            const mode = pageSaveModes[item.id] ?? 'full'
-            return (
-              <div key={item.id} className="px-4 py-3 mb-2 bg-white rounded-card border border-line-base">
-                <div className="flex items-center gap-3">
-                  <button onClick={() => toggle(item.id, selectedPages, setSelectedPages)}>
-                    <SelectCheck selected={selectedPages.includes(item.id)} />
-                  </button>
-                  <div className="w-8 h-8 rounded-full bg-brand-orange-light text-brand-orange text-caption font-semibold flex items-center justify-center flex-shrink-0">
-                    {item.favicon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-card-title text-ink-primary truncate">{item.title}</p>
-                    <p className="text-micro text-ink-placeholder truncate">{item.url}</p>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 mt-3">
-                  <button
-                    type="button"
-                    onClick={() => setPageMode(item.id, 'full')}
-                    className={`h-7 rounded-pill px-3.5 text-[12px] leading-4 transition-colors duration-150 ${
-                      mode === 'full'
-                        ? 'border border-brand-orange bg-brand-orange text-white'
-                        : 'border border-brand-orange bg-white text-brand-orange'
-                    }`}
-                  >
-                    整页
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPageMode(item.id, 'selection')}
-                    className={`h-7 rounded-pill px-3.5 text-[12px] leading-4 transition-colors duration-150 ${
-                      mode === 'selection'
-                        ? 'border border-brand-orange bg-brand-orange text-white'
-                        : 'border border-brand-orange bg-white text-brand-orange'
-                    }`}
-                  >
-                    选段
-                  </button>
-                </div>
-                {mode === 'selection' && (
-                  <div className="mt-3 rounded-card border border-line-base bg-surface-card p-3">
-                    <p className="text-micro text-ink-secondary">粘贴或编辑要保存的片段</p>
-                    <textarea
-                      value={pageSnippets[item.id] ?? ''}
-                      onChange={event => updatePageSnippet(item.id, event.target.value)}
-                      placeholder="粘贴或编辑要保存的片段"
-                      className="mt-2 h-20 w-full resize-none rounded-[10px] bg-white px-3 py-2 text-caption text-ink-primary outline-none placeholder:text-ink-placeholder focus:ring-1 focus:ring-brand-orange"
-                    />
-                  </div>
-                )}
-              </div>
-            )
-          })}
-          <button
-            onClick={importPages}
-            disabled={selectedPages.length === 0 || importing}
-            className="w-full mt-2 py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
-          >
-            {importing ? '入库中...' : `入库 ${selectedPages.length} 项`}
-          </button>
-        </div>
-      )
-    }
-
-    if (view === 'ai-chat') {
-      return (
-        <div className="px-5 py-3">
-          <p className="text-caption text-ink-placeholder mb-3">最近 AI 对话</p>
-          {RECENT_AI_CONVERSATIONS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => toggle(item.id, selectedAiChats, setSelectedAiChats)}
-              className="w-full flex items-center gap-3 px-4 py-3 mb-2 bg-white rounded-card border border-line-base text-left"
-            >
-              <SelectCheck selected={selectedAiChats.includes(item.id)} />
-              <div className="w-10 h-10 rounded-card bg-brand-orange/[0.08] flex items-center justify-center">
-                <Sparkles size={18} className="text-brand-orange" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-card-title text-ink-primary truncate">{item.title}</p>
-                <p className="text-caption text-ink-placeholder">{item.time}</p>
-                <p className="text-caption text-ink-secondary mt-0.5 line-clamp-1">{item.summary}</p>
-              </div>
-            </button>
-          ))}
-          <button
-            onClick={importAiChats}
-            disabled={selectedAiChats.length === 0 || importing}
-            className="w-full mt-2 py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
-          >
-            {importing ? '入库中...' : `入库 ${selectedAiChats.length} 项`}
-          </button>
-        </div>
-      )
-    }
-
-    if (view === 'download') {
-      return (
-        <div className="px-5 py-3">
-          <p className="text-caption text-ink-placeholder mb-3">mock 文件选择器</p>
-          {MOCK_FILES.map(item => {
-            const cfg = getFileTypeVisual(item.type)
-            const { Icon } = cfg
-            return (
-              <button
-                key={item.id}
-                onClick={() => toggle(item.id, selectedFiles, setSelectedFiles)}
-                className="w-full flex items-center gap-3 px-4 py-3 mb-2 bg-white rounded-card border border-line-base text-left"
-              >
-                <SelectCheck selected={selectedFiles.includes(item.id)} />
-                <div
-                  className="w-10 h-10 rounded-card flex items-center justify-center"
-                  style={{ backgroundColor: cfg.bg }}
-                >
-                  <Icon size={18} style={{ color: cfg.color }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-card-title text-ink-primary truncate">{item.name}</p>
-                  <p className="text-caption text-ink-placeholder">{item.size}</p>
-                </div>
-              </button>
-            )
-          })}
-          <button
-            onClick={uploadSelectedFiles}
-            disabled={selectedFiles.length === 0}
-            className="w-full mt-2 py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
-          >
-            上传 {selectedFiles.length} 个文件
-          </button>
-        </div>
-      )
-    }
-
-    if (view === 'recording') {
-      return (
-        <div className="px-5 py-3">
-          <p className="text-caption text-ink-placeholder mb-3">最近录音</p>
-          {RECORDINGS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => toggle(item.id, selectedRecordings, setSelectedRecordings)}
-              className="w-full flex items-center gap-3 px-4 py-3 mb-2 bg-white rounded-card border border-line-base text-left"
-            >
-              <SelectCheck selected={selectedRecordings.includes(item.id)} />
-              <div className="w-10 h-10 rounded-card bg-brand-orange/[0.08] flex items-center justify-center">
-                <Mic size={18} className="text-brand-orange" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-card-title text-ink-primary truncate">{item.title}</p>
-                <p className="text-caption text-ink-placeholder">{item.duration} · {item.date}</p>
-              </div>
-            </button>
-          ))}
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            <button
-              onClick={() => { showToast('现场录音功能即将上线') }}
-              className="flex items-center justify-center gap-2 py-3 bg-surface-card rounded-btn text-body text-ink-secondary"
-            >
-              <Radio size={16} />
-              现场录音
-            </button>
-            <button
-              onClick={importRecordings}
-              disabled={selectedRecordings.length === 0 || importing}
-              className="py-3 bg-brand-orange text-white rounded-btn text-body font-medium disabled:opacity-40"
-            >
-              {importing ? '入库中...' : `入库 ${selectedRecordings.length} 项`}
-            </button>
-          </div>
-        </div>
-      )
-    }
-
-    if (view === 'third-party') {
-      return (
-        <GuideView
-          title="如何从其他 App 分享到本应用"
-          steps={['在公众号、小红书、抖音或快手中打开目标内容。', '点击系统分享按钮，选择“分享到本应用”。', '回到本应用确认保存范围，AI 会自动提取标题、正文和来源。']}
-          onDone={() => setView('sources')}
-        />
-      )
-    }
-
-    if (view === 'wechat') {
-      return (
-        <GuideView
-          title="在微信内通过 ... 菜单分享到本应用"
-          steps={['在微信里打开文章链接、图片或文件。', '点击右上角“...”菜单，选择“更多打开方式”。', '选择本应用后，内容会进入当前知识库的待入库队列。']}
-          onDone={() => setView('sources')}
-        />
-      )
-    }
-
-    if (view === 'system-note') {
-      return (
-        <GuideView
-          title="读取系统便签需要授权"
-          steps={['前往系统设置，允许本应用读取备忘录 / 便签。', '授权后会显示最近便签列表，你可以多选导入。', '导入内容会保留原始创建时间，并转成速记或文本文件。']}
-          onDone={() => setView('sources')}
-        />
-      )
-    }
-
-    return (
-      <div>
-        <div className="sticky top-0 z-10 bg-white px-5 pt-2 pb-4 border-b border-line-base/60">
-          <p className="text-caption text-ink-secondary mb-3 text-center">选择内容来源</p>
-          <PasteLinkInput
-            value={linkValue}
-            onChange={setLinkValue}
-            onSave={openLinkSaveSheet}
-          />
-        </div>
-
-        <div className={`px-5 pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'}`}>
-          <RecentShortcutSection
-            title="最近浏览/下载"
-            onAction={() => navigate('/knowledge/recent-browsing')}
-          >
-            {RECENT_BROWSER_DOWNLOADS.map(item => {
-              const key = shortcutKey(item.id)
-              const saved = savedBrowsingIds.includes(item.id)
-              return (
-                <SelectableCard
-                  key={item.id}
-                  title={item.title}
-                  meta={`${item.time} · ${item.source}`}
-                  type={item.type}
-                  state={saved ? 'saved' : selectedShortcutIds.includes(key) ? 'selected' : 'default'}
-                  onClick={() => {
-                    if (!saved) toggleShortcut(key)
-                  }}
-                />
-              )
-            })}
-          </RecentShortcutSection>
-
-          {SOURCE_GROUPS.map(group => (
-            <SourceGroup
-              key={group.title}
-              title={group.title}
-              items={group.items}
-              onSourceClick={setView}
-            >
-              {group.title === '设备来源' && isQuickNotes && (
-                <button
-                  onClick={handleNewQuickNote}
-                  className="h-[88px] rounded-card bg-brand-orange/[0.04] border border-brand-orange/20 px-2.5 py-2.5 text-left active:bg-brand-orange-light transition-colors"
-                >
-                  <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center mb-2">
-                    <PenLine size={16} strokeWidth={1.8} className="text-brand-orange" />
-                  </div>
-                  <p className="text-caption font-medium text-ink-primary truncate">新建速记</p>
-                  <p className="text-micro text-ink-placeholder mt-0.5 truncate">快速记录灵感</p>
-                </button>
-              )}
-            </SourceGroup>
-          ))}
-        </div>
-        <BottomActionBar
-          count={selectedShortcutCount}
-          onCancel={cancelShortcutSelection}
-          onConfirm={confirmShortcutSelection}
-          confirmLabel={confirmShortcutLabel}
-        />
-      </div>
-    )
-  }
-
-  const flatSources = SOURCE_GROUPS.flatMap(group => group.items)
-  const secondaryTitle = flatSources.find(item => item.kind === view)?.title
 
   return (
     <>
@@ -902,20 +476,88 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
         heightClassName="h-[80%] max-h-[80%]"
         headerLeft={
           <button
-            onClick={view === 'sources' ? resetAndClose : () => setView('sources')}
+            onClick={resetAndClose}
             className="text-body text-ink-secondary px-1"
           >
-            {view === 'sources' ? '取消' : <ChevronLeft size={22} />}
+            取消
           </button>
         }
       >
-        {view !== 'sources' && (
-          <div className="px-5 pt-1 pb-2">
-            <p className="text-caption text-ink-secondary">选择内容来源</p>
-            <p className="text-h2 text-ink-primary mt-1">{secondaryTitle}</p>
+        <div>
+          <div className="sticky top-0 z-10 bg-white px-5 pt-2 pb-4 border-b border-line-base/60">
+            <PasteLinkInput
+              value={linkValue}
+              onChange={setLinkValue}
+              onSave={openLinkSaveSheet}
+            />
           </div>
-        )}
-        {renderContent()}
+
+          <div className={`px-5 pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'}`}>
+            <RecentShortcutSection
+              title="最近浏览/下载"
+              onAction={() => {
+                resetAndClose()
+                setTimeout(() => navigate('/knowledge/add-from/browser-history'), 80)
+              }}
+            >
+              {RECENT_BROWSER_DOWNLOADS.map(item => {
+                const key = shortcutKey(item.id)
+                const saved = savedBrowsingIds.includes(item.id)
+                return (
+                  <SelectableCard
+                    key={item.id}
+                    title={item.title}
+                    meta={`${item.time} · ${item.source}`}
+                    type={item.type}
+                    state={saved ? 'saved' : selectedShortcutIds.includes(key) ? 'selected' : 'default'}
+                    onClick={() => {
+                      if (!saved) toggleShortcut(key)
+                    }}
+                  />
+                )
+              })}
+            </RecentShortcutSection>
+
+            <SourceGroup
+              title="自动同步 🔄"
+              subtitle="授权一次，持续帮你抓取"
+              items={AUTO_SOURCES}
+              onClick={handleSourceClick}
+            />
+
+            <SourceGroup
+              title="手动添加 🤚"
+              subtitle="需要时主动选择"
+              items={MANUAL_SOURCES}
+              onClick={handleSourceClick}
+            />
+
+            {isQuickNotes && (
+              <button
+                onClick={handleNewQuickNote}
+                className="w-full h-12 rounded-card bg-brand-orange/[0.04] border border-brand-orange/20 px-3 flex items-center gap-3 active:bg-brand-orange-light transition-colors"
+              >
+                <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center">
+                  <PenLine size={16} strokeWidth={1.8} className="text-brand-orange" />
+                </div>
+                <span className="text-card-title text-ink-primary">新建速记</span>
+                <span className="ml-auto text-caption text-ink-placeholder">快速记录灵感</span>
+              </button>
+            )}
+          </div>
+          <BottomActionBar
+            count={selectedShortcutCount}
+            onCancel={cancelShortcutSelection}
+            onConfirm={confirmShortcutSelection}
+            confirmLabel={confirmShortcutLabel}
+          />
+        </div>
+
+        <CloudPickerSheet
+          open={showCloudPicker}
+          onClose={() => setShowCloudPicker(false)}
+          onPick={handleCloudPick}
+        />
       </BottomSheet>
 
       <SaveToKnowledgeBaseSheet
