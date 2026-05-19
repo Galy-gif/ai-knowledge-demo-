@@ -355,16 +355,23 @@ export default function T03_GenerateConfirm() {
               <Cpu size={18} className="text-brand-orange" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-caption text-ink-placeholder mb-1.5">功能模块</p>
+              <p className="text-[12px] leading-4 text-[#9CA3AF] mb-1.5">功能模块</p>
               <div className="flex flex-wrap gap-1.5">
-                {selectedFeatures.map(f => (
-                  <span
-                    key={f}
-                    className="text-[11px] px-2 py-0.5 bg-brand-orange text-white rounded-pill font-medium"
-                  >
-                    {f}
-                  </span>
-                ))}
+                {selectedFeatures.map(f => {
+                  const isAi = /AI/i.test(f)
+                  return (
+                    <span
+                      key={f}
+                      className={`text-[10px] leading-4 px-2 py-0.5 rounded-pill font-medium ${
+                        isAi
+                          ? 'bg-[#FFF1E6] text-[#FF7A00]'
+                          : 'bg-[#F5F5F5] text-[#4A4A4A]'
+                      }`}
+                    >
+                      {f}
+                    </span>
+                  )
+                })}
               </div>
             </div>
             <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
@@ -379,8 +386,8 @@ export default function T03_GenerateConfirm() {
               <Globe size={18} className="text-brand-orange" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-caption text-ink-placeholder">访问方式</p>
-              <p className="text-body text-ink-primary font-medium">{accessModeLabel}</p>
+              <p className="text-[12px] leading-4 text-[#9CA3AF]">访问方式</p>
+              <p className="text-body font-medium text-[#1A1A1A]">{accessModeLabel}</p>
             </div>
             <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
           </button>
@@ -396,13 +403,13 @@ export default function T03_GenerateConfirm() {
                   <MapPin size={18} className="text-brand-orange" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-caption text-ink-placeholder">行程偏好</p>
+                  <p className="text-[12px] leading-4 text-[#9CA3AF]">行程偏好</p>
                   {prefsConfigured ? (
-                    <p className="text-body text-ink-primary font-semibold truncate">
+                    <p className="text-body font-medium text-[#1A1A1A] truncate">
                       {buildPrefsSummary(travelPrefs)}
                     </p>
                   ) : (
-                    <p className="text-body font-semibold" style={{ color: '#FF7A00' }}>
+                    <p className="text-body text-[#9CA3AF]">
                       请填写预算、酒店等偏好
                     </p>
                   )}
