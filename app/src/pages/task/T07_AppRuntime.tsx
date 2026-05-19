@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
-import { ChevronDown, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
+import { ChevronDown, ChevronRight, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
 import { useApps } from '../../context/AppsContext'
 import { useUser } from '../../context/UserContext'
 import ExportItinerarySheet from '../../components/common/ExportItinerarySheet'
@@ -10,18 +10,64 @@ import type { LightApp, TravelPreferences } from '../../mock/data'
 
 // ── Shared ────────────────────────────────────────────────────────────────────
 
-function SyncBar({ dataSource, color = 'orange' }: { dataSource: string; color?: 'orange' | 'teal' }) {
-  const isTeal = color === 'teal'
-  const bg = isTeal ? '#CCFBF1' : '#FFF1E6'
-  const dot = isTeal ? '#14B8A6' : '#FF7A00'
-  const text = isTeal ? '#0F766E' : '#FF7A00'
+function SyncBar({ dataSource, onClick }: { dataSource: string; onClick?: () => void }) {
+  const names = dataSource.split(/\s*[+＋、]\s*/).filter(Boolean)
+  const first = names[0] ?? dataSource
+  const extra = names.length - 1
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (!onClick) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onClick()
+    }
+  }
   return (
-    <div className="flex items-center justify-between px-3 h-9 rounded-card" style={{ backgroundColor: bg }}>
-      <div className="flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: dot }} />
-        <p className="text-caption" style={{ color: text }}>基于「{dataSource}」· 实时同步</p>
-      </div>
-      <p className="text-micro opacity-60" style={{ color: text }}>上次同步：刚刚</p>
+    <div
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : -1}
+      onClick={onClick}
+      onKeyDown={onClick ? handleKey : undefined}
+      className="flex items-center"
+      style={{
+        backgroundColor: '#FFF1E6',
+        borderRadius: 12,
+        padding: '10px 14px',
+        margin: '14px 14px 12px',
+        gap: 8,
+        cursor: onClick ? 'pointer' : 'default',
+      }}
+    >
+      <span
+        style={{
+          width: 5,
+          height: 5,
+          borderRadius: '50%',
+          backgroundColor: '#FF7A00',
+          flexShrink: 0,
+        }}
+      />
+      <span
+        style={{
+          flex: 1,
+          minWidth: 0,
+          fontSize: 12,
+          lineHeight: '16px',
+          fontWeight: 500,
+          color: '#FF7A00',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        基于 {first}
+        {extra > 0 && (
+          <span style={{ fontSize: 11, color: '#FFA050' }}> +{extra}</span>
+        )}
+        <span> · 刚刚同步</span>
+      </span>
+      {onClick && (
+        <ChevronRight size={13} className="text-[#FF7A00]" style={{ flexShrink: 0 }} />
+      )}
     </div>
   )
 }
@@ -683,7 +729,7 @@ export default function T07_AppRuntime() {
 
   const handleRefresh = () => {
     setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 1200)
+    setTimeout(() => setRefreshing(false), 1000)
   }
 
   const handleAdjust = () => {
@@ -736,35 +782,24 @@ export default function T07_AppRuntime() {
         showBack
         right={
           <div className="flex items-center gap-1">
-            <button onClick={handleRefresh} className={`p-1 ${refreshing ? 'animate-spin' : ''}`}>
-              <RefreshCw size={18} className={isTravel ? 'text-[#14B8A6]' : 'text-brand-orange'} />
+            <button onClick={handleRefresh} className="p-1" aria-label="同步数据源">
+              <RefreshCw
+                size={18}
+                className={refreshing ? 'animate-spin text-[#FF7A00]' : 'text-[#4A4A4A]'}
+              />
             </button>
-            <button className="p-1">
+            <button className="p-1" aria-label="更多">
               <MoreHorizontal size={18} className="text-ink-secondary" />
             </button>
           </div>
         }
       />
 
-      <div className={`${isTravel ? 'pt-3 pb-6' : 'px-5 py-4'} space-y-3`}>
-        <div className={isTravel ? 'px-4' : ''}>
-          <SyncBar dataSource={app.dataSource} color={isTravel ? 'teal' : 'orange'} />
-          <p
-            style={{
-              fontSize: 11,
-              color: '#9CA3AF',
-              textAlign: 'center',
-              marginTop: 8,
-            }}
-          >
-            基于
-            {app.dataSource
-              .split(/\s*[+＋、]\s*/)
-              .map(name => `「${name}」`)
-              .join(' + ')}
-            生成
-          </p>
-        </div>
+      <SyncBar
+        dataSource={app.dataSource}
+        onClick={() => showToast('数据源管理（mock）')}
+      />
+      <div className={isTravel ? 'pb-6' : 'px-5 pb-4'}>
         {form}
       </div>
 
