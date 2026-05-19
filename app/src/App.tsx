@@ -32,8 +32,6 @@ import Q04_AiAnswer from './pages/ask/Q04_AiAnswer'
 import Q05_AiAnswerMulti from './pages/ask/Q05_AiAnswerMulti'
 import Q06_WebSearchResults from './pages/ask/Q06_WebSearchResults'
 import Q07_WebArticle from './pages/ask/Q07_WebArticle'
-import Q08_SkillFromAi from './pages/ask/Q08_SkillFromAi'
-import Q09_SkillCreate from './pages/ask/Q09_SkillCreate'
 
 // Task
 import T01_TaskMode from './pages/task/T01_TaskMode'
@@ -86,8 +84,6 @@ export default function App() {
           <Route path="/ask/answer-multi" element={<Q05_AiAnswerMulti />} />
           <Route path="/ask/web-search" element={<Q06_WebSearchResults />} />
           <Route path="/ask/web-article" element={<Q07_WebArticle />} />
-          <Route path="/skill/from-ai" element={<Q08_SkillFromAi />} />
-          <Route path="/skill/create" element={<Q09_SkillCreate />} />
 
           {/* Task / PWA */}
           <Route path="/ask/task-mode" element={<T01_TaskMode />} />
