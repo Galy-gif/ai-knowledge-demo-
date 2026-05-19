@@ -2,30 +2,33 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
-import { MoreHorizontal, RefreshCw } from 'lucide-react'
+import { ChevronDown, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
 import { useApps } from '../../context/AppsContext'
-import { useUser } from '../../context/UserContext'
-import BottomSheet from '../../components/ui/BottomSheet'
+import type { LightApp, TravelPreferences } from '../../mock/data'
 
 // ── Shared ────────────────────────────────────────────────────────────────────
 
-function SyncBar({ dataSource }: { dataSource: string }) {
+function SyncBar({ dataSource, color = 'orange' }: { dataSource: string; color?: 'orange' | 'teal' }) {
+  const isTeal = color === 'teal'
+  const bg = isTeal ? '#CCFBF1' : '#FFF1E6'
+  const dot = isTeal ? '#14B8A6' : '#FF7A00'
+  const text = isTeal ? '#0F766E' : '#FF7A00'
   return (
-    <div className="flex items-center justify-between px-3 h-9 rounded-card" style={{ backgroundColor: '#FFF1E6' }}>
+    <div className="flex items-center justify-between px-3 h-9 rounded-card" style={{ backgroundColor: bg }}>
       <div className="flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full bg-brand-orange animate-pulse" />
-        <p className="text-caption text-brand-orange">基于「{dataSource}」· 实时同步</p>
+        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: dot }} />
+        <p className="text-caption" style={{ color: text }}>基于「{dataSource}」· 实时同步</p>
       </div>
-      <p className="text-micro text-brand-orange opacity-60">上次同步：刚刚</p>
+      <p className="text-micro opacity-60" style={{ color: text }}>上次同步：刚刚</p>
     </div>
   )
 }
 
 function AiTip({ text }: { text: string }) {
   return (
-    <div className="flex gap-2.5 p-3.5 rounded-card" style={{ backgroundColor: '#FFF8F0', border: '1px solid #FFD9B3' }}>
+    <div className="flex gap-2.5 p-3 rounded-card" style={{ backgroundColor: '#FFF1E6' }}>
       <span className="text-base leading-none mt-0.5">✨</span>
-      <p className="text-caption text-ink-secondary leading-relaxed">{text}</p>
+      <p className="text-[12px] text-ink-primary leading-relaxed">{text}</p>
     </div>
   )
 }
@@ -305,330 +308,351 @@ function FitnessTrackerForm() {
   )
 }
 
-// ── Form 5: Travel Tracker ────────────────────────────────────────────────────
+// ── Form 5: Travel Planner ────────────────────────────────────────────────────
 
-type TravelTag = '景点' | '餐厅' | '交通' | '休闲'
+const BUDGET_LABEL: Record<string, string> = {
+  budget: '¥5,000 以下',
+  comfort: '¥1.5万',
+  premium: '¥1.5-3万',
+  luxury: '¥3万+',
+}
+const HOTEL_LABEL: Record<string, string> = {
+  chain: '连锁酒店',
+  premium: '精品酒店',
+  local: '当地民宿',
+  apartment: '公寓式',
+}
+const STYLE_LABEL: Record<string, string> = {
+  nature: '自然',
+  city: '城市',
+  history: '历史',
+  food: '美食',
+  shopping: '购物',
+}
+const COMPANION_LABEL: Record<string, string> = {
+  solo: '独行',
+  couple: '情侣',
+  family: '亲子',
+  friends: '朋友',
+}
 
-interface ItineraryItem {
+function buildSubtitle(prefs: TravelPreferences) {
+  const budget = `预算 ${BUDGET_LABEL[prefs.budget] ?? '舒适'}`
+  const hotel = prefs.hotelPrefs.length > 0
+    ? prefs.hotelPrefs.map(h => HOTEL_LABEL[h] ?? h).join(' / ')
+    : '精品酒店'
+  const styles = prefs.tripStyles.length > 0
+    ? prefs.tripStyles.map(s => STYLE_LABEL[s] ?? s).join(' + ')
+    : '综合'
+  const companion = `${COMPANION_LABEL[prefs.companions] ?? '情侣'} ${prefs.duration} 天`
+  return `按照您的需求定制 · ${budget} · ${hotel} · ${styles} · ${companion}`
+}
+
+interface FlightCard {
+  id: string
+  airline: string
+  flightNo: string
+  price: string
+  route: string
+  badge?: { label: string; color: string }
+}
+
+const FLIGHTS: FlightCard[] = [
+  { id: 'f1', airline: '春秋航空', flightNo: '9C8587', price: '¥1,280', route: '上海浦东 → 大阪关西 · 直飞 4h', badge: { label: '💰 最便宜', color: '#FF7A00' } },
+  { id: 'f2', airline: '国航', flightNo: 'CA923', price: '¥1,820', route: '上海浦东 → 大阪关西 · 直飞 4h 10min', badge: { label: '⭐ 推荐', color: '#14B8A6' } },
+  { id: 'f3', airline: '全日空', flightNo: 'NH976', price: '¥2,450', route: '上海浦东 → 关西（经东京）· 6h 30min' },
+]
+
+interface HotelCard {
+  id: string
+  emoji: string
+  name: string
+  meta: string
+  price: string
+  badge?: { label: string; color: string }
+}
+
+const HOTELS: HotelCard[] = [
+  { id: 'h1', emoji: '🏛️', name: '京都老町家民宿', meta: '祇园步行 5min · 评分 9.2', price: '¥1,800/晚', badge: { label: '⭐ AI 推荐', color: '#14B8A6' } },
+  { id: 'h2', emoji: '🏨', name: '大阪瑞吉酒店', meta: '难波附近 · 评分 9.0', price: '¥2,800/晚' },
+  { id: 'h3', emoji: '🏯', name: '京都丽思卡尔顿', meta: '距清水寺 1.2km · 评分 8.9', price: '¥3,200/晚' },
+]
+
+interface DayItem {
   time: string
   place: string
-  tag: TravelTag
+  tag: string
+  emoji: string
 }
 
-const INIT_ITINERARY: ItineraryItem[] = [
-  { time: '8:30', place: '清水寺', tag: '景点' },
-  { time: '11:00', place: '伏见稻荷大社', tag: '景点' },
-  { time: '13:00', place: '午餐 · 祇园料亭', tag: '餐厅' },
-  { time: '15:00', place: '祇园散步', tag: '休闲' },
+interface DayPlan {
+  day: number
+  city: string
+  theme: string
+  items: DayItem[]
+}
+
+const ITINERARY: DayPlan[] = [
+  {
+    day: 1, city: '京都', theme: '古都初体验', items: [
+      { time: '8:30', place: '清水寺', tag: '景点', emoji: '🏛️' },
+      { time: '11:00', place: '二年坂三年坂', tag: '街区', emoji: '🛍️' },
+      { time: '13:00', place: '祇园料亭午餐', tag: '餐厅', emoji: '🍜' },
+      { time: '15:30', place: '伏见稻荷大社', tag: '景点', emoji: '🏛️' },
+    ],
+  },
+  {
+    day: 2, city: '京都', theme: '古寺与园林', items: [
+      { time: '9:00', place: '金阁寺', tag: '景点', emoji: '🏛️' },
+      { time: '11:30', place: '龙安寺', tag: '景点', emoji: '🏛️' },
+      { time: '13:00', place: '京都料理晚餐', tag: '餐厅', emoji: '🍜' },
+      { time: '15:00', place: '哲学之道', tag: '休闲', emoji: '🌸' },
+    ],
+  },
+  {
+    day: 3, city: '大阪', theme: '城市初探', items: [
+      { time: '9:30', place: '大阪城公园', tag: '景点', emoji: '🏯' },
+      { time: '12:00', place: '难波美食街', tag: '餐厅', emoji: '🍜' },
+      { time: '15:00', place: '心斋桥购物', tag: '街区', emoji: '🛍️' },
+    ],
+  },
+  {
+    day: 4, city: '大阪', theme: '美食之日', items: [
+      { time: '10:00', place: '黑门市场', tag: '街区', emoji: '🍣' },
+      { time: '12:30', place: '道顿堀章鱼烧', tag: '餐厅', emoji: '🍜' },
+      { time: '14:00', place: '通天阁', tag: '景点', emoji: '🏛️' },
+      { time: '18:00', place: '梅田蓝天大厦', tag: '景点', emoji: '🏙️' },
+    ],
+  },
+  {
+    day: 5, city: '奈良', theme: '古都余韵', items: [
+      { time: '9:00', place: '奈良公园喂鹿', tag: '景点', emoji: '🦌' },
+      { time: '11:00', place: '东大寺', tag: '景点', emoji: '🏛️' },
+      { time: '13:30', place: '春日大社', tag: '景点', emoji: '🏛️' },
+    ],
+  },
+  {
+    day: 6, city: '神户', theme: '港湾风光', items: [
+      { time: '9:30', place: '北野异人馆', tag: '景点', emoji: '🏛️' },
+      { time: '12:30', place: '神户牛肉午餐', tag: '餐厅', emoji: '🥩' },
+      { time: '15:00', place: '神户港夜景', tag: '景点', emoji: '🌃' },
+    ],
+  },
+  {
+    day: 7, city: '大阪', theme: '购物归程', items: [
+      { time: '9:00', place: '心斋桥扫货', tag: '街区', emoji: '🛍️' },
+      { time: '12:00', place: '关西机场', tag: '交通', emoji: '✈️' },
+    ],
+  },
 ]
 
-const AI_SUGGESTIONS: ItineraryItem[] = [
-  { time: '', place: '天下一品拉面（京都站附近）', tag: '餐厅' },
-  { time: '', place: '二年坂三年坂传统街道', tag: '景点' },
-  { time: '', place: '鸭川河畔散步', tag: '休闲' },
-]
-
-const TAG_COLORS: Record<TravelTag, string> = {
-  景点: '#CCFBF1',
-  餐厅: '#FEF3C7',
-  交通: '#DBEAFE',
-  休闲: '#F3E8FF',
-}
-const TAG_TEXT: Record<TravelTag, string> = {
-  景点: '#0F766E',
-  餐厅: '#92400E',
-  交通: '#1E40AF',
-  休闲: '#6B21A8',
-}
-
-const TAGS: TravelTag[] = ['景点', '餐厅', '交通', '休闲']
-
-function AddItinerarySheet({
-  open,
-  onClose,
-  onAdd,
-}: {
-  open: boolean
-  onClose: () => void
-  onAdd: (item: ItineraryItem) => void
-}) {
-  const [tag, setTag] = useState<TravelTag | ''>('')
-  const [startTime, setStartTime] = useState('09:00')
-  const [endTime, setEndTime] = useState('11:00')
-  const [name, setName] = useState('')
-  const [location, setLocation] = useState('')
-  const [budget, setBudget] = useState('')
-  const [note, setNote] = useState('')
-  const [aiExpanded, setAiExpanded] = useState(false)
-
-  const canAdd = tag !== '' && name.trim() !== ''
-
-  const reset = () => {
-    setTag('')
-    setStartTime('09:00')
-    setEndTime('11:00')
-    setName('')
-    setLocation('')
-    setBudget('')
-    setNote('')
-    setAiExpanded(false)
-  }
-
-  const handleAdd = () => {
-    if (!canAdd) return
-    onAdd({ time: startTime, place: name.trim(), tag: tag as TravelTag })
-    reset()
-    onClose()
-  }
-
-  const handleAddSuggestion = (item: ItineraryItem) => {
-    onAdd({ ...item, time: '09:00' })
-    reset()
-    onClose()
-  }
-
-  useEffect(() => {
-    if (!open) reset()
-  }, [open])
-
-  const inputCls = 'w-full text-[14px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors'
-
+function FlightCardItem({ flight }: { flight: FlightCard }) {
   return (
-    <BottomSheet
-      open={open}
-      onClose={onClose}
-      title="添加新行程"
-      titleAlign="center"
-      titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
-      headerLeft={<button onClick={onClose} className="text-[14px] text-ink-secondary">取消</button>}
-      headerRight={
-        <button
-          onClick={handleAdd}
-          className={`text-[14px] font-medium ${canAdd ? 'text-brand-orange' : 'text-ink-placeholder'}`}
-        >
-          添加
-        </button>
-      }
-      fullHeight
-    >
-      <div className="px-5 pt-4 pb-6 space-y-4">
-        {/* Tag selector */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">行程类型 <span className="text-brand-orange">*</span></p>
-          <div className="flex gap-2">
-            {TAGS.map(t => (
-              <button
-                key={t}
-                onClick={() => setTag(t)}
-                className="px-4 py-1.5 rounded-pill text-[13px] font-medium transition-colors border"
-                style={tag === t
-                  ? { backgroundColor: '#CCFBF1', color: '#14B8A6', borderColor: '#14B8A6' }
-                  : { backgroundColor: '#F8F8F8', color: '#4A4A4A', borderColor: '#EEEEEE' }
-                }
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+    <div className="relative w-[240px] h-[120px] flex-shrink-0 bg-white border border-[#EEEEEE] rounded-card p-3 flex flex-col justify-between">
+      <div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] text-ink-placeholder font-medium">{flight.airline}</span>
+          <span className="text-[11px] text-ink-placeholder">{flight.flightNo}</span>
         </div>
-
-        {/* Time */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">时间 <span className="text-brand-orange">*</span></p>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <p className="text-[11px] text-ink-placeholder mb-1">开始时间</p>
-              <input
-                type="time"
-                value={startTime}
-                onChange={e => setStartTime(e.target.value)}
-                className={inputCls}
-              />
-            </div>
-            <div>
-              <p className="text-[11px] text-ink-placeholder mb-1">结束时间</p>
-              <input
-                type="time"
-                value={endTime}
-                onChange={e => setEndTime(e.target.value)}
-                className={inputCls}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Name */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">名称 <span className="text-brand-orange">*</span></p>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="如：清水寺、祇园料亭"
-            className={inputCls}
-          />
-        </div>
-
-        {/* Location */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">地点</p>
-          <input
-            type="text"
-            value={location}
-            onChange={e => setLocation(e.target.value)}
-            placeholder="如：东山区清水 1 丁目 294"
-            className="w-full text-[13px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors"
-          />
-        </div>
-
-        {/* Budget */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">预算</p>
-          <div className="flex items-center gap-1 bg-surface-card rounded-card border border-line-base focus-within:border-brand-orange transition-colors px-3 py-2.5">
-            <span className="text-[14px] text-ink-placeholder">¥</span>
-            <input
-              type="number"
-              value={budget}
-              onChange={e => setBudget(e.target.value)}
-              placeholder="如：500"
-              className="flex-1 text-[14px] text-ink-primary bg-transparent outline-none placeholder:text-ink-placeholder"
-            />
-          </div>
-        </div>
-
-        {/* Note */}
-        <div>
-          <p className="text-caption text-ink-secondary mb-2">备注</p>
-          <textarea
-            value={note}
-            onChange={e => setNote(e.target.value)}
-            placeholder="如：记得提前买票，避开人多时段"
-            rows={3}
-            className="w-full text-[13px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors resize-none"
-            style={{ maxHeight: '72px' }}
-          />
-        </div>
-
-        {/* AI suggestions */}
-        <div className="rounded-card border border-line-base overflow-hidden">
-          <button
-            onClick={() => setAiExpanded(v => !v)}
-            className="w-full flex items-center justify-between px-4 py-3 text-left"
-          >
-            <span className="text-[13px] font-medium text-brand-orange">✨ AI 推荐相关行程</span>
-            <span className="text-caption text-ink-placeholder">{aiExpanded ? '收起' : '展开'}</span>
-          </button>
-          {aiExpanded && (
-            <div className="border-t border-line-base">
-              {AI_SUGGESTIONS.map((s, i) => (
-                <div
-                  key={s.place}
-                  className={`flex items-center gap-3 px-4 py-3 ${i !== AI_SUGGESTIONS.length - 1 ? 'border-b border-line-base' : ''}`}
-                >
-                  <span
-                    className="text-[10px] px-1.5 py-0.5 rounded-pill flex-shrink-0"
-                    style={{ backgroundColor: TAG_COLORS[s.tag], color: TAG_TEXT[s.tag] }}
-                  >
-                    {s.tag}
-                  </span>
-                  <p className="flex-1 text-[13px] text-ink-primary min-w-0 truncate">{s.place}</p>
-                  <button
-                    onClick={() => handleAddSuggestion(s)}
-                    className="text-[12px] font-medium px-3 py-1 rounded-pill flex-shrink-0"
-                    style={{ backgroundColor: '#FFF1E6', color: '#FF7A00' }}
-                  >
-                    添加
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <p className="text-[18px] font-semibold leading-7 mt-1" style={{ color: '#0F766E' }}>{flight.price}</p>
       </div>
-    </BottomSheet>
+      <p className="text-[11px] text-ink-secondary leading-4">{flight.route}</p>
+      {flight.badge && (
+        <span
+          className="absolute top-2 right-2 text-[10px] font-medium text-white px-1.5 py-0.5 rounded-md"
+          style={{ backgroundColor: flight.badge.color }}
+        >
+          {flight.badge.label}
+        </span>
+      )}
+    </div>
   )
 }
 
-function TravelTrackerForm() {
-  const { showToast } = useUser()
-  const [itinerary, setItinerary] = useState<ItineraryItem[]>(INIT_ITINERARY)
-  const [showAddSheet, setShowAddSheet] = useState(false)
+function HotelCardItem({ hotel }: { hotel: HotelCard }) {
+  return (
+    <div className="relative w-[240px] h-[120px] flex-shrink-0 bg-white border border-[#EEEEEE] rounded-card p-3 flex gap-3">
+      <div className="w-16 h-16 rounded-[10px] bg-[#CCFBF1] flex items-center justify-center text-[28px] flex-shrink-0">
+        {hotel.emoji}
+      </div>
+      <div className="flex-1 min-w-0 flex flex-col justify-between">
+        <div>
+          <p className="text-[13px] font-semibold text-ink-primary leading-5 truncate">{hotel.name}</p>
+          <p className="text-[11px] text-ink-secondary leading-4 mt-0.5 line-clamp-2">{hotel.meta}</p>
+        </div>
+        <p className="text-[14px] font-semibold" style={{ color: '#0F766E' }}>{hotel.price}</p>
+      </div>
+      {hotel.badge && (
+        <span
+          className="absolute top-2 right-2 text-[10px] font-medium text-white px-1.5 py-0.5 rounded-md"
+          style={{ backgroundColor: hotel.badge.color }}
+        >
+          {hotel.badge.label}
+        </span>
+      )}
+    </div>
+  )
+}
 
-  const sightCount = itinerary.filter(i => i.tag === '景点').length
-  const sightPct = Math.round((sightCount / 8) * 100)
-  const restaurantCount = itinerary.filter(i => i.tag === '餐厅').length
-  const restaurantPct = Math.round((restaurantCount / 5) * 100)
+function SectionTitle({ title, more, sub }: { title: string; more?: boolean; sub?: string }) {
+  return (
+    <div className="px-4 mb-2.5">
+      <div className="flex items-center justify-between">
+        <p className="text-[14px] leading-5 font-semibold text-ink-primary">{title}</p>
+        {more && <button className="text-[11px] text-ink-placeholder">更多 ›</button>}
+      </div>
+      {sub && <p className="text-[11px] text-ink-placeholder mt-1">{sub}</p>}
+    </div>
+  )
+}
 
-  const handleAddItem = (item: ItineraryItem) => {
-    setItinerary(prev => [...prev, item])
-    showToast(`已添加「${item.place}」到第 3 天`)
+function DayCard({ plan, defaultOpen }: { plan: DayPlan; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="bg-white border border-[#EEEEEE] rounded-card overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center gap-2.5 px-3.5 py-3.5"
+      >
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#14B8A6' }} />
+        <p className="text-[13px] font-semibold text-ink-primary">Day {plan.day} · {plan.city}</p>
+        <p className="text-[12px] text-ink-secondary flex-1 text-left truncate">{plan.theme}</p>
+        {open ? <ChevronUp size={16} className="text-ink-placeholder" /> : <ChevronDown size={16} className="text-ink-placeholder" />}
+      </button>
+      {open && (
+        <div className="px-3.5 pb-3.5 space-y-2">
+          {plan.items.map((item, i) => (
+            <div key={i} className="flex items-center gap-3 py-1.5">
+              <p className="text-[11px] text-ink-placeholder w-12 flex-shrink-0">{item.time}</p>
+              <span className="text-[16px] flex-shrink-0">{item.emoji}</span>
+              <p className="flex-1 text-[13px] text-ink-primary min-w-0">{item.place}</p>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-pill flex-shrink-0" style={{ backgroundColor: '#CCFBF1', color: '#0F766E' }}>
+                {item.tag}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TravelPlannerForm({ app }: { app: LightApp }) {
+  const prefs: TravelPreferences = app.travelPreferences ?? {
+    budget: 'comfort',
+    hotelPrefs: ['premium'],
+    tripStyles: ['history', 'food'],
+    companions: 'couple',
+    duration: 7,
   }
+  const subtitle = buildSubtitle(prefs)
+  const sightCount = ITINERARY.reduce((acc, day) => acc + day.items.filter(i => i.tag === '景点' || i.tag === '街区').length, 0)
+  const restCount = ITINERARY.reduce((acc, day) => acc + day.items.filter(i => i.tag === '餐厅').length, 0)
 
   return (
-    <div className="space-y-3">
-      {/* Header card */}
-      <div className="rounded-card p-4" style={{ background: 'linear-gradient(135deg, #CCFBF1 0%, #F0FDFA 100%)', border: '1px solid #99F6E4' }}>
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="text-caption font-semibold text-[#0F766E]">第 3 天 · 京都</p>
-            <p className="text-[11px] text-[#14B8A6]">已完成 2 / 7 天</p>
+    <div className="space-y-4">
+      {/* A: Hero card */}
+      <div
+        className="mx-4 rounded-[16px] p-4 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #CCFBF1 0%, #FFFFFF 100%)', minHeight: 160 }}
+      >
+        <span className="text-[32px] leading-none">✈️</span>
+        <p className="text-[22px] font-semibold leading-7 mt-1" style={{ color: '#0F766E' }}>日本关西七日游</p>
+        <p className="text-[11px] leading-4 text-ink-secondary mt-2 line-clamp-2 max-w-[260px]">{subtitle}</p>
+        <svg
+          className="absolute right-3 bottom-3 opacity-30"
+          width="80" height="48" viewBox="0 0 80 48" fill="none"
+        >
+          <path d="M 8 40 L 20 40 L 20 24 L 28 16 L 36 24 L 36 40 L 50 40 L 50 28 L 62 28 L 62 40 L 72 40" stroke="#14B8A6" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" fill="none" />
+          <path d="M 28 16 L 28 8 M 26 11 L 30 11" stroke="#14B8A6" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </div>
+
+      {/* B: Flights */}
+      <section>
+        <SectionTitle title="✈️ 机票推荐" more />
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 px-4">
+            {FLIGHTS.map(f => <FlightCardItem key={f.id} flight={f} />)}
           </div>
-          <button
-            onClick={() => setShowAddSheet(true)}
-            className="text-micro font-medium px-2.5 py-1 rounded-pill active:scale-95 transition-transform"
-            style={{ backgroundColor: '#14B8A6', color: '#fff' }}
-          >
-            + 添加行程
-          </button>
         </div>
-        <div className="w-full h-2 rounded-full overflow-hidden mt-2" style={{ backgroundColor: '#99F6E4' }}>
-          <div className="h-full rounded-full" style={{ width: '28%', backgroundColor: '#14B8A6' }} />
+        <div className="mx-4 mt-3">
+          <AiTip text="春秋航空价格最优，但建议提前 30 天预订国航更稳妥。" />
         </div>
-        <p className="text-[11px] text-[#0F766E] opacity-70 mt-1">行程进度 2/7 天</p>
-      </div>
+      </section>
 
-      {/* Stats rings */}
-      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
-        <p className="text-micro text-ink-placeholder font-medium mb-4">今日完成度</p>
-        <div className="flex justify-around">
-          <CircleRing pct={sightPct} color="#14B8A6" label="景点" value={`${sightCount}/8`} />
-          <CircleRing pct={restaurantPct} color="#0EA5E9" label="餐厅" value={`${restaurantCount}/5`} />
-          <CircleRing pct={52} color="#F59E0B" label="预算" value="¥4.2k" />
-        </div>
-      </div>
-
-      {/* Today's itinerary */}
-      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
-        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
-          <p className="text-micro text-ink-placeholder font-medium">今日行程</p>
-        </div>
-        {itinerary.map((item, i) => (
-          <div
-            key={`${item.place}-${i}`}
-            className={`flex items-center gap-3 px-4 py-3 ${i !== itinerary.length - 1 ? 'border-b border-line-base' : ''}`}
-          >
-            <p className="text-micro text-ink-placeholder w-10 flex-shrink-0">{item.time || '—'}</p>
-            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#14B8A6' }} />
-            <div className="flex-1 min-w-0">
-              <p className="text-caption text-ink-primary font-medium truncate">{item.place}</p>
-            </div>
-            <span
-              className="text-[10px] px-1.5 py-0.5 rounded-pill flex-shrink-0"
-              style={{ backgroundColor: TAG_COLORS[item.tag], color: TAG_TEXT[item.tag] }}
-            >
-              {item.tag}
-            </span>
+      {/* C: Hotels */}
+      <section>
+        <SectionTitle title="🏨 酒店推荐 · 已按您的精品酒店偏好筛选" more />
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 px-4">
+            {HOTELS.map(h => <HotelCardItem key={h.id} hotel={h} />)}
           </div>
-        ))}
-      </div>
+        </div>
+        <div className="mx-4 mt-3">
+          <AiTip text="老町家民宿最贴合您的精品酒店和历史古迹偏好，建议优先预订。" />
+        </div>
+      </section>
 
-      <AiTip text="今天行程偏紧凑，建议午餐后留 30 分钟休息，伏见稻荷可以提前到 10:30，避开人流高峰。" />
+      {/* D: Utility 2x2 */}
+      <section>
+        <SectionTitle title="🌟 实用信息" />
+        <div className="mx-4 grid grid-cols-2 gap-2.5">
+          <div className="bg-white border border-[#EEEEEE] rounded-card p-3">
+            <span className="text-[18px]">☀️</span>
+            <p className="text-[18px] font-semibold text-ink-primary leading-6 mt-1">8℃</p>
+            <p className="text-[11px] text-ink-secondary mt-0.5">多云转晴 · 关西本周</p>
+          </div>
+          <div className="bg-white border border-[#EEEEEE] rounded-card p-3">
+            <span className="text-[18px]">💱</span>
+            <p className="text-[18px] font-semibold text-ink-primary leading-6 mt-1">¥1 = 21.8</p>
+            <p className="text-[11px] text-ink-secondary mt-0.5">日元 · 较昨日 <span style={{ color: '#10B981' }}>↑ 0.3</span></p>
+          </div>
+          <div className="bg-white border border-[#EEEEEE] rounded-card p-3">
+            <span className="text-[18px]">✅</span>
+            <p className="text-[18px] font-semibold leading-6 mt-1" style={{ color: '#10B981' }}>免签 15 天</p>
+            <p className="text-[11px] text-ink-secondary mt-0.5">已生效 · 无需办理</p>
+          </div>
+          <div className="bg-white border border-[#EEEEEE] rounded-card p-3">
+            <span className="text-[18px]">📖</span>
+            <p className="text-[18px] font-semibold text-ink-primary leading-6 mt-1">56 篇攻略</p>
+            <p className="text-[11px] text-ink-secondary mt-0.5">来自「日本旅行攻略」</p>
+          </div>
+        </div>
+      </section>
 
-      <AddItinerarySheet
-        open={showAddSheet}
-        onClose={() => setShowAddSheet(false)}
-        onAdd={handleAddItem}
-      />
+      {/* E: Itinerary */}
+      <section>
+        <SectionTitle
+          title={`📍 ${prefs.duration} 天行程 · 已按您的偏好生成`}
+          sub={`⭐ 历史古迹 + 美食探索 · 已规划 ${sightCount} 个景点 / ${restCount} 家餐厅`}
+        />
+        <div className="mx-4 space-y-2.5">
+          {ITINERARY.map(plan => (
+            <DayCard key={plan.day} plan={plan} defaultOpen={plan.day <= 2} />
+          ))}
+        </div>
+      </section>
+
+      {/* F: AI assistant */}
+      <section className="mx-4">
+        <div className="rounded-card p-3.5" style={{ backgroundColor: '#FFF1E6' }}>
+          <p className="text-[14px] font-semibold text-ink-primary">✨ AI 助手</p>
+          <p className="text-[12px] text-ink-secondary leading-5 mt-1.5">
+            已基于「日本旅行攻略」知识库生成全套方案，可随时调整您的偏好重新规划。
+          </p>
+          <div className="flex gap-2 mt-3">
+            <button className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-white border border-brand-orange text-brand-orange text-[12px] font-medium">
+              <Sliders size={13} strokeWidth={2} />
+              调整需求
+            </button>
+            <button className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-brand-orange text-white text-[12px] font-medium">
+              <Download size={13} strokeWidth={2} />
+              导出行程
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
@@ -663,14 +687,18 @@ export default function T07_AppRuntime() {
     )
   }
 
+  const isTravel = app.runtimeType === 'travel_planner'
+
   let form: React.ReactNode
   switch (app.runtimeType) {
     case 'data_dashboard':
       form = <DataDashboardForm />
       break
+    case 'travel_planner':
+      form = <TravelPlannerForm app={app} />
+      break
     case 'daily_tracker':
-      if (app.id === 'app_travel') form = <TravelTrackerForm />
-      else if (app.id === 'app_fitness') form = <FitnessTrackerForm />
+      if (app.id === 'app_fitness') form = <FitnessTrackerForm />
       else form = <DailyTrackerForm />
       break
     default:
@@ -685,7 +713,7 @@ export default function T07_AppRuntime() {
         right={
           <div className="flex items-center gap-1">
             <button onClick={handleRefresh} className={`p-1 ${refreshing ? 'animate-spin' : ''}`}>
-              <RefreshCw size={18} className="text-brand-orange" />
+              <RefreshCw size={18} className={isTravel ? 'text-[#14B8A6]' : 'text-brand-orange'} />
             </button>
             <button className="p-1">
               <MoreHorizontal size={18} className="text-ink-secondary" />
@@ -694,8 +722,10 @@ export default function T07_AppRuntime() {
         }
       />
 
-      <div className="px-5 py-4 space-y-3">
-        <SyncBar dataSource={app.dataSource} />
+      <div className={`${isTravel ? 'pt-3 pb-6' : 'px-5 py-4'} space-y-3`}>
+        <div className={isTravel ? 'px-4' : ''}>
+          <SyncBar dataSource={app.dataSource} color={isTravel ? 'teal' : 'orange'} />
+        </div>
         {form}
       </div>
     </PageLayout>

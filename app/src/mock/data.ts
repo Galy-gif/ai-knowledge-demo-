@@ -128,7 +128,18 @@ export interface DiscoverKbContentItem {
   type: string
 }
 
-export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker'
+export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker' | 'travel_planner'
+
+export type TravelBudget = 'budget' | 'comfort' | 'premium' | 'luxury'
+export type TravelCompanions = 'solo' | 'couple' | 'family' | 'friends'
+
+export interface TravelPreferences {
+  budget: TravelBudget
+  hotelPrefs: string[]
+  tripStyles: string[]
+  companions: TravelCompanions
+  duration: number
+}
 
 export interface LightApp {
   id: string
@@ -141,6 +152,7 @@ export interface LightApp {
   lastUsedAt: string
   dataSource: string
   runtimeType?: RuntimeType
+  travelPreferences?: TravelPreferences
 }
 
 export interface AiConversation {
@@ -373,8 +385,8 @@ export const mockKnowledgeBases: KnowledgeBase[] = [
 export const mockSubscribedKBs: KnowledgeBase[] = [
   {
     id: 'kb_travel_food',
-    name: '旅行美食圈',
-    icon: '🌏',
+    name: '日本旅行攻略',
+    icon: '📖',
     color: '#14B8A6',
     fileCount: 256,
     updatedAt: '2小时前',
@@ -1057,11 +1069,11 @@ export const mockDiscoverKbs: DiscoverKb[] = [
   // ─── 推荐 tab 默认 6 张（inRecommend: true）────────────────────────────────
   {
     id: 'kb_japan_travel',
-    name: '日本旅行实战手册',
-    description: '关东+关西+九州 30 天行程模板与避坑指南',
-    coverEmoji: '✈️',
+    name: '日本旅行攻略',
+    description: '涵盖关西/关东/北海道的景点、机酒、签证、汇率综合攻略',
+    coverEmoji: '📖',
     coverColor: '#CCFBF1',
-    author: { name: '旅行美食圈', type: 'team' },
+    author: { name: '攻略局', type: 'team' },
     contentCount: 256,
     subscriberCount: 12800,
     category: '生活',
@@ -1881,8 +1893,15 @@ export const mockApps: LightApp[] = [
     createdAt: '刚刚',
     lastOpenedAt: '刚刚',
     lastUsedAt: '刚刚',
-    dataSource: '旅行美食圈',
-    runtimeType: 'daily_tracker' as const,
+    dataSource: '日本旅行攻略',
+    runtimeType: 'travel_planner' as const,
+    travelPreferences: {
+      budget: 'comfort',
+      hotelPrefs: ['premium'],
+      tripStyles: ['history', 'food'],
+      companions: 'couple',
+      duration: 7,
+    },
   },
 ]
 

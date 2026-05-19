@@ -96,7 +96,7 @@ export const pwaTemplates: PwaTemplate[] = [
     coreFeatures: '行程时间线、景点收藏、预算跟踪',
     requirement: '帮我做一个旅行规划应用，按天展示行程、景点、餐厅和预算',
     keywords: ['旅行', '旅游', '行程', '攻略', '路线', '景点', '预算', '出行'],
-    targetRuntimeType: 'daily_tracker',
+    targetRuntimeType: 'travel_planner',
     resultAppName: '日本关西七日游',
     resultAppId: 'app_travel',
     resultMainColor: 'teal',

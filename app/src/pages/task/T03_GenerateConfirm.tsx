@@ -1,20 +1,194 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ChevronRight, Cpu, Database, Globe, Pen } from 'lucide-react'
+import { ChevronRight, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { getPwaTemplateById } from '../../mock/pwaTemplates'
 import DataSourceSelectorSheet from '../../components/common/DataSourceSelectorSheet'
 import FeaturesEditSheet from '../../components/common/FeaturesEditSheet'
 import AccessModeSheet, { type AccessModeId, ACCESS_MODE_LABELS, DEFAULT_ACCESS_MODES } from '../../components/common/AccessModeSheet'
+import type { TravelBudget, TravelCompanions, TravelPreferences } from '../../mock/data'
 
 const CUSTOM_REQ_PLACEHOLDERS: Record<string, string> = {
   'diet-log': '如：我想让它能扫描食物图片自动识别',
   'fitness-planner': '如：我希望它能根据心率自动推荐训练强度',
   'fund-portfolio': '如：我想要每天的涨跌推送，且能模拟买卖',
-  'travel-plan': '如：我想让它显示天气、汇率，按预算推荐景点',
+  'travel-plan': '如：希望避开人多景点、想体验温泉',
 }
 const DEFAULT_CUSTOM_REQ_PLACEHOLDER = '如：我想让它具备 XX 功能'
+
+const BUDGET_OPTIONS: { id: TravelBudget; label: string }[] = [
+  { id: 'budget', label: '经济 ¥5,000 以下' },
+  { id: 'comfort', label: '舒适 ¥5,000-1.5万' },
+  { id: 'premium', label: '精品 ¥1.5万-3万' },
+  { id: 'luxury', label: '奢华 ¥3万以上' },
+]
+
+const HOTEL_OPTIONS = [
+  { id: 'chain', label: '连锁酒店' },
+  { id: 'premium', label: '精品酒店' },
+  { id: 'local', label: '当地民宿' },
+  { id: 'apartment', label: '公寓式' },
+]
+
+const TRIP_STYLE_OPTIONS = [
+  { id: 'nature', label: '🏔️ 自然风光' },
+  { id: 'city', label: '🏙️ 城市文化' },
+  { id: 'history', label: '🏛️ 历史古迹' },
+  { id: 'food', label: '🍜 美食探索' },
+  { id: 'shopping', label: '🛍️ 购物娱乐' },
+]
+
+const COMPANION_OPTIONS: { id: TravelCompanions; label: string }[] = [
+  { id: 'solo', label: '一人独行' },
+  { id: 'couple', label: '情侣两人' },
+  { id: 'family', label: '亲子家庭' },
+  { id: 'friends', label: '朋友 3-5 人' },
+]
+
+const DEFAULT_TRAVEL_PREFS: TravelPreferences = {
+  budget: 'comfort',
+  hotelPrefs: ['premium'],
+  tripStyles: ['history', 'food'],
+  companions: 'couple',
+  duration: 7,
+}
+
+function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-pill text-[12px] leading-4 font-medium transition-colors whitespace-nowrap ${
+        active
+          ? 'bg-[#FFE4D0] text-brand-orange border-[1.5px] border-brand-orange'
+          : 'bg-white text-ink-secondary border border-[#EEEEEE]'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function TravelPrefsBlock({
+  prefs,
+  onChange,
+}: {
+  prefs: TravelPreferences
+  onChange: (next: TravelPreferences) => void
+}) {
+  const toggleArrayItem = (key: 'hotelPrefs' | 'tripStyles', id: string) => {
+    const current = prefs[key]
+    const next = current.includes(id) ? current.filter(i => i !== id) : [...current, id]
+    onChange({ ...prefs, [key]: next })
+  }
+
+  const stepDuration = (delta: number) => {
+    const next = Math.max(2, Math.min(30, prefs.duration + delta))
+    onChange({ ...prefs, duration: next })
+  }
+
+  return (
+    <div className="mx-4 bg-white border border-[#EEEEEE] rounded-card p-4">
+      <div className="flex items-center gap-2 mb-1">
+        <MapPin size={16} className="text-brand-orange" strokeWidth={2} />
+        <p className="text-[14px] leading-5 font-semibold text-ink-primary">行程偏好</p>
+      </div>
+      <p className="text-[11px] leading-4 text-ink-placeholder mb-3.5">AI 将根据您的偏好定制行程</p>
+
+      <div className="space-y-3.5">
+        {/* 预算 */}
+        <div>
+          <p className="text-[13px] leading-5 text-ink-primary mb-2">预算</p>
+          <div className="flex flex-wrap gap-2">
+            {BUDGET_OPTIONS.map(opt => (
+              <Pill
+                key={opt.id}
+                active={prefs.budget === opt.id}
+                onClick={() => onChange({ ...prefs, budget: opt.id })}
+              >
+                {opt.label}
+              </Pill>
+            ))}
+          </div>
+        </div>
+
+        {/* 酒店偏好 */}
+        <div>
+          <p className="text-[13px] leading-5 text-ink-primary mb-2">酒店偏好</p>
+          <div className="flex flex-wrap gap-2">
+            {HOTEL_OPTIONS.map(opt => (
+              <Pill
+                key={opt.id}
+                active={prefs.hotelPrefs.includes(opt.id)}
+                onClick={() => toggleArrayItem('hotelPrefs', opt.id)}
+              >
+                {opt.label}
+              </Pill>
+            ))}
+          </div>
+        </div>
+
+        {/* 偏好类型 */}
+        <div>
+          <p className="text-[13px] leading-5 text-ink-primary mb-2">偏好类型（可多选）</p>
+          <div className="flex flex-wrap gap-2">
+            {TRIP_STYLE_OPTIONS.map(opt => (
+              <Pill
+                key={opt.id}
+                active={prefs.tripStyles.includes(opt.id)}
+                onClick={() => toggleArrayItem('tripStyles', opt.id)}
+              >
+                {opt.label}
+              </Pill>
+            ))}
+          </div>
+        </div>
+
+        {/* 出行成员 */}
+        <div>
+          <p className="text-[13px] leading-5 text-ink-primary mb-2">出行成员</p>
+          <div className="flex flex-wrap gap-2">
+            {COMPANION_OPTIONS.map(opt => (
+              <Pill
+                key={opt.id}
+                active={prefs.companions === opt.id}
+                onClick={() => onChange({ ...prefs, companions: opt.id })}
+              >
+                {opt.label}
+              </Pill>
+            ))}
+          </div>
+        </div>
+
+        {/* 出行天数 */}
+        <div>
+          <p className="text-[13px] leading-5 text-ink-primary mb-2">出行天数</p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => stepDuration(-1)}
+              disabled={prefs.duration <= 2}
+              className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+            >
+              <Minus size={16} className="text-ink-secondary" strokeWidth={2} />
+            </button>
+            <p className="text-[18px] leading-6 font-semibold text-ink-primary tabular-nums w-8 text-center">{prefs.duration}</p>
+            <button
+              type="button"
+              onClick={() => stepDuration(1)}
+              disabled={prefs.duration >= 30}
+              className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+            >
+              <Plus size={16} className="text-ink-secondary" strokeWidth={2} />
+            </button>
+            <span className="text-[13px] text-ink-secondary">天</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function T03_GenerateConfirm() {
   const navigate = useNavigate()
@@ -39,9 +213,14 @@ export default function T03_GenerateConfirm() {
     (state?.selectedAccessModes as AccessModeId[] | undefined) ?? DEFAULT_ACCESS_MODES
   )
   const [customRequirement, setCustomRequirement] = useState<string>(state?.customRequirement ?? '')
+  const [travelPrefs, setTravelPrefs] = useState<TravelPreferences>(
+    (state?.travelPreferences as TravelPreferences | undefined) ?? DEFAULT_TRAVEL_PREFS
+  )
   const [showSourceSheet, setShowSourceSheet] = useState(false)
   const [showFeaturesSheet, setShowFeaturesSheet] = useState(false)
   const [showAccessSheet, setShowAccessSheet] = useState(false)
+
+  const isTravel = templateId === 'travel-plan'
 
   const handleApplySources = (ids: string[], names: string[]) => {
     setSelectedKbIds(ids)
@@ -80,6 +259,7 @@ export default function T03_GenerateConfirm() {
         selectedFeatures,
         selectedAccessModes,
         customRequirement,
+        travelPreferences: isTravel ? travelPrefs : undefined,
         sourcePath,
         sourceState,
       },
@@ -167,6 +347,12 @@ export default function T03_GenerateConfirm() {
             <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
           </button>
         </div>
+
+        {isTravel && (
+          <div className="-mx-5">
+            <TravelPrefsBlock prefs={travelPrefs} onChange={setTravelPrefs} />
+          </div>
+        )}
 
         {/* Custom requirement block */}
         <div className="p-[14px] bg-white rounded-card border border-line-base">

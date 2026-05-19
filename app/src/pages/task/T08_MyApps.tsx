@@ -9,6 +9,7 @@ const ICON_BG: Record<RuntimeType, string> = {
   learning_list: '#DBEAFE',
   data_dashboard: '#D1FAE5',
   daily_tracker: '#EDE9FE',
+  travel_planner: '#CCFBF1',
 }
 
 export default function T08_MyApps() {

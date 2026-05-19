@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
+import { useApps } from '../../context/AppsContext'
+import type { TravelPreferences } from '../../mock/data'
 
 interface Step { label: string; desc: string }
 
@@ -43,9 +45,9 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
     { label: '完成部署', desc: '应用就绪' },
   ],
   'travel-plan': [
-    { label: '分析需求', desc: '理解你的旅行规划需求' },
+    { label: '理解您的旅行偏好', desc: '解析预算、酒店、行程风格与同行人' },
     { label: '构建结构', desc: '搭建行程与预算框架' },
-    { label: '连接数据', desc: '对接「旅行美食圈」知识库' },
+    { label: '连接数据', desc: '对接「日本旅行攻略」知识库' },
     { label: '生成界面', desc: '设计每日行程视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
@@ -54,6 +56,7 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
 export default function T04_Generating() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const { updateApp } = useApps()
   const templateId: string | undefined = state?.templateId
   const templateName: string | undefined = state?.templateName
   const templateIcon: string | undefined = state?.templateIcon
@@ -68,6 +71,7 @@ export default function T04_Generating() {
   const selectedFeatures: string[] | undefined = state?.selectedFeatures
   const selectedAccessModes: string[] | undefined = state?.selectedAccessModes
   const customRequirement: string | undefined = state?.customRequirement
+  const travelPreferences: TravelPreferences | undefined = state?.travelPreferences
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
 
@@ -89,6 +93,9 @@ export default function T04_Generating() {
         if (prev >= steps.length - 1) {
           clearInterval(timer)
           setDone(true)
+          if (travelPreferences && resultAppId) {
+            updateApp(resultAppId, { travelPreferences })
+          }
           setTimeout(() => navigate('/ask/task-datasource', {
             replace: true,
             state: {
@@ -96,6 +103,7 @@ export default function T04_Generating() {
               targetRuntimeType, resultAppName, resultAppId, resultMainColor,
               selectedKbIds, selectedKbNames,
               selectedFeatures, selectedAccessModes, customRequirement,
+              travelPreferences,
               sourcePath, sourceState,
             },
           }), 1000)

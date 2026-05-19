@@ -130,7 +130,7 @@ const FIT_MAP: Record<PwaFitLevel, { label: string; className: string }> = {
 
 const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
   'travel-plan': {
-    '旅行美食圈': 'recommended',
+    '日本旅行攻略': 'recommended',
     '读书摘录': 'normal',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
@@ -138,7 +138,7 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '设计系统实战': 'not-recommended',
   },
   'diet-log': {
-    '旅行美食圈': 'recommended',
+    '日本旅行攻略': 'recommended',
     '读书摘录': 'normal',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
@@ -149,7 +149,7 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '读书摘录': 'not-recommended',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
-    '旅行美食圈': 'not-recommended',
+    '日本旅行攻略': 'not-recommended',
     'PM 必备：用户访谈方法论': 'not-recommended',
     '设计系统实战': 'not-recommended',
   },
@@ -157,7 +157,7 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '读书摘录': 'normal',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
-    '旅行美食圈': 'not-recommended',
+    '日本旅行攻略': 'not-recommended',
     'PM 必备：用户访谈方法论': 'not-recommended',
     '设计系统实战': 'not-recommended',
   },

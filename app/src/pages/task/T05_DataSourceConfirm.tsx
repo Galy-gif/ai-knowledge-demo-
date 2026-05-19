@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { CheckCircle, RefreshCw } from 'lucide-react'
+import type { TravelPreferences } from '../../mock/data'
 
 const RESULT_COLOR_BG: Record<string, string> = {
   purple: '#EDE9FE',
@@ -40,6 +41,7 @@ export default function T05_DataSourceConfirm() {
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
   const selectedFeatures: string[] | undefined = state?.selectedFeatures
   const customRequirement: string | undefined = state?.customRequirement
+  const travelPreferences: TravelPreferences | undefined = state?.travelPreferences
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
 
@@ -63,6 +65,7 @@ export default function T05_DataSourceConfirm() {
     selectedKbNames,
     selectedFeatures,
     customRequirement,
+    travelPreferences,
     sourcePath,
     sourceState,
   }
