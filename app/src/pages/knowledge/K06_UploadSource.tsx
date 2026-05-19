@@ -1,61 +1,18 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Check,
   ChevronRight,
-  FileText,
-  Globe2,
-  Image as ImageIcon,
+  Hand,
   Link as LinkIcon,
   PenLine,
+  RefreshCw,
 } from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
 import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
 import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type FileType, type KnowledgeFile } from '../../mock/data'
-import { getFileTypeVisual } from '../../utils/fileTypeVisuals'
-
-interface SourceCard {
-  key: string
-  route: string
-  emoji: string
-  bg: string
-  title: string
-  desc: string
-}
-
-const AUTO_SOURCES: SourceCard[] = [
-  { key: 'browser-history', route: '/knowledge/add-from/browser-history', emoji: '🌐', bg: '#DBEAFE', title: '浏览器历史', desc: '浏览过的网页' },
-  { key: 'wechat', route: '/knowledge/add-from/wechat', emoji: '💬', bg: '#D1FAE5', title: '微信收藏', desc: '收藏的文章/链接' },
-  { key: 'cloud', route: '__cloud__', emoji: '☁️', bg: '#EDE9FE', title: '网盘', desc: '5 种主流网盘' },
-  { key: 'email', route: '/knowledge/add-from/email', emoji: '✉️', bg: '#FEF3C7', title: '邮件附件', desc: '邮箱里的附件' },
-  { key: 'screenshot', route: '/knowledge/add-from/screenshot', emoji: '📸', bg: '#FCE7F3', title: '系统截图', desc: '自动同步相册截图' },
-  { key: 'download', route: '/knowledge/add-from/download', emoji: '📁', bg: '#FFF1E6', title: '下载文件', desc: '系统下载目录' },
-]
-
-const MANUAL_SOURCES: SourceCard[] = [
-  { key: 'upload', route: '/knowledge/add-from/upload', emoji: '📤', bg: '#DBEAFE', title: '上传文件', desc: '从设备选文件' },
-  { key: 'third-party', route: '/knowledge/add-from/third-party', emoji: '🔗', bg: '#D1FAE5', title: '第三方 App 分享', desc: '从其他 App 分享' },
-  { key: 'ai-chat', route: '/knowledge/add-from/ai-chat', emoji: '🤖', bg: '#EDE9FE', title: 'AI 对话保存', desc: '保存 ChatGPT/Claude 对话' },
-  { key: 'scan', route: '/knowledge/add-from/scan', emoji: '📷', bg: '#FEF3C7', title: '扫一扫', desc: '扫码或拍照' },
-]
-
-interface CloudProvider {
-  id: string
-  name: string
-  emoji: string
-  bg: string
-  connected: boolean
-}
-
-const CLOUD_PROVIDERS: CloudProvider[] = [
-  { id: 'baidu', name: '百度网盘', emoji: '🅑', bg: '#DBEAFE', connected: true },
-  { id: 'aliyun', name: '阿里云盘', emoji: '🅐', bg: '#E0F2FE', connected: true },
-  { id: 'icloud', name: 'iCloud Drive', emoji: '☁️', bg: '#F3F4F6', connected: false },
-  { id: 'onedrive', name: 'OneDrive', emoji: '🅞', bg: '#DBEAFE', connected: false },
-  { id: 'gdrive', name: 'Google Drive', emoji: '🅖', bg: '#FEF3C7', connected: false },
-]
 
 const RECENT_BROWSER_DOWNLOADS: Array<{
   id: string
@@ -64,31 +21,15 @@ const RECENT_BROWSER_DOWNLOADS: Array<{
   source: string
   time: string
   summary: string
+  emoji: string
 }> = [
-  { id: 'rb1', title: 'Notion AI 功能拆解', type: 'url', source: '微信文章', time: '2 小时前', summary: '来自微信文章的 Notion AI 功能分析。' },
-  { id: 'rb2', title: '2024 产品趋势报告.pdf', type: 'pdf', source: '下载', time: '昨天', summary: '最近下载的产品趋势报告 PDF。' },
-  { id: 'rb3', title: 'Linear vs Jira', type: 'url', source: '博客文章', time: '今天上午', summary: 'Linear 与 Jira 的产品体验对比。' },
-  { id: 'rb4', title: '用户访谈方法论', type: 'url', source: '小红书', time: '3 天前', summary: '用户访谈提纲和方法论整理。' },
-  { id: 'rb5', title: 'OKR 制定指南.docx', type: 'doc', source: '下载', time: '1 周前', summary: '团队 OKR 制定指南文档。' },
-  { id: 'rb6', title: 'Anthropic Claude 3 Demo', type: 'url', source: '网页', time: '4 小时前', summary: 'Claude 3 Demo 页面和能力说明。' },
+  { id: 'rb1', title: 'Notion AI 功能拆解', type: 'url', source: '微信文章', time: '2 小时前', summary: '来自微信文章的 Notion AI 功能分析。', emoji: '🌐' },
+  { id: 'rb2', title: '2024 产品趋势报告.pdf', type: 'pdf', source: '下载', time: '昨天', summary: '最近下载的产品趋势报告 PDF。', emoji: '📄' },
+  { id: 'rb3', title: 'Linear vs Jira', type: 'url', source: '博客文章', time: '今天上午', summary: 'Linear 与 Jira 的产品体验对比。', emoji: '🌐' },
+  { id: 'rb4', title: '用户访谈方法论', type: 'url', source: '小红书', time: '3 天前', summary: '用户访谈提纲和方法论整理。', emoji: '🌐' },
+  { id: 'rb5', title: 'OKR 制定指南.docx', type: 'doc', source: '下载', time: '1 周前', summary: '团队 OKR 制定指南文档。', emoji: '📝' },
+  { id: 'rb6', title: 'Anthropic Claude 3 Demo', type: 'url', source: '网页', time: '4 小时前', summary: 'Claude 3 Demo 页面和能力说明。', emoji: '🌐' },
 ]
-
-function getShortcutVisual(type: FileType) {
-  if (type === 'url') {
-    return { Icon: Globe2, color: '#0284C7' }
-  }
-  if (type === 'pdf') {
-    return { Icon: FileText, color: '#E74C3C' }
-  }
-  if (type === 'doc') {
-    return { Icon: FileText, color: '#2B7BD6' }
-  }
-  if (type === 'image') {
-    return { Icon: ImageIcon, color: '#10B981' }
-  }
-  const cfg = getFileTypeVisual(type)
-  return { Icon: cfg.Icon, color: cfg.color }
-}
 
 function getLinkTitle(url: string) {
   try {
@@ -103,7 +44,7 @@ function isValidUrl(value: string) {
   return /^https?:\/\/[\w.-]+\.[a-z]{2,}[\w\-._~:/?#[\]@!$&'()*+,;=.]*$/i.test(value.trim())
 }
 
-function PasteLinkInput({
+function PasteLinkRow({
   value,
   onChange,
   onSave,
@@ -112,9 +53,9 @@ function PasteLinkInput({
   onChange: (value: string) => void
   onSave: (content: SaveSourceContent) => void
 }) {
-  const [focused, setFocused] = useState(false)
-  const valid = isValidUrl(value)
   const trimmed = value.trim()
+  const valid = isValidUrl(value)
+  const hasInput = trimmed.length > 0
 
   const handleSave = () => {
     if (!valid) return
@@ -127,145 +68,131 @@ function PasteLinkInput({
   }
 
   return (
-    <div>
-      <p className="text-caption text-ink-secondary mb-2">粘贴链接添加</p>
-      <div className={`h-12 px-3 rounded-[10px] bg-[#F5F5F5] border flex items-center gap-2 transition-colors ${
-        focused ? 'border-brand-orange' : 'border-transparent'
-      }`}>
-        <LinkIcon size={17} className="text-brand-orange flex-shrink-0" />
-        <input
-          value={value}
-          onChange={event => onChange(event.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          placeholder="粘贴 URL，自动识别并保存..."
-          className="flex-1 min-w-0 bg-transparent outline-none text-body text-ink-primary placeholder:text-ink-placeholder"
-        />
+    <div className="mx-4 bg-white border border-[#EEEEEE] rounded-card p-3 flex items-center gap-3">
+      <div
+        className={`w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 ${
+          valid ? 'bg-[#DCFCE7]' : 'bg-brand-orange-light'
+        }`}
+      >
+        {valid ? (
+          <Check size={16} className="text-[#10B981]" strokeWidth={2.4} />
+        ) : (
+          <LinkIcon size={16} className="text-brand-orange" strokeWidth={2} />
+        )}
+      </div>
+      <input
+        value={value}
+        onChange={event => onChange(event.target.value)}
+        placeholder="粘贴链接快速添加"
+        className="flex-1 min-w-0 bg-transparent outline-none text-[13px] leading-5 font-medium text-ink-primary placeholder:text-ink-placeholder placeholder:font-medium"
+      />
+      {hasInput && (
         <button
           onClick={handleSave}
           disabled={!valid}
-          className="px-3 py-1.5 rounded-pill bg-brand-orange text-white text-caption font-medium disabled:bg-line-base disabled:text-ink-placeholder flex-shrink-0"
+          className="px-3 py-1 rounded-pill bg-brand-orange text-white text-[12px] leading-4 font-medium disabled:bg-line-base disabled:text-ink-placeholder flex-shrink-0"
         >
           保存
         </button>
-      </div>
+      )}
     </div>
   )
 }
 
-function SourceGridCard({ card, onClick }: { card: SourceCard; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="h-[84px] rounded-card bg-white border border-[#EEEEEE] px-2.5 py-2 text-center active:scale-[0.96] transition-transform"
-    >
-      <div
-        className="w-9 h-9 rounded-card mx-auto mb-1 flex items-center justify-center text-[20px]"
-        style={{ backgroundColor: card.bg }}
-      >
-        {card.emoji}
-      </div>
-      <p className="text-[13px] leading-4 font-semibold text-ink-primary truncate">{card.title}</p>
-      <p className="text-[11px] leading-3 text-ink-placeholder mt-0.5 truncate">{card.desc}</p>
-    </button>
-  )
-}
-
-function SourceGroup({ title, subtitle, items, onClick }: {
-  title: string
-  subtitle: string
-  items: SourceCard[]
-  onClick: (card: SourceCard) => void
+function RecentScrollSection({
+  selectedIds,
+  savedIds,
+  onToggle,
+  onSeeAll,
+}: {
+  selectedIds: string[]
+  savedIds: string[]
+  onToggle: (id: string) => void
+  onSeeAll: () => void
 }) {
   return (
-    <section className="mb-5">
-      <div className="mb-2">
-        <p className="text-[13px] leading-5 font-semibold text-ink-primary">{title}</p>
-        <p className="text-[11px] leading-4 text-ink-placeholder mt-0.5">{subtitle}</p>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {items.map(item => (
-          <SourceGridCard key={item.key} card={item} onClick={() => onClick(item)} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function RecentShortcutSection({ title, onAction, children }: {
-  title: string
-  onAction: () => void
-  children: ReactNode
-}) {
-  return (
-    <section className="mb-5">
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-[13px] leading-5 font-semibold text-ink-primary">{title}</h4>
+    <section>
+      <div className="px-4 flex items-center justify-between mb-2.5">
+        <h4 className="text-[13px] leading-5 font-semibold text-ink-primary">最近浏览/下载</h4>
         <button
-          onClick={onAction}
-          aria-label={`查看${title}全部内容`}
-          className="h-6 w-6 flex items-center justify-center text-brand-orange"
+          onClick={onSeeAll}
+          className="flex items-center gap-0.5 text-[11px] leading-4 text-ink-placeholder active:text-ink-secondary"
         >
-          <ChevronRight size={15} strokeWidth={1.9} />
+          全部
+          <ChevronRight size={12} strokeWidth={2} />
         </button>
       </div>
-      <div className="-mx-5 overflow-x-auto scrollbar-hide px-5">
-        <div className="flex gap-2 pb-1">
-          {children}
+      <div className="overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 px-4">
+          {RECENT_BROWSER_DOWNLOADS.map(item => {
+            const saved = savedIds.includes(item.id)
+            const selected = selectedIds.includes(item.id)
+            return (
+              <button
+                key={item.id}
+                type="button"
+                disabled={saved}
+                onClick={() => !saved && onToggle(item.id)}
+                className={`relative w-[130px] h-[84px] flex-shrink-0 rounded-card bg-white border p-2.5 text-left transition-all ${
+                  selected
+                    ? 'border-[1.5px] border-brand-orange shadow-[0_4px_12px_rgba(255,122,0,0.15)]'
+                    : 'border-[#EEEEEE]'
+                } ${saved ? 'opacity-60' : 'active:scale-[0.98]'}`}
+              >
+                <div className="w-7 h-7 rounded-[10px] bg-brand-orange-light flex items-center justify-center text-[14px] mb-1.5">
+                  {item.emoji}
+                </div>
+                <p className="text-[12px] leading-[15px] font-semibold text-ink-primary line-clamp-2">{item.title}</p>
+                <p className={`text-[10px] leading-3 mt-0.5 truncate ${saved ? 'text-[#10B981]' : 'text-ink-placeholder'}`}>
+                  {saved ? '✓ 已添加' : item.time}
+                </p>
+                {selected && (
+                  <span className="absolute right-1.5 top-1.5 h-4 w-4 rounded-full bg-brand-orange flex items-center justify-center">
+                    <Check size={11} className="text-white" strokeWidth={2.6} />
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
     </section>
   )
 }
 
-type SelectableCardState = 'default' | 'selected' | 'saved'
-
-function SelectableCard({
+function EntryRow({
+  icon,
+  iconBg,
+  iconColor,
   title,
-  meta,
-  type,
-  state,
+  desc,
   onClick,
 }: {
+  icon: typeof RefreshCw
+  iconBg: string
+  iconColor: string
   title: string
-  meta: string
-  type: FileType
-  state: SelectableCardState
+  desc: string
   onClick: () => void
 }) {
-  const visual = getShortcutVisual(type)
-  const Icon = visual.Icon
-  const saved = state === 'saved'
-  const selected = state === 'selected'
+  const Icon = icon
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={saved}
-      className={`relative h-[96px] w-[100px] flex-shrink-0 overflow-hidden rounded-card bg-white px-2.5 py-2.5 text-left border transition-all duration-150 ${
-        selected
-          ? 'scale-[0.98] border-[1.5px] border-brand-orange shadow-[0_4px_12px_rgba(255,122,0,0.15)]'
-          : 'border-[#EEEEEE]'
-      } ${saved ? 'opacity-60 cursor-default' : 'active:scale-[0.98]'}`}
+      className="mx-4 w-[calc(100%-32px)] bg-white border border-[#EEEEEE] rounded-card p-3 flex items-center gap-3 active:scale-[0.99] transition-transform"
     >
-      <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center mb-2">
-        <Icon size={16} className="text-brand-orange" strokeWidth={1.8} />
+      <div
+        className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
+        style={{ backgroundColor: iconBg }}
+      >
+        <Icon size={16} style={{ color: iconColor }} strokeWidth={2} />
       </div>
-      <p className="text-caption font-medium leading-[16px] text-ink-primary line-clamp-2">{title}</p>
-      <p className={`mt-0.5 text-[11px] leading-3 truncate ${saved ? 'text-[#10B981]' : 'text-ink-placeholder'}`}>
-        {saved ? '✓ 已添加' : meta}
-      </p>
-      {selected && (
-        <span className="absolute right-1.5 top-1.5 h-5 w-5 rounded-full bg-brand-orange flex items-center justify-center">
-          <Check size={14} className="text-white" strokeWidth={2.4} />
-        </span>
-      )}
-      {saved && (
-        <span className="absolute right-1.5 top-1.5 h-5 w-5 rounded-full bg-surface-card flex items-center justify-center">
-          <Check size={14} className="text-ink-placeholder" strokeWidth={2.2} />
-        </span>
-      )}
+      <div className="flex-1 min-w-0 text-left">
+        <p className="text-[14px] leading-5 font-semibold text-ink-primary">{title}</p>
+        <p className="text-[11px] leading-4 text-ink-placeholder mt-0.5 truncate">{desc}</p>
+      </div>
+      <ChevronRight size={14} className="text-ink-placeholder flex-shrink-0" strokeWidth={2} />
     </button>
   )
 }
@@ -308,54 +235,6 @@ function BottomActionBar({
   )
 }
 
-function CloudPickerSheet({
-  open,
-  onClose,
-  onPick,
-}: {
-  open: boolean
-  onClose: () => void
-  onPick: (provider: CloudProvider) => void
-}) {
-  if (!open) return null
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-t-card-xl shadow-sheet pb-6">
-        <div className="flex items-center justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-ink-placeholder/40 rounded-pill" />
-        </div>
-        <div className="px-5 pt-2 pb-3">
-          <p className="text-h2 text-ink-primary">从哪个网盘添加？</p>
-          <p className="text-caption text-ink-placeholder mt-1">已连接的网盘可直接浏览文件</p>
-        </div>
-        <div className="px-5 grid grid-cols-2 gap-2">
-          {CLOUD_PROVIDERS.map(p => (
-            <button
-              key={p.id}
-              onClick={() => onPick(p)}
-              className="h-[84px] rounded-card bg-white border border-[#EEEEEE] px-2.5 py-2 text-center active:scale-[0.96] transition-transform"
-            >
-              <div
-                className="w-9 h-9 rounded-card mx-auto mb-1 flex items-center justify-center text-[16px] font-bold"
-                style={{ backgroundColor: p.bg }}
-              >
-                {p.emoji}
-              </div>
-              <p className="text-[13px] leading-4 font-semibold text-ink-primary truncate">{p.name}</p>
-              <p className={`text-[11px] leading-3 mt-0.5 truncate ${
-                p.connected ? 'text-[#10B981]' : 'text-ink-placeholder'
-              }`}>
-                {p.connected ? '已连接' : '未连接'}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function K06_UploadSource({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate()
   const { activeBase, setActiveFile, addFile, quickNotesBase } = useKnowledge()
@@ -369,7 +248,6 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   })
   const [selectedShortcutIds, setSelectedShortcutIds] = useState<string[]>([])
   const [savedBrowsingIds, setSavedBrowsingIds] = useState<string[]>([])
-  const [showCloudPicker, setShowCloudPicker] = useState(false)
   const isQuickNotes = activeBase?.id === QUICK_NOTES_KB_ID
 
   const currentKbId = activeBase?.id ?? QUICK_NOTES_KB_ID
@@ -377,34 +255,12 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
 
   const resetAndClose = () => {
     setSelectedShortcutIds([])
-    setShowCloudPicker(false)
     onClose()
   }
 
-  const navigateToSource = (route: string) => {
+  const navigateTo = (route: string) => {
     resetAndClose()
     setTimeout(() => navigate(route), 80)
-  }
-
-  const handleSourceClick = (card: SourceCard) => {
-    if (card.route === '__cloud__') {
-      setShowCloudPicker(true)
-      return
-    }
-    navigateToSource(card.route)
-  }
-
-  const handleCloudPick = (provider: CloudProvider) => {
-    setShowCloudPicker(false)
-    if (provider.connected) {
-      navigateToSource(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
-      return
-    }
-    showToast(`正在连接${provider.name}...`)
-    setTimeout(() => {
-      showToast(`已连接${provider.name}`)
-      navigateToSource(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
-    }, 1000)
   }
 
   const handleNewQuickNote = () => {
@@ -440,17 +296,14 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
     })
   }
 
-  const shortcutKey = (id: string) => `browser:${id}`
-
-  const toggleShortcut = (key: string) => {
+  const toggleShortcut = (id: string) => {
     setSelectedShortcutIds(prev =>
-      prev.includes(key) ? prev.filter(item => item !== key) : [...prev, key]
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     )
   }
 
   const selectedBrowsingItems = RECENT_BROWSER_DOWNLOADS.filter(item =>
-    selectedShortcutIds.includes(shortcutKey(item.id)) &&
-    !savedBrowsingIds.includes(item.id)
+    selectedShortcutIds.includes(item.id) && !savedBrowsingIds.includes(item.id)
   )
   const selectedShortcutCount = selectedBrowsingItems.length
   const confirmShortcutLabel = `+ 添加到「${currentKbName}」`
@@ -482,81 +335,59 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
             取消
           </button>
         }
+        headerRight={<div className="w-7 h-7" aria-hidden />}
       >
-        <div>
-          <div className="sticky top-0 z-10 bg-white px-5 pt-2 pb-4 border-b border-line-base/60">
-            <PasteLinkInput
-              value={linkValue}
-              onChange={setLinkValue}
-              onSave={openLinkSaveSheet}
-            />
-          </div>
-
-          <div className={`px-5 pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'}`}>
-            <RecentShortcutSection
-              title="最近浏览/下载"
-              onAction={() => {
-                resetAndClose()
-                setTimeout(() => navigate('/knowledge/add-from/browser-history'), 80)
-              }}
-            >
-              {RECENT_BROWSER_DOWNLOADS.map(item => {
-                const key = shortcutKey(item.id)
-                const saved = savedBrowsingIds.includes(item.id)
-                return (
-                  <SelectableCard
-                    key={item.id}
-                    title={item.title}
-                    meta={`${item.time} · ${item.source}`}
-                    type={item.type}
-                    state={saved ? 'saved' : selectedShortcutIds.includes(key) ? 'selected' : 'default'}
-                    onClick={() => {
-                      if (!saved) toggleShortcut(key)
-                    }}
-                  />
-                )
-              })}
-            </RecentShortcutSection>
-
-            <SourceGroup
-              title="自动同步 🔄"
-              subtitle="授权一次，持续帮你抓取"
-              items={AUTO_SOURCES}
-              onClick={handleSourceClick}
-            />
-
-            <SourceGroup
-              title="手动添加 🤚"
-              subtitle="需要时主动选择"
-              items={MANUAL_SOURCES}
-              onClick={handleSourceClick}
-            />
-
-            {isQuickNotes && (
-              <button
-                onClick={handleNewQuickNote}
-                className="w-full h-12 rounded-card bg-brand-orange/[0.04] border border-brand-orange/20 px-3 flex items-center gap-3 active:bg-brand-orange-light transition-colors"
-              >
-                <div className="w-7 h-7 rounded-md bg-brand-orange/[0.08] flex items-center justify-center">
-                  <PenLine size={16} strokeWidth={1.8} className="text-brand-orange" />
-                </div>
-                <span className="text-card-title text-ink-primary">新建速记</span>
-                <span className="ml-auto text-caption text-ink-placeholder">快速记录灵感</span>
-              </button>
-            )}
-          </div>
-          <BottomActionBar
-            count={selectedShortcutCount}
-            onCancel={cancelShortcutSelection}
-            onConfirm={confirmShortcutSelection}
-            confirmLabel={confirmShortcutLabel}
+        <div className={`pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'} space-y-4`}>
+          <PasteLinkRow
+            value={linkValue}
+            onChange={setLinkValue}
+            onSave={openLinkSaveSheet}
           />
+
+          <RecentScrollSection
+            selectedIds={selectedShortcutIds}
+            savedIds={savedBrowsingIds}
+            onToggle={toggleShortcut}
+            onSeeAll={() => navigateTo('/knowledge/add-from/browser-history')}
+          />
+
+          <EntryRow
+            icon={RefreshCw}
+            iconBg="#FFF1E6"
+            iconColor="#FF7A00"
+            title="自动同步"
+            desc="浏览器 · 微信 · 网盘 · 截图 · 邮件 · 下载"
+            onClick={() => navigateTo(`/knowledge/${currentKbId}/add-from-auto`)}
+          />
+
+          <EntryRow
+            icon={Hand}
+            iconBg="#F8F8F8"
+            iconColor="#8C8C8C"
+            title="手动添加"
+            desc="上传文件 · 第三方分享 · AI 对话 · 扫一扫"
+            onClick={() => navigateTo(`/knowledge/${currentKbId}/add-from-manual`)}
+          />
+
+          {isQuickNotes && (
+            <button
+              onClick={handleNewQuickNote}
+              className="mx-4 w-[calc(100%-32px)] h-12 rounded-card bg-brand-orange/[0.04] border border-brand-orange/20 px-3 flex items-center gap-3 active:bg-brand-orange-light transition-colors"
+            >
+              <div className="w-9 h-9 rounded-[10px] bg-brand-orange-light flex items-center justify-center flex-shrink-0">
+                <PenLine size={16} strokeWidth={2} className="text-brand-orange" />
+              </div>
+              <span className="text-[14px] leading-5 font-semibold text-ink-primary">新建速记</span>
+              <span className="ml-auto text-[11px] leading-4 text-ink-placeholder">快速记录灵感</span>
+            </button>
+          )}
         </div>
 
-        <CloudPickerSheet
-          open={showCloudPicker}
-          onClose={() => setShowCloudPicker(false)}
-          onPick={handleCloudPick}
+        <BottomActionBar
+          count={selectedShortcutCount}
+          onCancel={cancelShortcutSelection}
+          onConfirm={confirmShortcutSelection}
+          confirmLabel={confirmShortcutLabel}
         />
       </BottomSheet>
 

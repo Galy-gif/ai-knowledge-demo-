@@ -20,6 +20,8 @@ import K15_AddFromUpload from './pages/knowledge/K15_AddFromUpload'
 import K16_AddFromThirdParty from './pages/knowledge/K16_AddFromThirdParty'
 import K17_AddFromAiChat from './pages/knowledge/K17_AddFromAiChat'
 import K18_AddFromScan from './pages/knowledge/K18_AddFromScan'
+import K19_AddFromAuto from './pages/knowledge/K19_AddFromAuto'
+import K20_AddFromManual from './pages/knowledge/K20_AddFromManual'
 import W01_WatchManage from './pages/watch/W01_WatchManage'
 import W02_TodayItems from './pages/watch/W02_TodayItems'
 
@@ -71,6 +73,8 @@ export default function App() {
           <Route path="/knowledge/add-from/third-party" element={<K16_AddFromThirdParty />} />
           <Route path="/knowledge/add-from/ai-chat" element={<K17_AddFromAiChat />} />
           <Route path="/knowledge/add-from/scan" element={<K18_AddFromScan />} />
+          <Route path="/knowledge/:kbId/add-from-auto" element={<K19_AddFromAuto />} />
+          <Route path="/knowledge/:kbId/add-from-manual" element={<K20_AddFromManual />} />
           <Route path="/knowledge/add-from/:source" element={<K14_AddFromSource />} />
 
           {/* Ask / Q */}
