@@ -1,6 +1,6 @@
 # Demo 开发进度
 
-> 最后更新：R38（K10 知识广场各分类 mock 数据扩充，9 个分类共 51 个 KB）
+> 最后更新：R39（Q01 蹲守提示条搬到 K01；K05 标识条删「重新整理」按钮）
 > 本文件由 Claude Code 维护，记录功能进度、产品决策和工作偏好。
 
 ---
@@ -198,3 +198,4 @@
 - **R36**：K06 添加内容抽屉重构——自动同步 6 + 手动添加 4 + 网盘二级 BottomSheet + 6 个 A 类来源页（K14 统一容器）+ 4 个 B 类页（K15/K16/K17/K18）；删除原 3 组来源教程视图和 `/knowledge/recent-browsing` ComingSoon 路由
 - **R37**：K05 删第二大脑模式「今日新进 8 条」卡 + CODE 模式「7 篇资料正在路上」进度卡；WatchContext mock 从 1 个知识库扩展到 5 个（kb_project_browser 3 任务 / kb1 2 / kb2 2 / kb3 2 / kb_output_review 1），K05 顶部蹲守状态条按当前 KB 动态显示运行中任务数和今日新进数
 - **R38**：K10 知识广场各分类 mock 数据扩充——`mockDiscoverKbs` 从 6 个扩展到 51 个，9 个分类（推荐/科技/职场/财经/生活/健康/教育/产业/人文/法律）每个都有 5-7 张卡片分本周热门 / 你可能感兴趣两组。`DiscoverKb` 新增 `inRecommend` 字段，K10 的「推荐」tab 只展示这 6 张精选 KB，其它分类按 `category` 过滤
+- **R39**：蹲守提示条从 Q01 首页搬到 K01 知识库主页——Q01 移除 useWatch + "🎯 今天蹲到 X 条"横条，K01 在 TopHeader 与 RecentSection 之间加 lucide Target 图标 + 浅橙底通栏（todayUnread > 0 才显示，跳 /watch/today）；K05「自动整理与维护」模式下管理方式标识条上的橙色「重新整理」文字按钮删除，AI 状态卡内的「重新整理」按钮保留

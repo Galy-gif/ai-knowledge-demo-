@@ -2360,15 +2360,6 @@ export default function K05_KnowledgeDetail() {
               {managementModeLabel}
             </span>
           </button>
-          {isAiMode && canEditManagementMode && (
-            <button
-              type="button"
-              onClick={runAiReorganize}
-              className="ml-3 text-[13px] font-medium leading-5 text-[#FF7A00]"
-            >
-              重新整理
-            </button>
-          )}
           <button
             type="button"
             onClick={openManagementModeSheet}
