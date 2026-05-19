@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Check, ChevronDown, ChevronLeft, ChevronRight, Compass, Edit3, Globe, Inbox, PenLine, Plus, Search, Target, Trash2, Unlink } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, Compass, Edit3, Globe, Inbox, PenLine, Plus, Search, Target, Trash2, Unlink } from 'lucide-react'
 import TabLayout from '../../components/layout/TabLayout'
 import RecentSection from '../../components/common/RecentSection'
 import SearchBar from '../../components/common/SearchBar'
@@ -155,6 +155,8 @@ function SelectionDot({ selected, visible }: { selected: boolean; visible: boole
     </div>
   )
 }
+
+const TODAY_EXPECTED_COUNT = 10
 
 export default function K01_KnowledgeHome() {
   const navigate = useNavigate()
@@ -502,11 +504,13 @@ export default function K01_KnowledgeHome() {
             onClick={() => navigate('/watch/today')}
             className="h-11 flex-shrink-0 flex items-center justify-between px-4 bg-[#FFF1E6] active:bg-[#FFE4D0] transition-colors"
           >
-            <div className="flex items-center gap-2">
-              <Target size={16} className="text-[#FF7A00]" />
-              <span className="text-[13px] text-ink-primary">今天蹲到 {todayUnread} 条新内容</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <Target size={16} className="text-[#FF7A00] flex-shrink-0" />
+              <span className="text-[13px] text-ink-primary truncate">
+                今天蹲到 {todayUnread} 条 · 预计蹲到 {TODAY_EXPECTED_COUNT} 条
+              </span>
             </div>
-            <span className="text-[11px] font-medium text-[#FF7A00]">查看 →</span>
+            <ArrowRight size={14} className="text-[#FF7A00] flex-shrink-0" />
           </button>
         )}
 
