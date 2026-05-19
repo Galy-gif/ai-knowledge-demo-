@@ -946,23 +946,6 @@ function ProjectSection({
   )
 }
 
-function OutputProgressCard() {
-  return (
-    <div className="mx-4 mt-3 rounded-[12px] border border-[#EEEEEE] bg-white px-4 py-3">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="text-[14px] font-semibold leading-5 text-ink-primary">7 篇资料正在路上</span>
-        <span className="text-[12px] leading-4 text-ink-secondary">距离成果还差 2 步</span>
-      </div>
-      <div className="grid grid-cols-4 gap-1">
-        <span className="h-1 rounded-full bg-[#FF7A00]" />
-        <span className="h-1 rounded-full bg-[#FF7A00]" />
-        <span className="h-1 rounded-full bg-[#FFE4D0]" />
-        <span className="h-1 rounded-full bg-[#EEEEEE]" />
-      </div>
-    </div>
-  )
-}
-
 function OutputStageBadge({ stage }: { stage: OutputStage }) {
   if (stage.badgeStyle === 'done') {
     return (
@@ -2461,15 +2444,6 @@ export default function K05_KnowledgeDetail() {
 
           {isSecondBrainMode && (
             <div className="relative z-[var(--z-content)] flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-4">
-              {/* Today's intake card */}
-              <div className="mx-4 mt-3 flex items-center gap-3 rounded-[12px] bg-[#F8F8F8] px-4 py-[14px]">
-                <Inbox size={24} className="flex-shrink-0 text-[#9CA3AF]" />
-                <div>
-                  <p className="text-[14px] font-semibold leading-5 text-[#1A1A1A]">今日新进 8 条</p>
-                  <p className="mt-0.5 text-[11px] text-ink-secondary">网页 3 · PDF 1 · 灵感 2 · 截图 2</p>
-                </div>
-              </div>
-
               {/* Horizontal scroll groups by content type */}
               {SECOND_BRAIN_GROUPS.map(group => {
                 const Icon = group.icon
@@ -2514,7 +2488,6 @@ export default function K05_KnowledgeDetail() {
 
           {isOutputMode && (
             <div className="relative z-[var(--z-content)] flex-1 min-h-0 overflow-y-auto scrollbar-hide pb-4">
-              <OutputProgressCard />
               <div className="px-4 pt-6">
                 {outputStages.map((stage, index) => (
                   <div key={stage.id}>
