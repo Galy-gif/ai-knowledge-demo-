@@ -56,6 +56,7 @@ export default function App() {
           <Route path="/knowledge/folder" element={<K09_FolderDetail />} />
           <Route path="/knowledge/square" element={<K10_KnowledgeSquare />} />
           <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
+          <Route path="/knowledge/kb/:id" element={<K11_TeamDetail />} />
           <Route path="/knowledge/recent" element={<K13_RecentAll />} />
           <Route path="/knowledge/recent-browsing" element={<ComingSoon />} />
 

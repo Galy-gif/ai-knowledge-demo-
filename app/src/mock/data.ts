@@ -105,6 +105,28 @@ export interface TeamKnowledgeBase {
   icon: string
 }
 
+export interface DiscoverKb {
+  id: string
+  name: string
+  description: string
+  coverEmoji: string
+  coverColor: string
+  author: { name: string; type: 'team' | 'personal' }
+  contentCount: number
+  subscriberCount: number
+  category: string
+  isSubscribed: boolean
+  section: 'hot' | 'recommended'
+}
+
+export interface DiscoverKbContentItem {
+  id: string
+  title: string
+  desc: string
+  time: string
+  type: string
+}
+
 export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker'
 
 export interface LightApp {
@@ -360,10 +382,10 @@ export const mockSubscribedKBs: KnowledgeBase[] = [
     type: 'subscribed',
   },
   {
-    id: 'kb4',
-    name: 'ProductLab 团队',
-    icon: '🏢',
-    color: '#8B5CF6',
+    id: 'kb_pm_interview',
+    name: 'PM 必备：用户访谈方法论',
+    icon: '💼',
+    color: '#3B82F6',
     fileCount: 89,
     updatedAt: '1小时前',
     managementMode: null,
@@ -371,23 +393,12 @@ export const mockSubscribedKBs: KnowledgeBase[] = [
     type: 'subscribed',
   },
   {
-    id: 'kb5',
-    name: 'Design Systems Lab',
+    id: 'kb_design_system',
+    name: '设计系统实战',
     icon: '🎨',
-    color: '#06B6D4',
+    color: '#EC4899',
     fileCount: 124,
     updatedAt: '昨天',
-    managementMode: null,
-    isSubscribed: true,
-    type: 'subscribed',
-  },
-  {
-    id: 'kb_invest_research',
-    name: '投资研究社',
-    icon: '💰',
-    color: '#F59E0B',
-    fileCount: 67,
-    updatedAt: '3天前',
     managementMode: null,
     isSubscribed: true,
     type: 'subscribed',
@@ -1040,6 +1051,154 @@ export const mockTeams: Team[] = [
     ],
   },
 ]
+
+export const mockDiscoverKbs: DiscoverKb[] = [
+  {
+    id: 'kb_japan_travel',
+    name: '日本旅行实战手册',
+    description: '关东+关西+九州 30 天行程模板与避坑指南',
+    coverEmoji: '✈️',
+    coverColor: '#CCFBF1',
+    author: { name: '旅行美食圈', type: 'team' },
+    contentCount: 256,
+    subscriberCount: 12800,
+    category: '生活',
+    isSubscribed: false,
+    section: 'hot',
+  },
+  {
+    id: 'kb_pm_interview',
+    name: 'PM 必备：用户访谈方法论',
+    description: '从访谈大纲到洞察沉淀的完整工作流',
+    coverEmoji: '💼',
+    coverColor: '#DBEAFE',
+    author: { name: 'ProductLab 团队', type: 'team' },
+    contentCount: 89,
+    subscriberCount: 5200,
+    category: '职场',
+    isSubscribed: true,
+    section: 'hot',
+  },
+  {
+    id: 'kb_stock_notes',
+    name: 'A 股投资笔记',
+    description: '每周财报分析 + 行业拐点判断',
+    coverEmoji: '📈',
+    coverColor: '#D1FAE5',
+    author: { name: '老张说投资', type: 'personal' },
+    contentCount: 312,
+    subscriberCount: 8700,
+    category: '财经',
+    isSubscribed: false,
+    section: 'hot',
+  },
+  {
+    id: 'kb_browser_trend',
+    name: 'AI 浏览器趋势观察',
+    description: '每周追踪 Arc、Dia 等新一代浏览器动向',
+    coverEmoji: '🌐',
+    coverColor: '#EDE9FE',
+    author: { name: 'Dialog 设计周报', type: 'team' },
+    contentCount: 67,
+    subscriberCount: 3400,
+    category: '科技',
+    isSubscribed: false,
+    section: 'recommended',
+  },
+  {
+    id: 'kb_design_system',
+    name: '设计系统实战',
+    description: 'Notion、Linear、Vercel 的设计语言拆解',
+    coverEmoji: '🎨',
+    coverColor: '#FCE7F3',
+    author: { name: 'Design Systems Lab', type: 'team' },
+    contentCount: 124,
+    subscriberCount: 6100,
+    category: '职场',
+    isSubscribed: true,
+    section: 'recommended',
+  },
+  {
+    id: 'kb_diet_recipe',
+    name: '减脂期食谱与营养',
+    description: '100+ 高蛋白低卡食谱与采购清单',
+    coverEmoji: '🥗',
+    coverColor: '#D1FAE5',
+    author: { name: '健身教练老王', type: 'personal' },
+    contentCount: 78,
+    subscriberCount: 4500,
+    category: '健康',
+    isSubscribed: false,
+    section: 'recommended',
+  },
+]
+
+export const mockDiscoverKbContents: Record<string, DiscoverKbContentItem[]> = {
+  'kb_japan_travel': [
+    { id: 'j1', title: '东京3天深度行程：涩谷 + 新宿 + 浅草', desc: '结合线路图，适合第一次去东京', time: '2天前', type: 'doc' },
+    { id: 'j2', title: '大阪美食图鉴：道顿堀到黑门市场', desc: '20+ 本地人推荐的居酒屋和食堂', time: '4天前', type: 'doc' },
+    { id: 'j3', title: '关西七日游总预算拆解', desc: '机票、住宿、餐饮、景点全覆盖', time: '1周前', type: 'pdf' },
+    { id: 'j4', title: '日本交通攻略：JR Pass vs 单程票', desc: '不同行程下的性价比对比', time: '1周前', type: 'doc' },
+    { id: 'j5', title: '京都寺庙打卡清单（附门票信息）', desc: '含金阁寺、岚山、伏见稻荷', time: '2周前', type: 'doc' },
+    { id: 'j6', title: '购物清单：药妆 / 零食 / 电器', desc: '按类型整理，附价格参考', time: '2周前', type: 'note' },
+    { id: 'j7', title: '九州行程：博多 + 长崎 + 熊本', desc: '鲜为人知的九州小众路线', time: '3周前', type: 'doc' },
+    { id: 'j8', title: '去日本最容易犯的15个错误', desc: '过来人总结，含交通和礼仪篇', time: '1个月前', type: 'note' },
+  ],
+  'kb_pm_interview': [
+    { id: 'pm1', title: '用户访谈大纲模板 v3', desc: '结构化的访谈引导脚本，适合 B 端和 C 端', time: '1天前', type: 'doc' },
+    { id: 'pm2', title: '访谈洞察沉淀：从记录到 Action', desc: '如何把访谈笔记转化为产品洞察', time: '3天前', type: 'note' },
+    { id: 'pm3', title: '招募受访者的7种方法', desc: '渠道、话术和筛选标准全解析', time: '5天前', type: 'doc' },
+    { id: 'pm4', title: '远程访谈工具对比：Zoom vs Dovetail', desc: '功能、价格、适用场景详细对比', time: '1周前', type: 'pdf' },
+    { id: 'pm5', title: '如何设计不引导用户的提问', desc: '避免确认性偏差的访谈技巧', time: '2周前', type: 'doc' },
+    { id: 'pm6', title: '访谈录音转写与分析工作流', desc: '结合 AI 工具，效率提升 3 倍', time: '2周前', type: 'note' },
+    { id: 'pm7', title: '用户访谈 vs 可用性测试：如何选', desc: '研究方法选择决策树', time: '3周前', type: 'doc' },
+    { id: 'pm8', title: '访谈报告写作规范', desc: '让利益相关方更容易采纳洞察', time: '1个月前', type: 'pdf' },
+    { id: 'pm9', title: '远程访谈中的非语言信号解读', desc: '表情、停顿与回避的意义', time: '1个月前', type: 'note' },
+    { id: 'pm10', title: '儿童用户访谈特别指南', desc: '与未成年用户访谈的注意事项', time: '2个月前', type: 'doc' },
+  ],
+  'kb_stock_notes': [
+    { id: 'st1', title: '2025 Q2 财报分析：消费板块', desc: '贵州茅台 + 海底捞 + 泡泡玛特', time: '1天前', type: 'pdf' },
+    { id: 'st2', title: '行业拐点信号：如何判断底部', desc: '结合成交量、PE 和政策周期', time: '3天前', type: 'note' },
+    { id: 'st3', title: 'A 股核心资产估值体系', desc: '消费/科技/医疗三大板块估值方法', time: '5天前', type: 'doc' },
+    { id: 'st4', title: '基金经理访谈精华：张坤论消费', desc: '易方达 2024 年度报告核心摘录', time: '1周前', type: 'pdf' },
+    { id: 'st5', title: '散户常犯的3类认知错误', desc: '追涨杀跌 / 频繁操作 / 过度分散', time: '2周前', type: 'note' },
+    { id: 'st6', title: '医药板块投资逻辑梳理', desc: '政策、老龄化与创新药三条主线', time: '3周前', type: 'doc' },
+    { id: 'st7', title: '定投 vs 择时：10年回测对比', desc: '用数据说话，结论出乎意料', time: '1个月前', type: 'pdf' },
+    { id: 'st8', title: '港股折价成因与投资机会', desc: 'AH 溢价率变化规律分析', time: '1个月前', type: 'doc' },
+  ],
+  'kb_browser_trend': [
+    { id: 'br1', title: 'Arc 浏览器第12次重大更新解析', desc: '新功能逻辑与产品策略分析', time: '2天前', type: 'note' },
+    { id: 'br2', title: 'Dia 发布：AI 原生浏览器的下一站', desc: 'The Browser Company 新产品深度解读', time: '4天前', type: 'doc' },
+    { id: 'br3', title: 'Safari 18 与 Chrome 126 功能对比', desc: '2025 上半年浏览器能力演进', time: '1周前', type: 'pdf' },
+    { id: 'br4', title: '侧边栏战争：Arc vs Sidebar vs Edge', desc: '三款主流侧边栏交互深度对比', time: '2周前', type: 'note' },
+    { id: 'br5', title: '浏览器历史：从 Mosaic 到 AI 浏览器', desc: '30 年演进脉络梳理', time: '3周前', type: 'doc' },
+    { id: 'br6', title: '2025 浏览器市场份额报告', desc: 'StatCounter 最新数据分析', time: '1个月前', type: 'pdf' },
+    { id: 'br7', title: '用户为什么还没离开 Chrome', desc: '生态锁定 vs 体验创新的博弈', time: '1个月前', type: 'note' },
+    { id: 'br8', title: 'Notion Web Clipper vs Arc Boost', desc: '浏览器内容捕获工具对比', time: '2个月前', type: 'doc' },
+  ],
+  'kb_design_system': [
+    { id: 'ds1', title: '组件命名规范 2025 版', desc: '从 Atomic Design 到 Component API', time: '2天前', type: 'doc' },
+    { id: 'ds2', title: 'Token 系统：从 Figma Variables 到代码', desc: '双向同步的设计系统工作流', time: '5天前', type: 'pdf' },
+    { id: 'ds3', title: 'Vercel Design 设计语言拆解', desc: '极简风格背后的决策逻辑', time: '1周前', type: 'note' },
+    { id: 'ds4', title: 'Linear 组件库开源分析', desc: 'Radix UI + Tailwind 的最佳实践', time: '2周前', type: 'doc' },
+    { id: 'ds5', title: 'Dark Mode Token 策略：4 种主流方案', desc: 'CSS 变量 / Tailwind / Figma 语义色对比', time: '3周前', type: 'pdf' },
+    { id: 'ds6', title: '组件文档写作指南', desc: '让开发者真正会用你的设计系统', time: '3周前', type: 'note' },
+    { id: 'ds7', title: '无障碍色彩对比度检查清单', desc: 'WCAG 2.1 合规实操指南', time: '1个月前', type: 'doc' },
+    { id: 'ds8', title: 'Notion 设计系统演进史', desc: '从乱到治的 5 年设计系统建设历程', time: '1个月前', type: 'pdf' },
+    { id: 'ds9', title: 'iOS 17 Design Kit 拆解', desc: 'Apple HIG 最新变化与工程适配', time: '2个月前', type: 'doc' },
+    { id: 'ds10', title: '设计系统健康度评估模型', desc: '6 个维度判断你的设计系统是否好用', time: '2个月前', type: 'note' },
+  ],
+  'kb_diet_recipe': [
+    { id: 'dr1', title: '鸡胸肉10种低卡做法', desc: '不干不柴的烹饪技巧详解', time: '1天前', type: 'note' },
+    { id: 'dr2', title: '减脂期外卖选择指南', desc: '美团、饿了么上的高蛋白低卡选项', time: '3天前', type: 'doc' },
+    { id: 'dr3', title: '一周减脂餐食材采购清单', desc: '1500 kcal 目标的采购指南', time: '5天前', type: 'doc' },
+    { id: 'dr4', title: '蛋白质食物热量速查表', desc: '50+ 常见食物对比', time: '1周前', type: 'pdf' },
+    { id: 'dr5', title: '间歇性断食 16:8 实操指南', desc: '常见误区与注意事项', time: '2周前', type: 'note' },
+    { id: 'dr6', title: '高蛋白早餐：6种10分钟做法', desc: '不用沙拉的营养早餐方案', time: '3周前', type: 'doc' },
+    { id: 'dr7', title: '运动后补餐的最佳时机与食物', desc: '科学依据 + 实践建议', time: '1个月前', type: 'note' },
+    { id: 'dr8', title: '低卡零食 Top 20', desc: '超市能买到的健康替代品', time: '1个月前', type: 'doc' },
+  ],
+}
 
 export const mockApps: LightApp[] = [
   {

@@ -5,10 +5,12 @@ import {
   type FileType,
   type KnowledgeFile,
   type Team,
+  type DiscoverKb,
   mockKnowledgeBases,
   mockSubscribedKBs,
   mockFiles,
   mockTeams,
+  mockDiscoverKbs,
 } from '../mock/data'
 
 export type SaveSourceType =
@@ -39,6 +41,9 @@ interface KnowledgeContextValue {
   subscribedBases: KnowledgeBase[]
   files: KnowledgeFile[]
   teams: Team[]
+  discoverKbs: DiscoverKb[]
+  subscribeDiscoverKb: (kbId: string) => void
+  unsubscribeDiscoverKb: (kbId: string) => void
   activeBase: KnowledgeBase | null
   setActiveBase: (kb: KnowledgeBase | null) => void
   askSelectedBaseIds: string[]
@@ -111,6 +116,7 @@ export function KnowledgeProvider({ children }: { children: ReactNode }) {
   const [subscribedBases, setSubscribedBases] = useState<KnowledgeBase[]>(mockSubscribedKBs)
   const [files, setFiles] = useState<KnowledgeFile[]>(mockFiles)
   const [teams, setTeams] = useState<Team[]>(mockTeams)
+  const [discoverKbs, setDiscoverKbs] = useState<DiscoverKb[]>(mockDiscoverKbs)
   const [activeBase, setActiveBase] = useState<KnowledgeBase | null>(mockKnowledgeBases[0])
   const [askSelectedBaseIds, setAskSelectedBaseIds] = useState<string[]>([])
   const [activeFile, setActiveFile] = useState<KnowledgeFile | null>(null)
@@ -355,6 +361,33 @@ export function KnowledgeProvider({ children }: { children: ReactNode }) {
     return file
   }
 
+  const subscribeDiscoverKb = (kbId: string) => {
+    setDiscoverKbs(prev => prev.map(kb => kb.id === kbId ? { ...kb, isSubscribed: true } : kb))
+    const kb = discoverKbs.find(k => k.id === kbId)
+    if (!kb) return
+    const newBase: KnowledgeBase = {
+      id: kb.id,
+      name: kb.name,
+      icon: kb.coverEmoji,
+      color: kb.coverColor.replace(/[^#\w]/g, '') || '#14B8A6',
+      fileCount: kb.contentCount,
+      updatedAt: '刚刚',
+      managementMode: null,
+      isSubscribed: true,
+      type: 'subscribed',
+    }
+    setSubscribedBases(prev =>
+      prev.some(b => b.id === kb.id) ? prev : [...prev, newBase]
+    )
+  }
+
+  const unsubscribeDiscoverKb = (kbId: string) => {
+    setDiscoverKbs(prev => prev.map(kb => kb.id === kbId ? { ...kb, isSubscribed: false } : kb))
+    setSubscribedBases(prev => prev.filter(b => b.id !== kbId))
+    setAskSelectedBaseIds(prev => prev.filter(id => id !== kbId))
+    setActiveBase(prev => prev?.id === kbId ? null : prev)
+  }
+
   const appendToNote = (content: SaveSourceContent, noteId: string) => {
     const target = files.find(file => file.id === noteId && file.type === 'note')
     if (!target) return undefined
@@ -377,7 +410,7 @@ export function KnowledgeProvider({ children }: { children: ReactNode }) {
 
   return (
     <KnowledgeContext.Provider value={{
-      bases, subscribedBases, files, teams,
+      bases, subscribedBases, files, teams, discoverKbs, subscribeDiscoverKb, unsubscribeDiscoverKb,
       activeBase, setActiveBase,
       askSelectedBaseIds, setAskSelectedBaseIds,
       activeFile, setActiveFile,
