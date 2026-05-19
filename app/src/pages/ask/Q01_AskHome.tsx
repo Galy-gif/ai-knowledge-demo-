@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   AtSign,
   Check,
@@ -103,11 +103,20 @@ function getTemplateTone(template: PwaTemplate) {
 
 export default function Q01_AskHome() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { showToast } = useUser()
   const { bases, subscribedBases, askSelectedBaseIds } = useKnowledge()
   const [mode, setMode] = useState<AskMode>('ai')
   const [input, setInput] = useState('')
-  const [showSkills, setShowSkills] = useState(false)
+  const [showSkills, setShowSkills] = useState(Boolean((location.state as { reopenSkills?: boolean } | null)?.reopenSkills))
+
+  useEffect(() => {
+    const state = location.state as { reopenSkills?: boolean } | null
+    if (state?.reopenSkills) {
+      setShowSkills(true)
+      window.history.replaceState({}, '')
+    }
+  }, [location.state])
   const [showModeMenu, setShowModeMenu] = useState(false)
   const [homeTemplates, setHomeTemplates] = useState<PwaTemplate[]>(() => getDefaultHomeTemplates())
   const [refreshingTemplates, setRefreshingTemplates] = useState(false)

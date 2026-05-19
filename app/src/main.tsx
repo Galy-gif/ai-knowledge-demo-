@@ -8,6 +8,7 @@ import { AppsProvider } from './context/AppsContext.tsx'
 import { AnnotationsProvider } from './context/AnnotationContext.tsx'
 import { MultiSelectProvider } from './context/MultiSelectContext.tsx'
 import { WatchProvider } from './context/WatchContext.tsx'
+import { SkillsProvider } from './context/SkillsContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
           <MultiSelectProvider>
             <AppsProvider>
               <WatchProvider>
-                <App />
+                <SkillsProvider>
+                  <App />
+                </SkillsProvider>
               </WatchProvider>
             </AppsProvider>
           </MultiSelectProvider>

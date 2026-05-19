@@ -1,46 +1,19 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  Globe,
-  PenLine,
-  Sparkles,
-  type LucideIcon,
-} from 'lucide-react'
-import BottomSheet from '../../components/ui/BottomSheet'
+import { useNavigate } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, Sparkles } from 'lucide-react'
+import { useUser } from '../../context/UserContext'
+import { useSkills } from '../../context/SkillsContext'
 
 export interface MagicAction {
   label: string
   desc: string
   prompt: string
-  Icon: LucideIcon
 }
 
-const MAGIC_ACTIONS: MagicAction[] = [
-  {
-    label: '总结',
-    desc: '把长内容压缩成要点',
-    prompt: '请帮我总结下面这段内容，输出 5 个关键要点：',
-    Icon: Sparkles,
-  },
-  {
-    label: '翻译',
-    desc: '保留语气的中英互译',
-    prompt: '请将下面内容翻译成自然、专业的英文：',
-    Icon: Globe,
-  },
-  {
-    label: '润色',
-    desc: '让表达更清晰克制',
-    prompt: '请帮我润色下面这段文字，保持原意但让表达更清晰：',
-    Icon: PenLine,
-  },
-  {
-    label: '续写',
-    desc: '顺着已有思路补下一段',
-    prompt: '请基于下面内容继续写，保持同样的语气和结构：',
-    Icon: FileText,
-  },
+const RECOMMENDED_SKILLS: MagicAction[] = [
+  { label: '总结', desc: '把长内容压缩成要点', prompt: '请帮我总结下面这段内容，输出 5 个关键要点：' },
+  { label: '找相关', desc: '在你的知识库中找相关资料', prompt: '在我的知识库中搜索与下面内容相关的资料：' },
+  { label: '追问 3 问', desc: 'AI 帮你深挖这段内容', prompt: '基于下面这段内容，提出 3 个最值得追问的问题：' },
+  { label: '改写口吻', desc: '给老板/客户/同事的不同版本', prompt: '把下面内容改写成给老板汇报、给客户介绍、给同事同步三个版本：' },
 ]
 
 export default function Q02_SkillsSheet({
@@ -52,45 +25,208 @@ export default function Q02_SkillsSheet({
   onClose: () => void
   onMagicApply: (action: MagicAction) => void
 }) {
+  const navigate = useNavigate()
+  const { showToast } = useUser()
+  const { userSkills, aiSuggestionDismissed, dismissAiSuggestion } = useSkills()
+
+  if (!open) return null
+
   return (
-    <BottomSheet
-      open={open}
-      onClose={onClose}
-      title="妙招"
-      headerLeft={
-        <button
-          onClick={onClose}
-          aria-label="返回"
-          className="p-1 text-ink-secondary"
+    <div className="absolute inset-0 z-40 flex flex-col justify-end">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-t-card-xl shadow-sheet flex flex-col h-[88%] max-h-[88%]">
+        <div className="flex items-center justify-center pt-3 pb-1 flex-shrink-0">
+          <div className="w-10 h-1 bg-ink-placeholder/40 rounded-pill" />
+        </div>
+
+        {/* Header */}
+        <div className="h-12 flex items-center px-4 border-b border-line-base flex-shrink-0">
+          <button onClick={onClose} aria-label="返回" className="p-1 -ml-1 text-ink-secondary">
+            <ChevronLeft size={22} />
+          </button>
+          <span className="ml-2 text-[16px] leading-6 font-semibold text-ink-primary">妙招</span>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+          {/* AI suggestion banner */}
+          {!aiSuggestionDismissed && (
+            <div
+              style={{
+                margin: '14px 14px 16px',
+                padding: 12,
+                backgroundColor: '#FFF1E6',
+                border: '1px solid #FFE4D0',
+                borderRadius: 12,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                <Sparkles size={13} color="#FF7A00" />
+                <span style={{ fontSize: 11, fontWeight: 500, color: '#FF7A00' }}>
+                  AI 发现一个工作模式
+                </span>
+              </div>
+              <p style={{ fontSize: 11, lineHeight: 1.55, color: '#4A4A4A', marginBottom: 10 }}>
+                你最近 5 次都在「用户访谈库」做相似的结构化整理，是否保存为妙招？
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => navigate('/skill/from-ai')}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#FF7A00',
+                    color: '#FFFFFF',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    padding: '7px 0',
+                    borderRadius: 8,
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  查看 →
+                </button>
+                <button
+                  type="button"
+                  onClick={dismissAiSuggestion}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#9CA3AF',
+                    fontSize: 11,
+                    padding: '7px 12px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  忽略
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Recommended */}
+          <section style={{ padding: '0 14px', marginTop: aiSuggestionDismissed ? 16 : 0 }}>
+            <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 8 }}>推荐</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {RECOMMENDED_SKILLS.map(action => (
+                <button
+                  key={action.label}
+                  type="button"
+                  onClick={() => onMagicApply(action)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    backgroundColor: '#F8F8F8',
+                    borderRadius: 10,
+                    padding: '11px 12px',
+                    width: '100%',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A', marginBottom: 2 }}>
+                      {action.label}
+                    </p>
+                    <p style={{ fontSize: 10, color: '#9CA3AF' }}>{action.desc}</p>
+                  </div>
+                  <ChevronRight size={13} color="#9CA3AF" style={{ flexShrink: 0 }} />
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* My skills */}
+          <section style={{ padding: '0 14px', marginTop: 18, paddingBottom: 16 }}>
+            <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 8 }}>我的妙招</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {userSkills.map(skill => (
+                <div
+                  key={skill.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    backgroundColor: '#F8F8F8',
+                    borderRadius: 10,
+                    padding: '11px 12px',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => onMagicApply({ label: skill.name, desc: skill.desc, prompt: skill.prompt ?? `请按「${skill.name}」的方式处理下面这段内容：` })}
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A', marginBottom: 2 }}>
+                      {skill.name}
+                    </p>
+                    <p style={{ fontSize: 10, color: '#9CA3AF', marginBottom: 3 }}>{skill.desc}</p>
+                    <p style={{ fontSize: 10, color: '#9CA3AF' }}>{skill.meta}</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => showToast('使用 / 编辑 / 删除（mock）')}
+                    aria-label="更多"
+                    style={{
+                      flexShrink: 0,
+                      marginTop: 2,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 2,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <MoreHorizontal size={13} color="#9CA3AF" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            padding: '12px 14px',
+            borderTop: '0.5px solid #EEEEEE',
+            flexShrink: 0,
+          }}
         >
-          <ChevronLeft size={24} />
-        </button>
-      }
-    >
-      <div className="px-5 py-3">
-        <p className="text-caption text-ink-placeholder mb-3">快速处理</p>
-        <div className="grid grid-cols-1 gap-2">
-          {MAGIC_ACTIONS.map(action => {
-            const { Icon } = action
-            return (
-              <button
-                key={action.label}
-                onClick={() => onMagicApply(action)}
-                className="w-full flex items-center gap-3 p-3.5 bg-surface-card rounded-card border border-line-base text-left active:bg-white transition-colors"
-              >
-                <div className="w-10 h-10 rounded-card bg-white border border-line-base flex items-center justify-center flex-shrink-0">
-                  <Icon size={18} className="text-brand-orange" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-card-title text-ink-primary">{action.label}</p>
-                  <p className="text-caption text-ink-placeholder mt-0.5">{action.desc}</p>
-                </div>
-                <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
-              </button>
-            )
-          })}
+          <button
+            type="button"
+            onClick={() => navigate('/skill/create')}
+            style={{
+              width: '100%',
+              backgroundColor: '#FFF1E6',
+              color: '#FF7A00',
+              border: '1px dashed #FF7A00',
+              padding: '10px 0',
+              borderRadius: 10,
+              fontSize: 12,
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              cursor: 'pointer',
+            }}
+          >
+            <Plus size={13} color="#FF7A00" />
+            创建妙招
+          </button>
         </div>
       </div>
-    </BottomSheet>
+    </div>
   )
 }
