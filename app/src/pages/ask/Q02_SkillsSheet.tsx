@@ -4,6 +4,37 @@ import { useUser } from '../../context/UserContext'
 import { useSkills } from '../../context/SkillsContext'
 import { PRESET_SKILLS, type MagicAction } from '../../mock/skills'
 
+const SECTION_TITLE_STYLE: React.CSSProperties = {
+  fontSize: 12,
+  color: '#9CA3AF',
+  marginBottom: 10,
+}
+
+const SKILL_CARD_STYLE: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  backgroundColor: '#F8F8F8',
+  borderRadius: 10,
+  padding: '12px 14px',
+  width: '100%',
+  border: 'none',
+  textAlign: 'left',
+  cursor: 'pointer',
+}
+
+const SKILL_NAME_STYLE: React.CSSProperties = {
+  fontSize: 14,
+  fontWeight: 500,
+  color: '#1A1A1A',
+  marginBottom: 3,
+}
+
+const SKILL_DESC_STYLE: React.CSSProperties = {
+  fontSize: 12,
+  color: '#9CA3AF',
+}
+
 export default function Q02_SkillsSheet({
   open,
   onClose,
@@ -15,9 +46,20 @@ export default function Q02_SkillsSheet({
 }) {
   const navigate = useNavigate()
   const { showToast } = useUser()
-  const { userSkills, aiSuggestionDismissed, dismissAiSuggestion } = useSkills()
+  const { userSkills, aiSuggestionDismissed, dismissAiSuggestion, addUserSkill } = useSkills()
 
   if (!open) return null
+
+  const handleAdopt = () => {
+    addUserSkill({
+      name: '用户访谈结构化整理',
+      desc: '按问题/痛点/需求三类提取访谈要点',
+      placeholder: '粘贴访谈记录或输入你的问题…',
+      kbNames: ['用户访谈库'],
+    })
+    dismissAiSuggestion()
+    showToast('已保存为妙招', 'success')
+  }
 
   return (
     <div className="absolute inset-0 z-40 flex flex-col justify-end">
@@ -50,40 +92,56 @@ export default function Q02_SkillsSheet({
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                 <Sparkles size={13} color="#FF7A00" />
-                <span style={{ fontSize: 11, fontWeight: 500, color: '#FF7A00' }}>
+                <span style={{ fontSize: 12, fontWeight: 500, color: '#FF7A00' }}>
                   AI 发现一个工作模式
                 </span>
               </div>
-              <p style={{ fontSize: 11, lineHeight: 1.55, color: '#4A4A4A', marginBottom: 10 }}>
+              <p style={{ fontSize: 12, lineHeight: 1.6, color: '#4A4A4A', marginBottom: 10 }}>
                 你最近 5 次都在「用户访谈库」做相似的结构化整理，是否保存为妙招？
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <button
                   type="button"
                   onClick={() => navigate('/skill/from-ai')}
                   style={{
-                    flex: 1,
-                    backgroundColor: '#FF7A00',
-                    color: '#FFFFFF',
+                    backgroundColor: '#FFFFFF',
+                    color: '#FF7A00',
+                    border: '0.5px solid #FF7A00',
                     fontSize: 11,
                     fontWeight: 500,
-                    padding: '7px 0',
+                    padding: '6px 14px',
                     borderRadius: 8,
-                    border: 'none',
                     cursor: 'pointer',
                   }}
                 >
-                  查看 →
+                  查看
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAdopt}
+                  style={{
+                    backgroundColor: '#FF7A00',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    cursor: 'pointer',
+                  }}
+                >
+                  采用
                 </button>
                 <button
                   type="button"
                   onClick={dismissAiSuggestion}
                   style={{
+                    marginLeft: 'auto',
                     backgroundColor: 'transparent',
                     color: '#9CA3AF',
-                    fontSize: 11,
-                    padding: '7px 12px',
                     border: 'none',
+                    fontSize: 11,
+                    padding: '6px 10px',
                     cursor: 'pointer',
                   }}
                 >
@@ -95,33 +153,20 @@ export default function Q02_SkillsSheet({
 
           {/* Recommended */}
           <section style={{ padding: '0 14px', marginTop: aiSuggestionDismissed ? 16 : 0 }}>
-            <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 8 }}>推荐</p>
+            <p style={SECTION_TITLE_STYLE}>可能需要的妙招</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {PRESET_SKILLS.map(action => (
                 <button
                   key={action.id}
                   type="button"
                   onClick={() => onMagicApply(action)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    backgroundColor: '#F8F8F8',
-                    borderRadius: 10,
-                    padding: '11px 12px',
-                    width: '100%',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                  }}
+                  style={SKILL_CARD_STYLE}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A', marginBottom: 2 }}>
-                      {action.name}
-                    </p>
-                    <p style={{ fontSize: 10, color: '#9CA3AF' }}>{action.desc}</p>
+                    <p style={SKILL_NAME_STYLE}>{action.name}</p>
+                    <p style={SKILL_DESC_STYLE}>{action.desc}</p>
                   </div>
-                  <ChevronRight size={13} color="#9CA3AF" style={{ flexShrink: 0 }} />
+                  <ChevronRight size={14} color="#9CA3AF" style={{ flexShrink: 0 }} />
                 </button>
               ))}
             </div>
@@ -129,7 +174,7 @@ export default function Q02_SkillsSheet({
 
           {/* My skills */}
           <section style={{ padding: '0 14px', marginTop: 18, paddingBottom: 16 }}>
-            <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 8 }}>我的妙招</p>
+            <p style={SECTION_TITLE_STYLE}>我的妙招</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {userSkills.map(skill => (
                 <div
@@ -140,7 +185,7 @@ export default function Q02_SkillsSheet({
                     gap: 10,
                     backgroundColor: '#F8F8F8',
                     borderRadius: 10,
-                    padding: '11px 12px',
+                    padding: '12px 14px',
                   }}
                 >
                   <button
@@ -162,11 +207,9 @@ export default function Q02_SkillsSheet({
                       cursor: 'pointer',
                     }}
                   >
-                    <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A', marginBottom: 2 }}>
-                      {skill.name}
-                    </p>
-                    <p style={{ fontSize: 10, color: '#9CA3AF', marginBottom: 3 }}>{skill.desc}</p>
-                    <p style={{ fontSize: 10, color: '#9CA3AF' }}>{skill.meta}</p>
+                    <p style={SKILL_NAME_STYLE}>{skill.name}</p>
+                    <p style={{ ...SKILL_DESC_STYLE, marginBottom: 3 }}>{skill.desc}</p>
+                    <p style={SKILL_DESC_STYLE}>{skill.meta}</p>
                   </button>
                   <button
                     type="button"
@@ -181,7 +224,7 @@ export default function Q02_SkillsSheet({
                       cursor: 'pointer',
                     }}
                   >
-                    <MoreHorizontal size={13} color="#9CA3AF" />
+                    <MoreHorizontal size={14} color="#9CA3AF" />
                   </button>
                 </div>
               ))}

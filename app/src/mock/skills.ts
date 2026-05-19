@@ -10,10 +10,10 @@ export interface MagicAction {
 
 export const PRESET_SKILLS: MagicAction[] = [
   {
-    id: 'skill_summary',
-    name: '总结',
-    desc: '把长内容压缩成要点',
-    placeholder: '粘贴或输入要总结的内容…',
+    id: 'skill_translate',
+    name: '翻译',
+    desc: '保留语气的中英互译',
+    placeholder: '粘贴或输入要翻译的内容…',
     type: 'preset',
   },
   {
@@ -24,17 +24,17 @@ export const PRESET_SKILLS: MagicAction[] = [
     type: 'preset',
   },
   {
-    id: 'skill_followup',
-    name: '追问 3 问',
-    desc: 'AI 帮你深挖这段内容',
-    placeholder: '粘贴或输入要深挖的内容…',
+    id: 'skill_polish',
+    name: '润色',
+    desc: '让表达更清晰克制',
+    placeholder: '粘贴或输入要润色的内容…',
     type: 'preset',
   },
   {
-    id: 'skill_rewrite',
-    name: '改写口吻',
-    desc: '给老板/客户/同事的不同版本',
-    placeholder: '粘贴或输入要改写的内容…',
+    id: 'skill_summary',
+    name: '总结',
+    desc: '把长内容压缩成要点',
+    placeholder: '粘贴或输入要总结的内容…',
     type: 'preset',
   },
 ]
