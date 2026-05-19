@@ -2,19 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, MoreHorizontal, Plus, Sparkles } from 'lucide-react'
 import { useUser } from '../../context/UserContext'
 import { useSkills } from '../../context/SkillsContext'
-
-export interface MagicAction {
-  label: string
-  desc: string
-  prompt: string
-}
-
-const RECOMMENDED_SKILLS: MagicAction[] = [
-  { label: '总结', desc: '把长内容压缩成要点', prompt: '请帮我总结下面这段内容，输出 5 个关键要点：' },
-  { label: '找相关', desc: '在你的知识库中找相关资料', prompt: '在我的知识库中搜索与下面内容相关的资料：' },
-  { label: '追问 3 问', desc: 'AI 帮你深挖这段内容', prompt: '基于下面这段内容，提出 3 个最值得追问的问题：' },
-  { label: '改写口吻', desc: '给老板/客户/同事的不同版本', prompt: '把下面内容改写成给老板汇报、给客户介绍、给同事同步三个版本：' },
-]
+import { PRESET_SKILLS, type MagicAction } from '../../mock/skills'
 
 export default function Q02_SkillsSheet({
   open,
@@ -109,9 +97,9 @@ export default function Q02_SkillsSheet({
           <section style={{ padding: '0 14px', marginTop: aiSuggestionDismissed ? 16 : 0 }}>
             <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 8 }}>推荐</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {RECOMMENDED_SKILLS.map(action => (
+              {PRESET_SKILLS.map(action => (
                 <button
-                  key={action.label}
+                  key={action.id}
                   type="button"
                   onClick={() => onMagicApply(action)}
                   style={{
@@ -129,7 +117,7 @@ export default function Q02_SkillsSheet({
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A', marginBottom: 2 }}>
-                      {action.label}
+                      {action.name}
                     </p>
                     <p style={{ fontSize: 10, color: '#9CA3AF' }}>{action.desc}</p>
                   </div>
@@ -157,7 +145,13 @@ export default function Q02_SkillsSheet({
                 >
                   <button
                     type="button"
-                    onClick={() => onMagicApply({ label: skill.name, desc: skill.desc, prompt: skill.prompt ?? `请按「${skill.name}」的方式处理下面这段内容：` })}
+                    onClick={() => onMagicApply({
+                      id: skill.id,
+                      name: skill.name,
+                      desc: skill.desc,
+                      placeholder: skill.placeholder,
+                      type: 'mine',
+                    })}
                     style={{
                       flex: 1,
                       minWidth: 0,

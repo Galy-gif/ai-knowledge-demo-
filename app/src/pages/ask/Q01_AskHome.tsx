@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   AtSign,
+  Bolt,
   Check,
   ChevronDown,
   ChevronRight,
@@ -12,12 +13,15 @@ import {
   Search,
   Send,
   Sparkles,
+  X,
   Zap,
 } from 'lucide-react'
 import TabLayout from '../../components/layout/TabLayout'
-import Q02_SkillsSheet, { type MagicAction } from './Q02_SkillsSheet'
+import Q02_SkillsSheet from './Q02_SkillsSheet'
+import { PRESET_SKILLS, type MagicAction } from '../../mock/skills'
 import { useUser } from '../../context/UserContext'
 import { useKnowledge } from '../../context/KnowledgeContext'
+import { useSkills } from '../../context/SkillsContext'
 import { pwaTemplates, type PwaTemplate } from '../../mock/pwaTemplates'
 
 type AskMode = 'ai' | 'web' | 'task'
@@ -32,7 +36,7 @@ const MODE_META: Record<AskMode, {
   ai: {
     label: 'AI 问答',
     desc: '用知识库和 AI 帮你回答问题',
-    placeholder: '问一问…',
+    placeholder: '输入你的问题或内容…',
     Icon: Sparkles,
     suggestions: [
       '如何在知识库中快速找到历史决策？',
@@ -105,9 +109,11 @@ export default function Q01_AskHome() {
   const navigate = useNavigate()
   const location = useLocation()
   const { showToast } = useUser()
-  const { bases, subscribedBases, askSelectedBaseIds } = useKnowledge()
+  const { bases, subscribedBases, askSelectedBaseIds, setAskSelectedBaseIds } = useKnowledge()
+  const { userSkills } = useSkills()
   const [mode, setMode] = useState<AskMode>('ai')
   const [input, setInput] = useState('')
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null)
   const [showSkills, setShowSkills] = useState(Boolean((location.state as { reopenSkills?: boolean } | null)?.reopenSkills))
 
   useEffect(() => {
@@ -124,11 +130,26 @@ export default function Q01_AskHome() {
   const CurrentModeIcon = MODE_META[mode].Icon
   const allBases = [...bases, ...subscribedBases]
   const askSelectedBases = allBases.filter(kb => askSelectedBaseIds.includes(kb.id))
-  const kbStatus = askSelectedBases.length === 0
+  const kbSlotLabel = askSelectedBases.length === 0
     ? ''
     : askSelectedBases.length === 1
       ? askSelectedBases[0].name
-      : `已选 ${askSelectedBases.length} 个`
+      : `${askSelectedBases[0].name} +${askSelectedBases.length - 1}`
+  const selectedSkill = useMemo<MagicAction | null>(() => {
+    if (!selectedSkillId) return null
+    const preset = PRESET_SKILLS.find(s => s.id === selectedSkillId)
+    if (preset) return preset
+    const mine = userSkills.find(s => s.id === selectedSkillId)
+    if (!mine) return null
+    return {
+      id: mine.id,
+      name: mine.name,
+      desc: mine.desc,
+      placeholder: mine.placeholder,
+      type: 'mine',
+    }
+  }, [selectedSkillId, userSkills])
+  const inputPlaceholder = (mode === 'ai' && selectedSkill?.placeholder) || MODE_META[mode].placeholder
 
   const submitQuery = (rawText: string) => {
     const text = rawText.trim()
@@ -175,14 +196,36 @@ export default function Q01_AskHome() {
   }
 
   const handleMagicAction = (action: MagicAction) => {
-    setMode('ai')
-    setInput(action.prompt)
+    setSelectedSkillId(action.id)
     setShowSkills(false)
   }
 
   const handleModeChange = (nextMode: AskMode) => {
-    setMode(nextMode)
     setShowModeMenu(false)
+    if (nextMode === mode) return
+    setMode(nextMode)
+    if (nextMode !== 'ai' && selectedSkillId) {
+      setSelectedSkillId(null)
+      showToast(`已清除妙招，${MODE_META[nextMode].label}下不可用`)
+    }
+  }
+
+  const handleSkillButtonClick = () => {
+    if (mode !== 'ai') {
+      setMode('ai')
+      showToast('已切换到 AI 问答模式')
+    }
+    setShowSkills(true)
+  }
+
+  const clearSkill = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation()
+    setSelectedSkillId(null)
+  }
+
+  const clearKb = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation()
+    setAskSelectedBaseIds([])
   }
 
   return (
@@ -329,23 +372,132 @@ export default function Q01_AskHome() {
                 })}
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => setShowSkills(true)}
-              className="flex items-center gap-1.5 px-[10px] py-[5px] bg-[#F5F5F5] rounded-full text-[12px] leading-4 text-black"
-            >
-              <Zap size={13} className="text-[#FF7A00]" />
-              妙招
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/ask/select-kb')}
-              className={`flex items-center gap-1.5 px-[10px] py-[5px] bg-[#F5F5F5] rounded-full text-[12px] leading-4 min-w-0 ${kbStatus ? 'text-brand-orange' : 'text-black'}`}
-            >
-              <AtSign size={13} className="text-[#FF7A00]" />
-              <span className="whitespace-nowrap">知识库</span>
-              {kbStatus && <span className="max-w-[92px] truncate">· {kbStatus}</span>}
-            </button>
+            {selectedSkill ? (
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label={`妙招：${selectedSkill.name}（点击更换，点击 × 清除）`}
+                onClick={handleSkillButtonClick}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSkillButtonClick() } }}
+                className="flex items-center gap-1 rounded-full cursor-pointer select-none"
+                style={{
+                  backgroundColor: '#FFF1E6',
+                  border: '0.5px solid #FFE4D0',
+                  padding: '5px 6px 5px 10px',
+                  maxWidth: 130,
+                  minWidth: 0,
+                }}
+              >
+                <Bolt size={11} className="text-[#FF7A00]" style={{ flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontSize: 11,
+                    lineHeight: '14px',
+                    fontWeight: 500,
+                    color: '#FF7A00',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    minWidth: 0,
+                  }}
+                >
+                  {selectedSkill.name}
+                </span>
+                <span
+                  role="button"
+                  tabIndex={0}
+                  aria-label="清除妙招"
+                  onClick={clearSkill}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') clearSkill(e) }}
+                  style={{
+                    flexShrink: 0,
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    backgroundColor: '#FFFFFF',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <X size={9} className="text-[#FF7A00]" />
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSkillButtonClick}
+                className="flex items-center gap-1.5 rounded-full"
+                style={{ backgroundColor: '#F8F8F8', padding: '5px 10px' }}
+              >
+                <Bolt size={11} className="text-[#FF7A00]" />
+                <span style={{ fontSize: 11, lineHeight: '14px', color: '#4A4A4A' }}>妙招</span>
+              </button>
+            )}
+            {kbSlotLabel ? (
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label={`知识库：${kbSlotLabel}（点击修改，点击 × 清除）`}
+                onClick={() => navigate('/ask/select-kb')}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/ask/select-kb') } }}
+                className="flex items-center gap-1 rounded-full cursor-pointer select-none"
+                style={{
+                  backgroundColor: '#F5F5F5',
+                  border: '0.5px solid #EEEEEE',
+                  padding: '5px 6px 5px 10px',
+                  maxWidth: 130,
+                  minWidth: 0,
+                }}
+              >
+                <AtSign size={11} className="text-[#4A4A4A]" style={{ flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontSize: 11,
+                    lineHeight: '14px',
+                    fontWeight: 500,
+                    color: '#4A4A4A',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    minWidth: 0,
+                  }}
+                >
+                  {kbSlotLabel}
+                </span>
+                <span
+                  role="button"
+                  tabIndex={0}
+                  aria-label="清除知识库"
+                  onClick={clearKb}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') clearKb(e) }}
+                  style={{
+                    flexShrink: 0,
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    backgroundColor: '#FFFFFF',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <X size={9} className="text-[#9CA3AF]" />
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigate('/ask/select-kb')}
+                className="flex items-center gap-1.5 rounded-full"
+                style={{ backgroundColor: '#F8F8F8', padding: '5px 10px' }}
+              >
+                <AtSign size={11} className="text-[#4A4A4A]" />
+                <span style={{ fontSize: 11, lineHeight: '14px', color: '#4A4A4A' }}>知识库</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -353,7 +505,7 @@ export default function Q01_AskHome() {
               <textarea
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                placeholder={MODE_META[mode].placeholder}
+                placeholder={inputPlaceholder}
                 className="flex-1 h-5 bg-transparent resize-none text-[14px] leading-5 text-ink-primary outline-none placeholder:text-[#9CA3AF] overflow-hidden"
                 rows={1}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}

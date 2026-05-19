@@ -22,7 +22,13 @@ export default function Q08_SkillFromAi() {
 
   const handleSave = () => {
     if (!canSave) return
-    addUserSkill({ name: name.trim(), desc: desc.trim(), prompt, kbNames: kbs })
+    addUserSkill({
+      name: name.trim(),
+      desc: desc.trim(),
+      prompt,
+      kbNames: kbs,
+      placeholder: '粘贴访谈记录或输入你的问题…',
+    })
     showToast('已保存为妙招')
     setTimeout(() => navigate('/ask', { state: { reopenSkills: true } }), 450)
   }
