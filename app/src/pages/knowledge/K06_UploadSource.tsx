@@ -3,16 +3,54 @@ import { useNavigate } from 'react-router-dom'
 import {
   Check,
   ChevronRight,
-  Hand,
   Link as LinkIcon,
   PenLine,
-  RefreshCw,
 } from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
 import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
 import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type FileType, type KnowledgeFile } from '../../mock/data'
+
+interface SourceIcon {
+  key: string
+  emoji: string
+  bg: string
+  label: string
+  route?: string
+}
+
+const AUTO_SOURCES: SourceIcon[] = [
+  { key: 'browser-history', emoji: '🌐', bg: '#DBEAFE', label: '浏览器', route: '/knowledge/add-from/browser-history' },
+  { key: 'wechat', emoji: '💬', bg: '#D1FAE5', label: '微信', route: '/knowledge/add-from/wechat' },
+  { key: 'cloud', emoji: '☁️', bg: '#EDE9FE', label: '网盘' },
+  { key: 'email', emoji: '✉️', bg: '#FEF3C7', label: '邮件', route: '/knowledge/add-from/email' },
+  { key: 'screenshot', emoji: '📸', bg: '#FCE7F3', label: '截图', route: '/knowledge/add-from/screenshot' },
+  { key: 'download', emoji: '📁', bg: '#FFF1E6', label: '下载', route: '/knowledge/add-from/download' },
+]
+
+const MANUAL_SOURCES: SourceIcon[] = [
+  { key: 'upload', emoji: '📤', bg: '#DBEAFE', label: '上传文件', route: '/knowledge/add-from/upload' },
+  { key: 'third-party', emoji: '🔗', bg: '#D1FAE5', label: '第三方', route: '/knowledge/add-from/third-party' },
+  { key: 'ai-chat', emoji: '🤖', bg: '#EDE9FE', label: 'AI 对话', route: '/knowledge/add-from/ai-chat' },
+  { key: 'scan', emoji: '📷', bg: '#FEF3C7', label: '扫一扫', route: '/knowledge/add-from/scan' },
+]
+
+interface CloudProvider {
+  id: string
+  name: string
+  emoji: string
+  bg: string
+  connected: boolean
+}
+
+const CLOUD_PROVIDERS: CloudProvider[] = [
+  { id: 'baidu', name: '百度网盘', emoji: '🅑', bg: '#DBEAFE', connected: true },
+  { id: 'aliyun', name: '阿里云盘', emoji: '🅐', bg: '#E0F2FE', connected: true },
+  { id: 'icloud', name: 'iCloud Drive', emoji: '☁️', bg: '#F3F4F6', connected: false },
+  { id: 'onedrive', name: 'OneDrive', emoji: '🅞', bg: '#DBEAFE', connected: false },
+  { id: 'gdrive', name: 'Google Drive', emoji: '🅖', bg: '#FEF3C7', connected: false },
+]
 
 const RECENT_BROWSER_DOWNLOADS: Array<{
   id: string
@@ -133,17 +171,22 @@ function RecentScrollSection({
                 type="button"
                 disabled={saved}
                 onClick={() => !saved && onToggle(item.id)}
-                className={`relative w-[130px] h-[84px] flex-shrink-0 rounded-card bg-white border p-2.5 text-left transition-all ${
+                className={`relative w-[130px] h-[84px] flex-shrink-0 box-border rounded-card bg-white border p-2.5 text-left flex flex-col transition-all ${
                   selected
                     ? 'border-[1.5px] border-brand-orange shadow-[0_4px_12px_rgba(255,122,0,0.15)]'
                     : 'border-[#EEEEEE]'
                 } ${saved ? 'opacity-60' : 'active:scale-[0.98]'}`}
               >
-                <div className="w-7 h-7 rounded-[10px] bg-brand-orange-light flex items-center justify-center text-[14px] mb-1.5">
+                <div className="w-6 h-6 rounded-[10px] bg-brand-orange-light flex items-center justify-center text-[13px] flex-shrink-0">
                   {item.emoji}
                 </div>
-                <p className="text-[12px] leading-[15px] font-semibold text-ink-primary line-clamp-2">{item.title}</p>
-                <p className={`text-[10px] leading-3 mt-0.5 truncate ${saved ? 'text-[#10B981]' : 'text-ink-placeholder'}`}>
+                <p
+                  className="text-[12px] leading-4 font-semibold text-ink-primary mt-1.5"
+                  style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                >
+                  {item.title}
+                </p>
+                <p className={`text-[10px] leading-3 mt-auto truncate ${saved ? 'text-[#10B981]' : 'text-ink-placeholder'}`}>
                   {saved ? '✓ 已添加' : item.time}
                 </p>
                 {selected && (
@@ -160,40 +203,89 @@ function RecentScrollSection({
   )
 }
 
-function EntryRow({
-  icon,
-  iconBg,
-  iconColor,
+function IconStripSection({
   title,
-  desc,
-  onClick,
+  items,
+  onPick,
 }: {
-  icon: typeof RefreshCw
-  iconBg: string
-  iconColor: string
   title: string
-  desc: string
-  onClick: () => void
+  items: SourceIcon[]
+  onPick: (item: SourceIcon) => void
 }) {
-  const Icon = icon
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="mx-4 w-[calc(100%-32px)] bg-white border border-[#EEEEEE] rounded-card p-3 flex items-center gap-3 active:scale-[0.99] transition-transform"
-    >
-      <div
-        className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: iconBg }}
-      >
-        <Icon size={16} style={{ color: iconColor }} strokeWidth={2} />
+    <section>
+      <div className="px-4 mb-2.5">
+        <h4 className="text-[13px] leading-5 font-semibold text-ink-primary">{title}</h4>
       </div>
-      <div className="flex-1 min-w-0 text-left">
-        <p className="text-[14px] leading-5 font-semibold text-ink-primary">{title}</p>
-        <p className="text-[11px] leading-4 text-ink-placeholder mt-0.5 truncate">{desc}</p>
+      <div className="overflow-x-auto scrollbar-hide h-[78px]">
+        <div className="flex gap-3 px-4">
+          {items.map(item => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onPick(item)}
+              className="w-14 flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-95 transition-transform"
+            >
+              <div
+                className="w-12 h-12 rounded-[12px] flex items-center justify-center text-[22px] leading-none"
+                style={{ backgroundColor: item.bg }}
+              >
+                {item.emoji}
+              </div>
+              <span className="text-[11px] leading-4 text-ink-secondary text-center whitespace-nowrap">{item.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
-      <ChevronRight size={14} className="text-ink-placeholder flex-shrink-0" strokeWidth={2} />
-    </button>
+    </section>
+  )
+}
+
+function CloudPickerSheet({
+  open,
+  onClose,
+  onPick,
+}: {
+  open: boolean
+  onClose: () => void
+  onPick: (provider: CloudProvider) => void
+}) {
+  if (!open) return null
+  return (
+    <div className="absolute inset-0 z-50 flex flex-col justify-end">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-t-card-xl shadow-sheet pb-6">
+        <div className="flex items-center justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-ink-placeholder/40 rounded-pill" />
+        </div>
+        <div className="px-5 pt-2 pb-3">
+          <p className="text-h2 text-ink-primary">从哪个网盘添加？</p>
+          <p className="text-caption text-ink-placeholder mt-1">已连接的网盘可直接浏览文件</p>
+        </div>
+        <div className="px-5 grid grid-cols-2 gap-2">
+          {CLOUD_PROVIDERS.map(p => (
+            <button
+              key={p.id}
+              onClick={() => onPick(p)}
+              className="h-[84px] rounded-card bg-white border border-[#EEEEEE] px-2.5 py-2 text-center active:scale-[0.96] transition-transform"
+            >
+              <div
+                className="w-9 h-9 rounded-card mx-auto mb-1 flex items-center justify-center text-[16px] font-bold"
+                style={{ backgroundColor: p.bg }}
+              >
+                {p.emoji}
+              </div>
+              <p className="text-[13px] leading-4 font-semibold text-ink-primary truncate">{p.name}</p>
+              <p className={`text-[11px] leading-3 mt-0.5 truncate ${
+                p.connected ? 'text-[#10B981]' : 'text-ink-placeholder'
+              }`}>
+                {p.connected ? '已连接' : '未连接'}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -248,6 +340,7 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
   })
   const [selectedShortcutIds, setSelectedShortcutIds] = useState<string[]>([])
   const [savedBrowsingIds, setSavedBrowsingIds] = useState<string[]>([])
+  const [showCloudPicker, setShowCloudPicker] = useState(false)
   const isQuickNotes = activeBase?.id === QUICK_NOTES_KB_ID
 
   const currentKbId = activeBase?.id ?? QUICK_NOTES_KB_ID
@@ -255,12 +348,34 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
 
   const resetAndClose = () => {
     setSelectedShortcutIds([])
+    setShowCloudPicker(false)
     onClose()
   }
 
   const navigateTo = (route: string) => {
     resetAndClose()
     setTimeout(() => navigate(route), 80)
+  }
+
+  const handleSourcePick = (item: SourceIcon) => {
+    if (item.key === 'cloud') {
+      setShowCloudPicker(true)
+      return
+    }
+    if (item.route) navigateTo(item.route)
+  }
+
+  const handleCloudPick = (provider: CloudProvider) => {
+    setShowCloudPicker(false)
+    if (provider.connected) {
+      navigateTo(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+      return
+    }
+    showToast(`正在连接${provider.name}...`)
+    setTimeout(() => {
+      showToast(`已连接${provider.name}`)
+      navigateTo(`/knowledge/add-from/cloud-files?provider=${provider.id}`)
+    }, 1000)
   }
 
   const handleNewQuickNote = () => {
@@ -337,7 +452,7 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
         }
         headerRight={<div className="w-7 h-7" aria-hidden />}
       >
-        <div className={`pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'} space-y-4`}>
+        <div className={`pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'} space-y-3.5`}>
           <PasteLinkRow
             value={linkValue}
             onChange={setLinkValue}
@@ -351,23 +466,9 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
             onSeeAll={() => navigateTo('/knowledge/add-from/browser-history')}
           />
 
-          <EntryRow
-            icon={RefreshCw}
-            iconBg="#FFF1E6"
-            iconColor="#FF7A00"
-            title="自动同步"
-            desc="浏览器 · 微信 · 网盘 · 截图 · 邮件 · 下载"
-            onClick={() => navigateTo(`/knowledge/${currentKbId}/add-from-auto`)}
-          />
+          <IconStripSection title="自动同步" items={AUTO_SOURCES} onPick={handleSourcePick} />
 
-          <EntryRow
-            icon={Hand}
-            iconBg="#F8F8F8"
-            iconColor="#8C8C8C"
-            title="手动添加"
-            desc="上传文件 · 第三方分享 · AI 对话 · 扫一扫"
-            onClick={() => navigateTo(`/knowledge/${currentKbId}/add-from-manual`)}
-          />
+          <IconStripSection title="手动添加" items={MANUAL_SOURCES} onPick={handleSourcePick} />
 
           {isQuickNotes && (
             <button
@@ -388,6 +489,12 @@ export default function K06_UploadSource({ open, onClose }: { open: boolean; onC
           onCancel={cancelShortcutSelection}
           onConfirm={confirmShortcutSelection}
           confirmLabel={confirmShortcutLabel}
+        />
+
+        <CloudPickerSheet
+          open={showCloudPicker}
+          onClose={() => setShowCloudPicker(false)}
+          onPick={handleCloudPick}
         />
       </BottomSheet>
 
