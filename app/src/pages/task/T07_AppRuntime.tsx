@@ -4,6 +4,8 @@ import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { MoreHorizontal, RefreshCw } from 'lucide-react'
 import { useApps } from '../../context/AppsContext'
+import { useUser } from '../../context/UserContext'
+import BottomSheet from '../../components/ui/BottomSheet'
 
 // ── Shared ────────────────────────────────────────────────────────────────────
 
@@ -303,6 +305,334 @@ function FitnessTrackerForm() {
   )
 }
 
+// ── Form 5: Travel Tracker ────────────────────────────────────────────────────
+
+type TravelTag = '景点' | '餐厅' | '交通' | '休闲'
+
+interface ItineraryItem {
+  time: string
+  place: string
+  tag: TravelTag
+}
+
+const INIT_ITINERARY: ItineraryItem[] = [
+  { time: '8:30', place: '清水寺', tag: '景点' },
+  { time: '11:00', place: '伏见稻荷大社', tag: '景点' },
+  { time: '13:00', place: '午餐 · 祇园料亭', tag: '餐厅' },
+  { time: '15:00', place: '祇园散步', tag: '休闲' },
+]
+
+const AI_SUGGESTIONS: ItineraryItem[] = [
+  { time: '', place: '天下一品拉面（京都站附近）', tag: '餐厅' },
+  { time: '', place: '二年坂三年坂传统街道', tag: '景点' },
+  { time: '', place: '鸭川河畔散步', tag: '休闲' },
+]
+
+const TAG_COLORS: Record<TravelTag, string> = {
+  景点: '#CCFBF1',
+  餐厅: '#FEF3C7',
+  交通: '#DBEAFE',
+  休闲: '#F3E8FF',
+}
+const TAG_TEXT: Record<TravelTag, string> = {
+  景点: '#0F766E',
+  餐厅: '#92400E',
+  交通: '#1E40AF',
+  休闲: '#6B21A8',
+}
+
+const TAGS: TravelTag[] = ['景点', '餐厅', '交通', '休闲']
+
+function AddItinerarySheet({
+  open,
+  onClose,
+  onAdd,
+}: {
+  open: boolean
+  onClose: () => void
+  onAdd: (item: ItineraryItem) => void
+}) {
+  const [tag, setTag] = useState<TravelTag | ''>('')
+  const [startTime, setStartTime] = useState('09:00')
+  const [endTime, setEndTime] = useState('11:00')
+  const [name, setName] = useState('')
+  const [location, setLocation] = useState('')
+  const [budget, setBudget] = useState('')
+  const [note, setNote] = useState('')
+  const [aiExpanded, setAiExpanded] = useState(false)
+
+  const canAdd = tag !== '' && name.trim() !== ''
+
+  const reset = () => {
+    setTag('')
+    setStartTime('09:00')
+    setEndTime('11:00')
+    setName('')
+    setLocation('')
+    setBudget('')
+    setNote('')
+    setAiExpanded(false)
+  }
+
+  const handleAdd = () => {
+    if (!canAdd) return
+    onAdd({ time: startTime, place: name.trim(), tag: tag as TravelTag })
+    reset()
+    onClose()
+  }
+
+  const handleAddSuggestion = (item: ItineraryItem) => {
+    onAdd({ ...item, time: '09:00' })
+    reset()
+    onClose()
+  }
+
+  useEffect(() => {
+    if (!open) reset()
+  }, [open])
+
+  const inputCls = 'w-full text-[14px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors'
+
+  return (
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      title="添加新行程"
+      titleAlign="center"
+      titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
+      headerLeft={<button onClick={onClose} className="text-[14px] text-ink-secondary">取消</button>}
+      headerRight={
+        <button
+          onClick={handleAdd}
+          className={`text-[14px] font-medium ${canAdd ? 'text-brand-orange' : 'text-ink-placeholder'}`}
+        >
+          添加
+        </button>
+      }
+      fullHeight
+    >
+      <div className="px-5 pt-4 pb-6 space-y-4">
+        {/* Tag selector */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">行程类型 <span className="text-brand-orange">*</span></p>
+          <div className="flex gap-2">
+            {TAGS.map(t => (
+              <button
+                key={t}
+                onClick={() => setTag(t)}
+                className="px-4 py-1.5 rounded-pill text-[13px] font-medium transition-colors border"
+                style={tag === t
+                  ? { backgroundColor: '#CCFBF1', color: '#14B8A6', borderColor: '#14B8A6' }
+                  : { backgroundColor: '#F8F8F8', color: '#4A4A4A', borderColor: '#EEEEEE' }
+                }
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Time */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">时间 <span className="text-brand-orange">*</span></p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-[11px] text-ink-placeholder mb-1">开始时间</p>
+              <input
+                type="time"
+                value={startTime}
+                onChange={e => setStartTime(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <p className="text-[11px] text-ink-placeholder mb-1">结束时间</p>
+              <input
+                type="time"
+                value={endTime}
+                onChange={e => setEndTime(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Name */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">名称 <span className="text-brand-orange">*</span></p>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="如：清水寺、祇园料亭"
+            className={inputCls}
+          />
+        </div>
+
+        {/* Location */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">地点</p>
+          <input
+            type="text"
+            value={location}
+            onChange={e => setLocation(e.target.value)}
+            placeholder="如：东山区清水 1 丁目 294"
+            className="w-full text-[13px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors"
+          />
+        </div>
+
+        {/* Budget */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">预算</p>
+          <div className="flex items-center gap-1 bg-surface-card rounded-card border border-line-base focus-within:border-brand-orange transition-colors px-3 py-2.5">
+            <span className="text-[14px] text-ink-placeholder">¥</span>
+            <input
+              type="number"
+              value={budget}
+              onChange={e => setBudget(e.target.value)}
+              placeholder="如：500"
+              className="flex-1 text-[14px] text-ink-primary bg-transparent outline-none placeholder:text-ink-placeholder"
+            />
+          </div>
+        </div>
+
+        {/* Note */}
+        <div>
+          <p className="text-caption text-ink-secondary mb-2">备注</p>
+          <textarea
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            placeholder="如：记得提前买票，避开人多时段"
+            rows={3}
+            className="w-full text-[13px] text-ink-primary bg-surface-card rounded-card px-3 py-2.5 outline-none placeholder:text-ink-placeholder border border-line-base focus:border-brand-orange transition-colors resize-none"
+            style={{ maxHeight: '72px' }}
+          />
+        </div>
+
+        {/* AI suggestions */}
+        <div className="rounded-card border border-line-base overflow-hidden">
+          <button
+            onClick={() => setAiExpanded(v => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 text-left"
+          >
+            <span className="text-[13px] font-medium text-brand-orange">✨ AI 推荐相关行程</span>
+            <span className="text-caption text-ink-placeholder">{aiExpanded ? '收起' : '展开'}</span>
+          </button>
+          {aiExpanded && (
+            <div className="border-t border-line-base">
+              {AI_SUGGESTIONS.map((s, i) => (
+                <div
+                  key={s.place}
+                  className={`flex items-center gap-3 px-4 py-3 ${i !== AI_SUGGESTIONS.length - 1 ? 'border-b border-line-base' : ''}`}
+                >
+                  <span
+                    className="text-[10px] px-1.5 py-0.5 rounded-pill flex-shrink-0"
+                    style={{ backgroundColor: TAG_COLORS[s.tag], color: TAG_TEXT[s.tag] }}
+                  >
+                    {s.tag}
+                  </span>
+                  <p className="flex-1 text-[13px] text-ink-primary min-w-0 truncate">{s.place}</p>
+                  <button
+                    onClick={() => handleAddSuggestion(s)}
+                    className="text-[12px] font-medium px-3 py-1 rounded-pill flex-shrink-0"
+                    style={{ backgroundColor: '#FFF1E6', color: '#FF7A00' }}
+                  >
+                    添加
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </BottomSheet>
+  )
+}
+
+function TravelTrackerForm() {
+  const { showToast } = useUser()
+  const [itinerary, setItinerary] = useState<ItineraryItem[]>(INIT_ITINERARY)
+  const [showAddSheet, setShowAddSheet] = useState(false)
+
+  const sightCount = itinerary.filter(i => i.tag === '景点').length
+  const sightPct = Math.round((sightCount / 8) * 100)
+  const restaurantCount = itinerary.filter(i => i.tag === '餐厅').length
+  const restaurantPct = Math.round((restaurantCount / 5) * 100)
+
+  const handleAddItem = (item: ItineraryItem) => {
+    setItinerary(prev => [...prev, item])
+    showToast(`已添加「${item.place}」到第 3 天`)
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Header card */}
+      <div className="rounded-card p-4" style={{ background: 'linear-gradient(135deg, #CCFBF1 0%, #F0FDFA 100%)', border: '1px solid #99F6E4' }}>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <p className="text-caption font-semibold text-[#0F766E]">第 3 天 · 京都</p>
+            <p className="text-[11px] text-[#14B8A6]">已完成 2 / 7 天</p>
+          </div>
+          <button
+            onClick={() => setShowAddSheet(true)}
+            className="text-micro font-medium px-2.5 py-1 rounded-pill active:scale-95 transition-transform"
+            style={{ backgroundColor: '#14B8A6', color: '#fff' }}
+          >
+            + 添加行程
+          </button>
+        </div>
+        <div className="w-full h-2 rounded-full overflow-hidden mt-2" style={{ backgroundColor: '#99F6E4' }}>
+          <div className="h-full rounded-full" style={{ width: '28%', backgroundColor: '#14B8A6' }} />
+        </div>
+        <p className="text-[11px] text-[#0F766E] opacity-70 mt-1">行程进度 2/7 天</p>
+      </div>
+
+      {/* Stats rings */}
+      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
+        <p className="text-micro text-ink-placeholder font-medium mb-4">今日完成度</p>
+        <div className="flex justify-around">
+          <CircleRing pct={sightPct} color="#14B8A6" label="景点" value={`${sightCount}/8`} />
+          <CircleRing pct={restaurantPct} color="#0EA5E9" label="餐厅" value={`${restaurantCount}/5`} />
+          <CircleRing pct={52} color="#F59E0B" label="预算" value="¥4.2k" />
+        </div>
+      </div>
+
+      {/* Today's itinerary */}
+      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
+          <p className="text-micro text-ink-placeholder font-medium">今日行程</p>
+        </div>
+        {itinerary.map((item, i) => (
+          <div
+            key={`${item.place}-${i}`}
+            className={`flex items-center gap-3 px-4 py-3 ${i !== itinerary.length - 1 ? 'border-b border-line-base' : ''}`}
+          >
+            <p className="text-micro text-ink-placeholder w-10 flex-shrink-0">{item.time || '—'}</p>
+            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#14B8A6' }} />
+            <div className="flex-1 min-w-0">
+              <p className="text-caption text-ink-primary font-medium truncate">{item.place}</p>
+            </div>
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-pill flex-shrink-0"
+              style={{ backgroundColor: TAG_COLORS[item.tag], color: TAG_TEXT[item.tag] }}
+            >
+              {item.tag}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <AiTip text="今天行程偏紧凑，建议午餐后留 30 分钟休息，伏见稻荷可以提前到 10:30，避开人流高峰。" />
+
+      <AddItinerarySheet
+        open={showAddSheet}
+        onClose={() => setShowAddSheet(false)}
+        onAdd={handleAddItem}
+      />
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function T07_AppRuntime() {
@@ -339,7 +669,9 @@ export default function T07_AppRuntime() {
       form = <DataDashboardForm />
       break
     case 'daily_tracker':
-      form = app.id === 'app_fitness' ? <FitnessTrackerForm /> : <DailyTrackerForm />
+      if (app.id === 'app_travel') form = <TravelTrackerForm />
+      else if (app.id === 'app_fitness') form = <FitnessTrackerForm />
+      else form = <DailyTrackerForm />
       break
     default:
       form = <LearningListForm />

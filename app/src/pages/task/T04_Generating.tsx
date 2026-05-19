@@ -42,6 +42,13 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
     { label: '生成界面', desc: '设计题库学习视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
+  'travel-plan': [
+    { label: '分析需求', desc: '理解你的旅行规划需求' },
+    { label: '构建结构', desc: '搭建行程与预算框架' },
+    { label: '连接数据', desc: '对接「旅行美食圈」知识库' },
+    { label: '生成界面', desc: '设计每日行程视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
 }
 
 export default function T04_Generating() {
@@ -58,10 +65,20 @@ export default function T04_Generating() {
   const resultMainColor: string | undefined = state?.resultMainColor
   const selectedKbIds: string[] = state?.selectedKbIds ?? []
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
+  const selectedFeatures: string[] | undefined = state?.selectedFeatures
+  const selectedAccessModes: string[] | undefined = state?.selectedAccessModes
+  const customRequirement: string | undefined = state?.customRequirement
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
 
-  const steps = TEMPLATE_STEPS[templateId ?? ''] ?? DEFAULT_STEPS
+  const baseSteps = TEMPLATE_STEPS[templateId ?? ''] ?? DEFAULT_STEPS
+  const steps: Step[] = customRequirement
+    ? [
+        baseSteps[0],
+        { label: '识别补充需求', desc: `识别到补充需求：${customRequirement.slice(0, 20)}${customRequirement.length > 20 ? '...' : ''}` },
+        ...baseSteps.slice(1),
+      ]
+    : baseSteps
 
   const [currentStep, setCurrentStep] = useState(0)
   const [done, setDone] = useState(false)
@@ -77,7 +94,9 @@ export default function T04_Generating() {
             state: {
               requirement, templateId, templateName, templateIcon, templateCoreFeatures,
               targetRuntimeType, resultAppName, resultAppId, resultMainColor,
-              selectedKbIds, selectedKbNames, sourcePath, sourceState,
+              selectedKbIds, selectedKbNames,
+              selectedFeatures, selectedAccessModes, customRequirement,
+              sourcePath, sourceState,
             },
           }), 1000)
           return prev

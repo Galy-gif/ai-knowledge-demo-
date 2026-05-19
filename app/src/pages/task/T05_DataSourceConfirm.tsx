@@ -8,6 +8,7 @@ const RESULT_COLOR_BG: Record<string, string> = {
   orange: '#FFF1E6',
   green: '#D1FAE5',
   blue: '#DBEAFE',
+  teal: '#CCFBF1',
 }
 
 const RESULT_COLOR_HEADER: Record<string, string> = {
@@ -15,6 +16,7 @@ const RESULT_COLOR_HEADER: Record<string, string> = {
   orange: '#FF7A00',
   green: '#047857',
   blue: '#1D4ED8',
+  teal: '#14B8A6',
 }
 
 const TEMPLATE_FILE_LISTS: Record<string, string[]> = {
@@ -22,6 +24,7 @@ const TEMPLATE_FILE_LISTS: Record<string, string[]> = {
   'fitness-planner': ['晨间拉伸 · 7 分钟 · 3 项动作', '上肢力量 · 25 分钟 · 6 项动作', '核心训练 · 13 分钟 · 4 项动作', '本周目标：4 天训练'],
   'fund-portfolio': ['易方达消费精选 · ¥34,500 (+2.3%)', '中欧医疗健康 · ¥18,720 (-0.8%)', '招商中证白酒 · ¥42,800 (+1.5%)', '兴全合宜 · ¥52,150 (+0.9%)'],
   'interview-bank': ['算法 · 二叉树遍历 · 已掌握', 'HR 面 · 职业规划 · 学习中', '项目 · 系统设计 · 新题', '行为 · 团队协作 · 学习中'],
+  'travel-plan': ['第 1 天 · 大阪城公园 + 道顿堀', '第 2 天 · 奈良公园 + 春日大社', '第 3 天 · 清水寺 + 伏见稻荷', '预算规划 · ¥8,000 / 7 天'],
 }
 
 const DEFAULT_FILES = ['资料条目 1', '资料条目 2', '资料条目 3']
@@ -35,6 +38,8 @@ export default function T05_DataSourceConfirm() {
   const resultAppId: string = state?.resultAppId ?? 'app_words'
   const resultMainColor: string = state?.resultMainColor ?? 'orange'
   const selectedKbNames: string[] = state?.selectedKbNames ?? []
+  const selectedFeatures: string[] | undefined = state?.selectedFeatures
+  const customRequirement: string | undefined = state?.customRequirement
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
 
@@ -56,6 +61,8 @@ export default function T05_DataSourceConfirm() {
     resultMainColor,
     selectedKbIds: state?.selectedKbIds,
     selectedKbNames,
+    selectedFeatures,
+    customRequirement,
     sourcePath,
     sourceState,
   }
@@ -71,7 +78,10 @@ export default function T05_DataSourceConfirm() {
 
         <div className="bg-white rounded-card-lg border border-line-base overflow-hidden shadow-card">
           <div className="px-4 py-3 flex items-center gap-2" style={{ backgroundColor: headerBg }}>
-            <span className="w-8 h-8 rounded-[8px] flex items-center justify-center text-xl flex-shrink-0" style={{ backgroundColor: 'rgba(255,255,255,0.25)' }}>
+            <span
+              className="w-8 h-8 rounded-[8px] flex items-center justify-center text-xl flex-shrink-0"
+              style={{ backgroundColor: 'rgba(255,255,255,0.25)' }}
+            >
               {templateIcon}
             </span>
             <p className="text-white font-semibold">{resultAppName}</p>
@@ -83,6 +93,20 @@ export default function T05_DataSourceConfirm() {
                 <p className="text-caption text-ink-secondary">{f}</p>
               </div>
             ))}
+            {selectedFeatures && selectedFeatures.length > 0 && (
+              <div className="pt-2 flex flex-wrap gap-1.5">
+                {selectedFeatures.map(f => (
+                  <span key={f} className="text-[10px] px-2 py-0.5 rounded-pill" style={{ backgroundColor: `${headerBg}22`, color: headerBg }}>
+                    {f}
+                  </span>
+                ))}
+              </div>
+            )}
+            {customRequirement && (
+              <p className="text-caption pt-1" style={{ color: headerBg }}>
+                ✓ 已包含你的补充需求
+              </p>
+            )}
           </div>
         </div>
 
@@ -93,7 +117,9 @@ export default function T05_DataSourceConfirm() {
             <div>
               <p className="text-body text-ink-primary font-medium">{dataSourceTitle}</p>
               <p className="text-caption text-ink-placeholder">
-                {selectedKbNames.length > 0 ? selectedKbNames.join(' / ') : '将使用默认资料范围'} · 自动同步
+                {selectedKbNames.length > 0
+                    ? `${selectedKbNames.join(' / ')} · 自动同步`
+                    : '将使用默认资料范围'}
               </p>
             </div>
           </div>

@@ -1360,7 +1360,6 @@ function AIConfidenceBadge({ confidence }: { confidence: AIConfidence }) {
 function AITopicGroupSection({
   group,
   onOpenItem,
-  onDecide,
   hiddenIds,
   deletingIds,
   renamingId,
@@ -1373,7 +1372,6 @@ function AITopicGroupSection({
 }: {
   group: AITopicGroup
   onOpenItem: (group: AITopicGroup, item: AITopicItem) => void
-  onDecide: () => void
   hiddenIds: string[]
   deletingIds: string[]
   renamingId: string | null
@@ -1450,15 +1448,7 @@ function AITopicGroupSection({
             </LongPressActionMenu>
           )
         })}
-        {group.weak ? (
-          <button
-            type="button"
-            onClick={onDecide}
-            className="w-full px-4 py-3 text-left text-[13px] font-medium leading-5 text-[#FF7A00]"
-          >
-            帮 AI 决定 →
-          </button>
-        ) : (
+        {!group.weak && (
           <button
             type="button"
             className="w-full px-4 py-3 text-left text-[13px] leading-5 text-ink-secondary"
@@ -2606,7 +2596,6 @@ export default function K05_KnowledgeDetail() {
                     <AITopicGroupSection
                       group={group}
                       onOpenItem={openAiItem}
-                      onDecide={() => showToast('已记录你的分类偏好')}
                       hiddenIds={hiddenStructuredIds}
                       deletingIds={deletingStructuredIds}
                       renamingId={renamingStructuredId}

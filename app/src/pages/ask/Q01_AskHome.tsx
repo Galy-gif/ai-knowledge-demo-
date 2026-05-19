@@ -67,7 +67,7 @@ const MODE_META: Record<AskMode, {
 const SUGGESTION_ICONS = [Sparkles, Search, FileText]
 const MODE_ORDER: AskMode[] = ['ai', 'web', 'task']
 
-const DEFAULT_HOME_TEMPLATE_IDS = ['diet-log', 'fitness-planner', 'fund-portfolio', 'interview-bank']
+const DEFAULT_HOME_TEMPLATE_IDS = ['diet-log', 'fitness-planner', 'fund-portfolio', 'travel-plan']
 
 const TEMPLATE_TONES: Record<PwaTemplate['category'], { bg: string; color: string }> = {
   财经: { bg: '#DBEAFE', color: '#0C447C' },
@@ -81,7 +81,7 @@ const TEMPLATE_ID_TONES: Record<string, { bg: string; color: string }> = {
   'diet-log': { bg: '#D1FAE5', color: '#0F6E56' },
   'fitness-planner': { bg: '#DBEAFE', color: '#0C447C' },
   'fund-portfolio': { bg: '#FEF3C7', color: '#7C4D00' },
-  'interview-bank': { bg: '#E9D5FF', color: '#3C3489' },
+  'travel-plan': { bg: '#CCFBF1', color: '#0F766E' },
 }
 
 function getDefaultHomeTemplates() {

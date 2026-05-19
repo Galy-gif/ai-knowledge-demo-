@@ -15,6 +15,8 @@ export interface PwaTemplate {
   resultAppName?: string
   resultAppId?: string
   resultMainColor?: string
+  defaultFeatures?: string[]
+  defaultAccessMode?: string
 }
 
 export const pwaTemplateCategories = ['全部', '财经', '健康', '职场', '教育', '生活'] as const
@@ -36,7 +38,7 @@ export const pwaTemplates: PwaTemplate[] = [
     id: 'fund-portfolio',
     category: '财经',
     tag: '基金理财',
-    icon: '💹',
+    icon: '📈',
     name: '基金组合助手',
     description: '跟踪基金持仓与收益',
     coreFeatures: '基金净值、收益曲线、持仓笔记',
@@ -46,6 +48,8 @@ export const pwaTemplates: PwaTemplate[] = [
     resultAppName: 'Q4 投资跟踪',
     resultAppId: 'app_invest',
     resultMainColor: 'green',
+    defaultFeatures: ['资产总览', '持仓明细', '收益曲线'],
+    defaultAccessMode: 'desktop',
   },
   {
     id: 'fitness-planner',
@@ -62,6 +66,8 @@ export const pwaTemplates: PwaTemplate[] = [
     resultAppName: '我的训练计划',
     resultAppId: 'app_fitness',
     resultMainColor: 'orange',
+    defaultFeatures: ['训练日程', '动作库', '力量记录'],
+    defaultAccessMode: 'desktop',
   },
   {
     id: 'diet-log',
@@ -77,6 +83,25 @@ export const pwaTemplates: PwaTemplate[] = [
     resultAppName: '减脂期饮食',
     resultAppId: 'app_diet',
     resultMainColor: 'purple',
+    defaultFeatures: ['食物库', '热量记录', '营养分析'],
+    defaultAccessMode: 'desktop',
+  },
+  {
+    id: 'travel-plan',
+    category: '生活',
+    tag: '旅行规划',
+    icon: '✈️',
+    name: '旅行计划本',
+    description: '规划行程与每日安排',
+    coreFeatures: '行程时间线、景点收藏、预算跟踪',
+    requirement: '帮我做一个旅行规划应用，按天展示行程、景点、餐厅和预算',
+    keywords: ['旅行', '旅游', '行程', '攻略', '路线', '景点', '预算', '出行'],
+    targetRuntimeType: 'daily_tracker',
+    resultAppName: '日本关西七日游',
+    resultAppId: 'app_travel',
+    resultMainColor: 'teal',
+    defaultFeatures: ['行程时间线', '景点收藏', '预算跟踪', 'AI 推荐'],
+    defaultAccessMode: 'desktop',
   },
   {
     id: 'interview-bank',
@@ -93,6 +118,8 @@ export const pwaTemplates: PwaTemplate[] = [
     resultAppName: '我的面试题库',
     resultAppId: 'app_interview',
     resultMainColor: 'blue',
+    defaultFeatures: ['题目集', '刷题进度', '复盘笔记'],
+    defaultAccessMode: 'desktop',
   },
   {
     id: 'word-cards',

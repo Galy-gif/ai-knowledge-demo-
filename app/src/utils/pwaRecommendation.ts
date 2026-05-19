@@ -122,19 +122,68 @@ export function getPwaRecommendation(input: PwaRecommendationInput) {
   }
 }
 
-export function getKnowledgeBasePwaFit(base: KnowledgeBase, files: KnowledgeFile[]): {
+const FIT_MAP: Record<PwaFitLevel, { label: string; className: string }> = {
+  recommended: { label: '🟢 推荐', className: 'bg-[#D1FAE5] text-[#10B981]' },
+  normal: { label: '🟡 一般', className: 'bg-[#FEF3C7] text-[#F59E0B]' },
+  'not-recommended': { label: '🔴 不建议', className: 'bg-[#FEE2E2] text-[#EF4444]' },
+}
+
+const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
+  'travel-plan': {
+    '旅行美食圈': 'recommended',
+    '读书摘录': 'normal',
+    '产品资料库': 'not-recommended',
+    '用户访谈库': 'not-recommended',
+    'AI 浏览器项目库': 'not-recommended',
+    '季度产品复盘': 'not-recommended',
+    'ProductLab 团队': 'not-recommended',
+    'Design Systems Lab': 'not-recommended',
+    '投资研究社': 'not-recommended',
+  },
+  'diet-log': {
+    '旅行美食圈': 'recommended',
+    '读书摘录': 'normal',
+    '产品资料库': 'not-recommended',
+    '用户访谈库': 'not-recommended',
+    'ProductLab 团队': 'not-recommended',
+    'Design Systems Lab': 'not-recommended',
+    '投资研究社': 'not-recommended',
+  },
+  'fitness-planner': {
+    '读书摘录': 'not-recommended',
+    '产品资料库': 'not-recommended',
+    '用户访谈库': 'not-recommended',
+    '旅行美食圈': 'not-recommended',
+    'ProductLab 团队': 'not-recommended',
+    'Design Systems Lab': 'not-recommended',
+    '投资研究社': 'not-recommended',
+  },
+  'fund-portfolio': {
+    '投资研究社': 'recommended',
+    '读书摘录': 'normal',
+    '产品资料库': 'not-recommended',
+    '用户访谈库': 'not-recommended',
+    '旅行美食圈': 'not-recommended',
+    'ProductLab 团队': 'not-recommended',
+    'Design Systems Lab': 'not-recommended',
+  },
+}
+
+export function getKnowledgeBasePwaFit(
+  base: KnowledgeBase,
+  files: KnowledgeFile[],
+  templateId?: string,
+): {
   level: PwaFitLevel
   label: string
   className: string
 } {
-  if (base.name === '产品资料库' || base.name === 'ProductLab 团队' || base.name === 'Design Systems Lab') {
-    return { level: 'recommended', label: '🟢 推荐', className: 'bg-green-100 text-green-700' }
-  }
-  if (base.name === '用户访谈库') {
-    return { level: 'normal', label: '🟡 一般', className: 'bg-yellow-100 text-yellow-700' }
-  }
-  if (base.name === '读书摘录') {
-    return { level: 'not-recommended', label: '🔴 不建议', className: 'bg-red-100 text-red-700' }
+  if (templateId) {
+    const rules = TEMPLATE_KB_FIT[templateId]
+    if (rules) {
+      const level = rules[base.name]
+      if (level) return { level, ...FIT_MAP[level] }
+    }
   }
 
   const kbFiles = files.filter(file => file.kbId === base.id)
@@ -148,7 +197,7 @@ export function getKnowledgeBasePwaFit(base: KnowledgeBase, files: KnowledgeFile
     })
   ).length
 
-  if (recommendedCount >= 2) return { level: 'recommended', label: '🟢 推荐', className: 'bg-green-100 text-green-700' }
-  if (recommendedCount >= 1) return { level: 'normal', label: '🟡 一般', className: 'bg-yellow-100 text-yellow-700' }
-  return { level: 'not-recommended', label: '🔴 不建议', className: 'bg-red-100 text-red-700' }
+  if (recommendedCount >= 2) return { level: 'recommended', ...FIT_MAP.recommended }
+  if (recommendedCount >= 1) return { level: 'normal', ...FIT_MAP.normal }
+  return { level: 'not-recommended', ...FIT_MAP['not-recommended'] }
 }
