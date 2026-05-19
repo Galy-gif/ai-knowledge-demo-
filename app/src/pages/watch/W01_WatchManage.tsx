@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Eye, MoreHorizontal, Plus, X } from 'lucide-react'
 import TopHeader from '../../components/layout/TopHeader'
 import BottomSheet from '../../components/ui/BottomSheet'
@@ -69,12 +69,19 @@ interface TaskCardProps {
   task: { id: string; platform: WatchPlatform; type: WatchType; target: string[]; status: string; lastFetchedAt: string; todayFetched: number }
   onToggle: () => void
   onMore: () => void
+  onOpen: () => void
 }
 
-function TaskCard({ task, onToggle, onMore }: TaskCardProps) {
+function TaskCard({ task, onToggle, onMore, onOpen }: TaskCardProps) {
   const isRunning = task.status === 'running'
   return (
-    <div className="mx-4 mb-[10px] bg-white rounded-card border border-[#EEEEEE] p-[14px]">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
+      className="mx-4 mb-[10px] bg-white rounded-card border border-[#EEEEEE] p-[14px] cursor-pointer active:bg-[#FAFAFA] transition-colors"
+    >
       <div className="flex items-start gap-3">
         <PlatformIcon platform={task.platform} size={40} />
         <div className="flex-1 min-w-0">
@@ -164,6 +171,7 @@ function getSearchResults(query: string) {
 
 export default function W01_WatchManage() {
   const { state } = useLocation()
+  const navigate = useNavigate()
   const kbName: string = state?.kbName ?? '当前知识库'
   const kbId: string = state?.kbId ?? 'kb1'
 
@@ -317,6 +325,7 @@ export default function W01_WatchManage() {
                 task={task}
                 onToggle={() => toggleTask(task.id)}
                 onMore={() => setTaskMenuId(task.id)}
+                onOpen={() => navigate(`/watch/task/${task.id}`)}
               />
             ))}
           </>
