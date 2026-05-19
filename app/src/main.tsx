@@ -7,6 +7,7 @@ import { KnowledgeProvider } from './context/KnowledgeContext.tsx'
 import { AppsProvider } from './context/AppsContext.tsx'
 import { AnnotationsProvider } from './context/AnnotationContext.tsx'
 import { MultiSelectProvider } from './context/MultiSelectContext.tsx'
+import { WatchProvider } from './context/WatchContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')!).render(
         <KnowledgeProvider>
           <MultiSelectProvider>
             <AppsProvider>
-              <App />
+              <WatchProvider>
+                <App />
+              </WatchProvider>
             </AppsProvider>
           </MultiSelectProvider>
         </KnowledgeProvider>

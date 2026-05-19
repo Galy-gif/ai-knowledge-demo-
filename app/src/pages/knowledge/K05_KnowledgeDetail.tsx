@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Archive, ArrowDown, Award, Check, ChevronDown, ChevronLeft, ChevronRight, FileText, Folder, FolderInput, Globe2,
+  Archive, ArrowDown, Award, Check, ChevronDown, ChevronLeft, ChevronRight, Eye, FileText, Folder, FolderInput, Globe2,
   ArrowRight, Inbox, Lightbulb, Mic, MoreHorizontal, Network, PenLine, Plus, Search, Sparkles, SquarePen, Table2, Tag, Target, Trash2, Workflow,
 } from 'lucide-react'
 import AskAIPanel from '../../components/common/AskAIPanel'
@@ -11,6 +11,7 @@ import SwipeableListItem, { type SwipeAction } from '../../components/common/Swi
 import Toast from '../../components/common/Toast'
 import BottomSheet from '../../components/ui/BottomSheet'
 import { useKnowledge } from '../../context/KnowledgeContext'
+import { useWatch } from '../../context/WatchContext'
 import { useMultiSelect } from '../../context/MultiSelectContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type KnowledgeFile, type KnowledgeManagementMode } from '../../mock/data'
@@ -1846,6 +1847,7 @@ export default function K05_KnowledgeDetail() {
   const navigate = useNavigate()
   const { activeBase, bases, files, setActiveFile, moveFiles, deleteFile, updateFile, updateBase } = useKnowledge()
   const { showToast, showConfirm } = useUser()
+  const { getKbTasks } = useWatch()
   const {
     isSelecting,
     selectedFiles,
@@ -2396,6 +2398,29 @@ export default function K05_KnowledgeDetail() {
         </div>
       )}
 
+      {/* Watch status bar */}
+      {(() => {
+        const kbTasks = getKbTasks(activeBase?.id ?? '')
+        const running = kbTasks.filter(t => t.status === 'running')
+        const todayCount = running.reduce((s, t) => s + t.todayFetched, 0)
+        if (running.length === 0) return null
+        return (
+          <button
+            type="button"
+            onClick={() => navigate('/knowledge/watch', { state: { kbId: activeBase?.id, kbName: activeBase?.name } })}
+            className="flex h-9 flex-shrink-0 items-center justify-between px-4 bg-[#FFF1E6]"
+          >
+            <div className="flex items-center gap-2">
+              <Eye size={16} className="text-[#FF7A00] flex-shrink-0" />
+              <span className="text-[13px] text-ink-primary">
+                {running.length} 个蹲守中 · 今天蹲到 {todayCount} 条新内容
+              </span>
+            </div>
+            <span className="text-[11px] font-medium text-[#FF7A00]">管理 →</span>
+          </button>
+        )
+      })()}
+
       <div className={`flex min-h-0 flex-1 flex-col transition-opacity duration-200 ${modeTransitioning ? 'opacity-0' : 'opacity-100'}`}>
         {showEmptyState ? (
           <KnowledgeEmptyState
@@ -2829,6 +2854,16 @@ export default function K05_KnowledgeDetail() {
         titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
       >
         <div className="px-5 pt-2 pb-4 space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowMoreMenu(false)
+              navigate('/knowledge/watch', { state: { kbId: activeBase?.id, kbName: activeBase?.name } })
+            }}
+            className="w-full rounded-[12px] border border-[#FFE4D0] bg-[#FFF7F0] px-4 py-3 text-left text-[14px] font-medium leading-5 text-[#FF7A00]"
+          >
+            蹲一下
+          </button>
           <button
             type="button"
             onClick={openManagementModeFromMoreMenu}

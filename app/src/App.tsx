@@ -15,6 +15,8 @@ import K09_FolderDetail from './pages/knowledge/K09_FolderDetail'
 import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
 import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
 import K13_RecentAll from './pages/knowledge/K13_RecentAll'
+import W01_WatchManage from './pages/watch/W01_WatchManage'
+import W02_TodayItems from './pages/watch/W02_TodayItems'
 
 // Ask
 import Q01_AskHome from './pages/ask/Q01_AskHome'
@@ -58,6 +60,8 @@ export default function App() {
           <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
           <Route path="/knowledge/kb/:id" element={<K11_TeamDetail />} />
           <Route path="/knowledge/recent" element={<K13_RecentAll />} />
+          <Route path="/knowledge/watch" element={<W01_WatchManage />} />
+          <Route path="/watch/today" element={<W02_TodayItems />} />
           <Route path="/knowledge/recent-browsing" element={<ComingSoon />} />
 
           {/* Ask / Q */}

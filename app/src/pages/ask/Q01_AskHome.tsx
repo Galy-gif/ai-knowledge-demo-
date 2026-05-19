@@ -18,6 +18,7 @@ import TabLayout from '../../components/layout/TabLayout'
 import Q02_SkillsSheet, { type MagicAction } from './Q02_SkillsSheet'
 import { useUser } from '../../context/UserContext'
 import { useKnowledge } from '../../context/KnowledgeContext'
+import { useWatch } from '../../context/WatchContext'
 import { pwaTemplates, type PwaTemplate } from '../../mock/pwaTemplates'
 
 type AskMode = 'ai' | 'web' | 'task'
@@ -105,6 +106,7 @@ export default function Q01_AskHome() {
   const navigate = useNavigate()
   const { showToast } = useUser()
   const { bases, subscribedBases, askSelectedBaseIds } = useKnowledge()
+  const { todayUnread } = useWatch()
   const [mode, setMode] = useState<AskMode>('ai')
   const [input, setInput] = useState('')
   const [showSkills, setShowSkills] = useState(false)
@@ -205,6 +207,20 @@ export default function Q01_AskHome() {
             </div>
             <p className="mt-3.5 text-[13px] leading-5 text-[#6B6B6B]">你的移动 AI 知识工作台</p>
           </div>
+
+          {/* Watch today bar */}
+          {todayUnread > 0 && (
+            <button
+              onClick={() => navigate('/watch/today')}
+              className="flex items-center justify-between w-full h-11 px-4 mb-4 rounded-card bg-[#FFF1E6] active:bg-[#FFE4D0] transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-[14px]">🎯</span>
+                <span className="text-[13px] text-ink-primary">今天蹲到 {todayUnread} 条新内容</span>
+              </div>
+              <span className="text-[11px] font-medium text-[#FF7A00]">查看 →</span>
+            </button>
+          )}
 
           {/* Suggestions */}
           <div className="mb-5">
