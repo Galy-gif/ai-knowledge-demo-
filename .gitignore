@@ -1,0 +1,13 @@
+node_modules/
+dist/
+deploy/
+artifacts/
+*.png
+!app/public/**/*.png
+
+.DS_Store
+*.log
+
+.vite/
+.cache/
+.vercel/
