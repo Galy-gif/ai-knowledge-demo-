@@ -1,18 +1,27 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowUpRight, ChevronLeft, Link2 } from 'lucide-react'
+import { ChevronLeft, Link as LinkIcon } from 'lucide-react'
 import Toast from '../../components/common/Toast'
 import ConfirmDialog from '../../components/common/ConfirmDialog'
 import { useUser } from '../../context/UserContext'
 
-const MOCK_LINK = 'https://www.xiaohongshu.com/explore/sample'
-
 export default function K16_AddFromThirdParty() {
   const navigate = useNavigate()
   const { showToast } = useUser()
+  const [value, setValue] = useState('')
+  const [focused, setFocused] = useState(false)
 
-  const handlePaste = () => {
-    showToast(`已添加链接：${MOCK_LINK}`)
-    setTimeout(() => navigate(-1), 600)
+  const disabled = value.trim().length === 0
+
+  const handleAdd = () => {
+    if (disabled) return
+    showToast('已添加链接到知识库')
+    setValue('')
+    setTimeout(() => navigate(-1), 500)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') handleAdd()
   }
 
   return (
@@ -24,66 +33,78 @@ export default function K16_AddFromThirdParty() {
         <span className="flex-1 text-h2 text-ink-primary truncate">粘贴链接添加</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto scrollbar-hide flex items-center justify-center">
-        <button
-          type="button"
-          onClick={handlePaste}
-          className="flex items-center transition-transform active:scale-[0.98]"
-          style={{
-            width: 'calc(100% - 40px)',
-            backgroundColor: '#FFF1E6',
-            borderRadius: 16,
-            padding: '20px 16px',
-            gap: 14,
-          }}
-        >
-          <div
-            className="flex items-center justify-center flex-shrink-0"
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              backgroundColor: '#FFFFFF',
-            }}
-          >
-            <Link2 size={20} color="#FF7A00" strokeWidth={2} />
-          </div>
-          <div className="flex-1 min-w-0 text-left">
-            <p
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div style={{ paddingTop: 24, paddingLeft: 20, paddingRight: 20 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'stretch' }}>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <LinkIcon
+                size={16}
+                strokeWidth={2}
+                color={focused ? '#FF7A00' : '#9CA3AF'}
+                style={{
+                  position: 'absolute',
+                  left: 14,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                }}
+              />
+              <input
+                autoFocus
+                type="url"
+                inputMode="url"
+                value={value}
+                onChange={e => setValue(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                onKeyDown={handleKeyDown}
+                placeholder="粘贴或输入链接"
+                style={{
+                  width: '100%',
+                  backgroundColor: focused ? '#FFFFFF' : '#F8F8F8',
+                  border: focused ? '1.5px solid #FF7A00' : '1px solid #EEEEEE',
+                  borderRadius: 12,
+                  padding: focused ? '11.5px 14px 11.5px 37.5px' : '12px 14px 12px 38px',
+                  fontSize: 13,
+                  lineHeight: '20px',
+                  color: '#1A1A1A',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={disabled}
               style={{
-                fontSize: 14,
+                backgroundColor: disabled ? '#FFD4B0' : '#FF7A00',
+                color: '#FFFFFF',
+                fontSize: 13,
                 fontWeight: 500,
-                color: '#1A1A1A',
-                lineHeight: 1.4,
+                padding: '0 18px',
+                borderRadius: 12,
+                border: 'none',
+                cursor: disabled ? 'default' : 'pointer',
+                flexShrink: 0,
+                transition: 'background-color 150ms ease',
               }}
             >
-              粘贴链接
-            </p>
-            <p
-              style={{
-                fontSize: 12,
-                color: '#9CA3AF',
-                marginTop: 2,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              小红书、知乎、B 站等都支持
-            </p>
+              添加
+            </button>
           </div>
-          <div
-            className="flex items-center justify-center flex-shrink-0"
+          <p
             style={{
-              width: 28,
-              height: 28,
-              borderRadius: '50%',
-              backgroundColor: '#FFFFFF',
+              marginTop: 10,
+              paddingLeft: 4,
+              fontSize: 11,
+              color: '#9CA3AF',
+              lineHeight: 1.5,
             }}
           >
-            <ArrowUpRight size={14} color="#FF7A00" strokeWidth={2.4} />
-          </div>
-        </button>
+            支持小红书、知乎、B 站、微信公众号等
+          </p>
+        </div>
       </div>
 
       <Toast />
