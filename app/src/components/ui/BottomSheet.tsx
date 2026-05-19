@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface BottomSheetProps {
   open: boolean
@@ -26,8 +27,9 @@ export default function BottomSheet({
   titleClassName = 'text-h2 text-ink-primary',
 }: BottomSheetProps) {
   if (!open) return null
+  const portalTarget = document.querySelector('[data-phone-content="true"]')
 
-  return (
+  const sheet = (
     <div className="absolute inset-0 z-40 flex flex-col justify-end">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div
@@ -57,4 +59,6 @@ export default function BottomSheet({
       </div>
     </div>
   )
+
+  return portalTarget ? createPortal(sheet, portalTarget) : sheet
 }
