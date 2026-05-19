@@ -107,7 +107,7 @@ export default function K10_KnowledgeSquare() {
   }
 
   const matchesCat = (kb: DiscoverKb) =>
-    activeCat === '推荐' || kb.category === activeCat
+    activeCat === '推荐' ? kb.inRecommend === true : kb.category === activeCat
 
   const hotKbs = discoverKbs.filter(kb => kb.section === 'hot' && matchesCat(kb))
   const recommendedKbs = discoverKbs.filter(kb => kb.section === 'recommended' && matchesCat(kb))
