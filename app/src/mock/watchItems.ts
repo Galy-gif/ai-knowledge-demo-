@@ -1,10 +1,9 @@
 // 蹲守任务详情页（W03）每条蹲到内容的 mock 数据。
-// 三种 kind：
+// 两种 kind：
 //   - new      新蹲到，带"新"徽章 + 相关度 + AI 归入主题
 //   - history  历史蹲到，有相关度 + AI 归入主题，无徽章
-//   - filtered 智能过滤剔除，灰底半透明 + "还是入库" 按钮
 
-export type WatchItemKind = 'new' | 'history' | 'filtered'
+export type WatchItemKind = 'new' | 'history'
 
 export interface WatchItem {
   id: string
@@ -15,7 +14,6 @@ export interface WatchItem {
   meta: string
   relevance?: number
   aiTopic?: string
-  filteredReason?: string
 }
 
 export const WATCH_ITEMS: WatchItem[] = [
@@ -129,14 +127,6 @@ export const WATCH_ITEMS: WatchItem[] = [
     relevance: 81,
     aiTopic: '需求管理',
   },
-  {
-    id: 'wi_004_4',
-    taskId: 'watch_004',
-    kind: 'filtered',
-    title: '作者闲聊：周末逛了一家咖啡馆',
-    meta: '微 · PMTalk · 5 天前',
-    filteredReason: '与产品方法无关，已剔除',
-  },
 
   // ── watch_005 · 知乎 · 产品方法论 ───────────────────────────────────────
   {
@@ -157,14 +147,6 @@ export const WATCH_ITEMS: WatchItem[] = [
     meta: '知 · 数据洞察 · 4 天前',
     relevance: 83,
     aiTopic: '数据决策',
-  },
-  {
-    id: 'wi_005_3',
-    taskId: 'watch_005',
-    kind: 'filtered',
-    title: '推广：报名我的产品训练营',
-    meta: '知 · 某机构号 · 2 天前',
-    filteredReason: '识别为推广内容，已剔除',
   },
 
   // ── watch_006 · X · 用户研究 ────────────────────────────────────────────
@@ -328,14 +310,6 @@ export const WATCH_ITEMS: WatchItem[] = [
     relevance: 81,
     aiTopic: '宏量营养素',
   },
-  {
-    id: 'wi_011_4',
-    taskId: 'watch_011',
-    kind: 'filtered',
-    title: '今天去环球影城啦～附穿搭',
-    meta: '书 · 减脂少女狗蛋 · 2 天前',
-    filteredReason: '与减脂内容无关，已剔除',
-  },
 
   // ── watch_012 · 公众号 · 营养师顾中一 ───────────────────────────────────
   {
@@ -427,14 +401,6 @@ export const WATCH_ITEMS: WatchItem[] = [
     meta: '雪 · 银行螺丝钉 · 4 天前',
     relevance: 86,
     aiTopic: '定投策略',
-  },
-  {
-    id: 'wi_015_3',
-    taskId: 'watch_015',
-    kind: 'filtered',
-    title: '快讯：某互联网巨头单日大涨 8%',
-    meta: '雪 · 财经快讯 · 今天',
-    filteredReason: '与指数定投策略无关，已剔除',
   },
 ]
 

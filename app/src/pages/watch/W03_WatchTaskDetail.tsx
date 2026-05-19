@@ -118,39 +118,7 @@ function RelevanceTopic({ relevance, topic }: { relevance?: number; topic?: stri
   )
 }
 
-function ContentCard({ item, onArchive }: { item: WatchItem; onArchive: () => void }) {
-  if (item.kind === 'filtered') {
-    return (
-      <div
-        className="mx-4 rounded-card p-3"
-        style={{ backgroundColor: '#F8F8F8', opacity: 0.7 }}
-      >
-        <div className="flex items-start gap-2">
-          <p
-            className="flex-1 text-[13px] leading-5 text-ink-placeholder line-through"
-            style={{ wordBreak: 'break-word' }}
-          >
-            {item.title}
-          </p>
-        </div>
-        <p className="text-[10px] text-ink-placeholder mt-1">{item.meta}</p>
-        <div className="flex items-center justify-between mt-2.5">
-          <span className="text-[10px] text-ink-placeholder">
-            {item.filteredReason ?? '智能过滤已剔除'}
-          </span>
-          <button
-            type="button"
-            onClick={onArchive}
-            className="text-[11px] font-medium px-2.5 py-1 rounded-pill"
-            style={{ backgroundColor: '#FFFFFF', color: '#FF7A00', border: '0.5px solid #FFD9B3' }}
-          >
-            还是入库
-          </button>
-        </div>
-      </div>
-    )
-  }
-
+function ContentCard({ item }: { item: WatchItem }) {
   const isNew = item.kind === 'new'
   return (
     <div className="mx-4 bg-white rounded-card border border-[#EEEEEE] p-3.5">
@@ -207,7 +175,6 @@ export default function W03_WatchTaskDetail() {
 
   const newItems = items.filter(i => i.kind === 'new')
   const historyItems = items.filter(i => i.kind === 'history')
-  const filteredItems = items.filter(i => i.kind === 'filtered')
 
   return (
     <PageLayout>
@@ -239,11 +206,7 @@ export default function W03_WatchTaskDetail() {
                   今日新蹲到 · {newItems.length} 条
                 </p>
                 {newItems.map(item => (
-                  <ContentCard
-                    key={item.id}
-                    item={item}
-                    onArchive={() => showToast('已加入知识库（mock）', 'success')}
-                  />
+                  <ContentCard key={item.id} item={item} />
                 ))}
               </section>
             )}
@@ -254,26 +217,7 @@ export default function W03_WatchTaskDetail() {
                   历史蹲到 · {historyItems.length} 条
                 </p>
                 {historyItems.map(item => (
-                  <ContentCard
-                    key={item.id}
-                    item={item}
-                    onArchive={() => showToast('已加入知识库（mock）', 'success')}
-                  />
-                ))}
-              </section>
-            )}
-
-            {filteredItems.length > 0 && (
-              <section className="space-y-2">
-                <p className="px-4 text-[11px] text-ink-placeholder">
-                  智能过滤剔除 · {filteredItems.length} 条
-                </p>
-                {filteredItems.map(item => (
-                  <ContentCard
-                    key={item.id}
-                    item={item}
-                    onArchive={() => showToast('已加入知识库（mock）', 'success')}
-                  />
+                  <ContentCard key={item.id} item={item} />
                 ))}
               </section>
             )}

@@ -299,19 +299,11 @@ export default function W01_WatchManage() {
           <>
             {/* Status card */}
             <div className="mx-4 mt-4 mb-4 rounded-card bg-[#FFF1E6] p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Eye size={20} className="text-brand-orange flex-shrink-0" />
-                  <p className="text-[14px] font-semibold text-ink-primary">
-                    {runningCount} 个任务运行中
-                  </p>
-                </div>
-                <button
-                  onClick={() => { resetForm(); setShowNewSheet(true) }}
-                  className="px-3 py-1 bg-brand-orange text-white rounded-pill text-[12px] font-medium"
-                >
-                  + 新建
-                </button>
+              <div className="flex items-center gap-2">
+                <Eye size={20} className="text-brand-orange flex-shrink-0" />
+                <p className="text-[14px] font-semibold text-ink-primary">
+                  {runningCount} 个任务运行中
+                </p>
               </div>
               <p className="text-[12px] text-ink-secondary mt-1.5 ml-7">
                 累计蹲到 {totalFetched} 条内容 · 已自动归入相关主题
