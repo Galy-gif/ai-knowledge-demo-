@@ -1010,19 +1010,16 @@ function OutputStageCardView({
     )
   }
 
+  const active = card.tone === 'active'
   return (
-    <div
-      className={`h-[116px] w-[240px] rounded-[12px] border border-[#EEEEEE] p-3 text-left ${
-        card.tone === 'active' ? 'bg-[#FFF1E6]' : 'bg-white'
-      }`}
-    >
-      <div className="mb-3 flex items-center gap-2">
+    <div className="h-[116px] w-[240px] rounded-[12px] border border-[#EEEEEE] bg-white p-3 text-left">
+      <div className="mb-2 flex items-center gap-2">
         <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] ${
-            card.tone === 'active' ? 'bg-white/70' : 'bg-[#F8F8F8]'
+          className={`flex flex-shrink-0 items-center justify-center rounded-[10px] ${
+            active ? 'h-11 w-11 bg-[#FFF1E6]' : 'h-8 w-8 bg-[#F8F8F8]'
           }`}
         >
-          <Icon size={17} className={card.tone === 'active' ? 'text-[#FF7A00]' : 'text-ink-secondary'} />
+          <Icon size={active ? 20 : 17} className={active ? 'text-[#FF7A00]' : 'text-ink-secondary'} />
         </span>
         {card.tag && (
           <span className="rounded-full bg-[#F5F5F5] px-2 py-0.5 text-[11px] leading-4 text-ink-secondary">
@@ -1033,9 +1030,9 @@ function OutputStageCardView({
       {renaming && onRenameChange && onRenameCommit ? (
         <InlineRenameInput value={renameValue ?? displayTitle} onChange={onRenameChange} onCommit={onRenameCommit} />
       ) : (
-        <p className="line-clamp-2 text-[14px] font-semibold leading-5 text-ink-primary">{displayTitle}</p>
+        <p className="line-clamp-2 text-[13px] font-semibold leading-[1.35] text-ink-primary">{displayTitle}</p>
       )}
-      <p className="mt-1 truncate text-[12px] leading-4 text-ink-secondary">{card.meta}</p>
+      <p className="mt-0.5 truncate text-[11px] leading-4 text-ink-secondary">{card.meta}</p>
     </div>
   )
 }

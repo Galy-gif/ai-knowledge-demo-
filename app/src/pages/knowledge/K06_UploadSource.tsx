@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import {
   Check,
   ChevronRight,
-  Link as LinkIcon,
   PenLine,
 } from 'lucide-react'
 import BottomSheet from '../../components/ui/BottomSheet'
-import SaveToKnowledgeBaseSheet from '../../components/common/SaveToKnowledgeBaseSheet'
 import Toast from '../../components/common/Toast'
 import ConfirmDialog from '../../components/common/ConfirmDialog'
-import { useKnowledge, type SaveSourceContent } from '../../context/KnowledgeContext'
+import { useKnowledge } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
 import { QUICK_NOTES_KB_ID, type FileType, type KnowledgeFile } from '../../mock/data'
 
@@ -70,74 +68,6 @@ const RECENT_BROWSER_DOWNLOADS: Array<{
   { id: 'rb5', title: 'OKR 制定指南.docx', type: 'doc', source: '下载', time: '1 周前', summary: '团队 OKR 制定指南文档。', emoji: '📝' },
   { id: 'rb6', title: 'Anthropic Claude 3 Demo', type: 'url', source: '网页', time: '4 小时前', summary: 'Claude 3 Demo 页面和能力说明。', emoji: '🌐' },
 ]
-
-function getLinkTitle(url: string) {
-  try {
-    const parsed = new URL(url)
-    return `网页：${parsed.hostname.replace(/^www\./, '')}`
-  } catch {
-    return '网页链接'
-  }
-}
-
-function isValidUrl(value: string) {
-  return /^https?:\/\/[\w.-]+\.[a-z]{2,}[\w\-._~:/?#[\]@!$&'()*+,;=.]*$/i.test(value.trim())
-}
-
-function PasteLinkRow({
-  value,
-  onChange,
-  onSave,
-}: {
-  value: string
-  onChange: (value: string) => void
-  onSave: (content: SaveSourceContent) => void
-}) {
-  const trimmed = value.trim()
-  const valid = isValidUrl(value)
-  const hasInput = trimmed.length > 0
-
-  const handleSave = () => {
-    if (!valid) return
-    const title = getLinkTitle(trimmed)
-    onSave({
-      title,
-      type: 'web',
-      body: `# ${title}\n\n来源：${trimmed}\n\n通过粘贴链接保存，AI 将在入库后自动识别网页标题、正文和要点。`,
-    })
-  }
-
-  return (
-    <div className="mx-4 bg-white border border-[#EEEEEE] rounded-card p-3 flex items-center gap-3">
-      <div
-        className={`w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 ${
-          valid ? 'bg-[#DCFCE7]' : 'bg-brand-orange-light'
-        }`}
-      >
-        {valid ? (
-          <Check size={16} className="text-[#10B981]" strokeWidth={2.4} />
-        ) : (
-          <LinkIcon size={16} className="text-brand-orange" strokeWidth={2} />
-        )}
-      </div>
-      <input
-        value={value}
-        onChange={event => onChange(event.target.value)}
-        placeholder="粘贴链接快速添加"
-        className="flex-1 min-w-0 bg-transparent outline-none text-[13px] leading-5 font-medium text-ink-primary placeholder:text-ink-placeholder placeholder:font-medium"
-      />
-      {hasInput && (
-        <button
-          onClick={handleSave}
-          disabled={!valid}
-          className="px-3 py-1 rounded-pill bg-brand-orange text-white text-[12px] leading-4 font-medium disabled:bg-line-base disabled:text-ink-placeholder flex-shrink-0"
-        >
-          保存
-        </button>
-      )}
-    </div>
-  )
-}
 
 function RecentScrollSection({
   selectedIds,
@@ -333,13 +263,6 @@ export default function K06_UploadSource() {
   const navigate = useNavigate()
   const { activeBase, setActiveFile, addFile, quickNotesBase } = useKnowledge()
   const { showToast } = useUser()
-  const [linkValue, setLinkValue] = useState('')
-  const [showLinkSaveSheet, setShowLinkSaveSheet] = useState(false)
-  const [linkContent, setLinkContent] = useState<SaveSourceContent>({
-    title: '网页链接',
-    body: '',
-    type: 'web',
-  })
   const [selectedShortcutIds, setSelectedShortcutIds] = useState<string[]>([])
   const [savedBrowsingIds, setSavedBrowsingIds] = useState<string[]>([])
   const [showCloudPicker, setShowCloudPicker] = useState(false)
@@ -374,11 +297,6 @@ export default function K06_UploadSource() {
   const handleNewQuickNote = () => {
     setActiveFile(null)
     navigate('/knowledge/file-detail', { state: { createNote: true, kbId: currentKbId } })
-  }
-
-  const openLinkSaveSheet = (content: SaveSourceContent) => {
-    setLinkContent(content)
-    setShowLinkSaveSheet(true)
   }
 
   const addMockFile = (payload: Omit<KnowledgeFile, 'id' | 'kbId' | 'uploadedAt'>) => {
@@ -446,12 +364,6 @@ export default function K06_UploadSource() {
         headerRight={<div className="w-7 h-7" aria-hidden />}
       >
         <div className={`pt-4 ${selectedShortcutCount > 0 ? 'pb-24' : 'pb-4'} space-y-3.5`}>
-          <PasteLinkRow
-            value={linkValue}
-            onChange={setLinkValue}
-            onSave={openLinkSaveSheet}
-          />
-
           <RecentScrollSection
             selectedIds={selectedShortcutIds}
             savedIds={savedBrowsingIds}
@@ -490,17 +402,6 @@ export default function K06_UploadSource() {
           onPick={handleCloudPick}
         />
       </BottomSheet>
-
-      <SaveToKnowledgeBaseSheet
-        open={showLinkSaveSheet}
-        onClose={() => setShowLinkSaveSheet(false)}
-        sourceContent={linkContent}
-        successToast={kb => `已保存「${linkContent.title}」到「${kb.name}」`}
-        onSaved={() => {
-          setLinkValue('')
-          setShowLinkSaveSheet(false)
-        }}
-      />
 
       <Toast />
       <ConfirmDialog />
