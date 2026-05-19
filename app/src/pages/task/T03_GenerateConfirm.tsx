@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, ChevronRight, ChevronUp, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
+import { ChevronDown, ChevronRight, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { getPwaTemplateById } from '../../mock/pwaTemplates'
@@ -269,11 +269,9 @@ export default function T03_GenerateConfirm() {
 
   const dataSourceMainLabel = selectedKbIds.length === 0
     ? null
-    : `已选 ${selectedKbIds.length} 个知识库`
-
-  const dataSourceSubLabel = selectedKbNames.length > 0
-    ? selectedKbNames.slice(0, 3).join('、') + (selectedKbNames.length > 3 ? '...' : '')
-    : undefined
+    : selectedKbNames.length > 0
+      ? selectedKbNames.slice(0, 3).join('、') + (selectedKbNames.length > 3 ? '…' : '')
+      : `已选 ${selectedKbIds.length} 个知识库`
 
   const accessModeLabel = selectedAccessModes
     .map(m => ACCESS_MODE_LABELS[m])
@@ -317,56 +315,113 @@ export default function T03_GenerateConfirm() {
           <p className="text-body text-ink-secondary mt-2">{templateCoreFeatures}</p>
         </div>
 
-        <div className="space-y-3">
-          {/* Data source row */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* Data source */}
           <button
+            type="button"
             onClick={() => setShowSourceSheet(true)}
-            className="w-full flex items-center gap-4 p-4 bg-surface-card rounded-card text-left active:bg-line-base/40 transition-colors border border-line-base"
+            className="text-left active:bg-line-base/30 transition-colors"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '14px 16px',
+              backgroundColor: '#FFFFFF',
+              border: '0.5px solid #EEEEEE',
+              borderRadius: 12,
+            }}
           >
-            <div className="w-10 h-10 bg-brand-orange-light rounded-card flex items-center justify-center flex-shrink-0">
-              <Database size={18} className="text-brand-orange" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] leading-5 text-ink-secondary">数据源</p>
+            <span
+              style={{
+                flexShrink: 0,
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                backgroundColor: '#FFF1E6',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Database size={14} color="#FF7A00" />
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 11, lineHeight: '14px', color: '#9CA3AF', marginBottom: 4 }}>
+                数据源
+              </p>
               {dataSourceMainLabel ? (
-                <>
-                  <p className="text-body text-ink-primary font-semibold">{dataSourceMainLabel}</p>
-                  {dataSourceSubLabel && (
-                    <p className="text-[11px] text-ink-placeholder leading-4 truncate mt-0.5">
-                      {dataSourceSubLabel}
-                    </p>
-                  )}
-                </>
+                <p
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: 1.4,
+                    color: '#1A1A1A',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {dataSourceMainLabel}
+                </p>
               ) : (
-                <p className="text-body font-semibold" style={{ color: '#FF7A00' }}>
+                <p style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, color: '#FF7A00' }}>
                   请选择知识库 →
                 </p>
               )}
             </div>
-            <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
+            <ChevronRight size={16} color="#9CA3AF" style={{ flexShrink: 0 }} />
           </button>
 
-          {/* Features row */}
+          {/* Features */}
           <button
+            type="button"
             onClick={() => setShowFeaturesSheet(true)}
-            className="w-full flex items-center gap-4 p-4 bg-surface-card rounded-card text-left active:bg-line-base/40 transition-colors border border-line-base"
+            className="text-left active:bg-line-base/30 transition-colors"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 12,
+              padding: '14px 16px',
+              backgroundColor: '#FFFFFF',
+              border: '0.5px solid #EEEEEE',
+              borderRadius: 12,
+            }}
           >
-            <div className="w-10 h-10 bg-brand-orange-light rounded-card flex items-center justify-center flex-shrink-0">
-              <Cpu size={18} className="text-brand-orange" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] leading-4 text-[#9CA3AF] mb-1.5">功能模块</p>
-              <div className="flex flex-wrap gap-1.5">
+            <span
+              style={{
+                flexShrink: 0,
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                backgroundColor: '#FFF1E6',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Cpu size={14} color="#FF7A00" />
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 11, lineHeight: '14px', color: '#9CA3AF', marginBottom: 4 }}>
+                功能模块
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {selectedFeatures.map(f => {
                   const isAi = /AI/i.test(f)
                   return (
                     <span
                       key={f}
-                      className={`text-[10px] leading-4 px-2 py-0.5 rounded-pill font-medium ${
-                        isAi
-                          ? 'bg-[#FFF1E6] text-[#FF7A00]'
-                          : 'bg-[#F5F5F5] text-[#4A4A4A]'
-                      }`}
+                      style={{
+                        fontSize: 11,
+                        lineHeight: '14px',
+                        padding: '3px 10px',
+                        borderRadius: 999,
+                        fontWeight: isAi ? 500 : 400,
+                        backgroundColor: isAi ? '#FFF1E6' : '#F5F5F5',
+                        color: isAi ? '#FF7A00' : '#4A4A4A',
+                      }}
                     >
                       {f}
                     </span>
@@ -374,49 +429,115 @@ export default function T03_GenerateConfirm() {
                 })}
               </div>
             </div>
-            <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
+            <ChevronRight size={16} color="#9CA3AF" style={{ flexShrink: 0, marginTop: 2 }} />
           </button>
 
-          {/* Access mode row */}
+          {/* Access mode */}
           <button
+            type="button"
             onClick={() => setShowAccessSheet(true)}
-            className="w-full flex items-center gap-4 p-4 bg-surface-card rounded-card text-left active:bg-line-base/40 transition-colors border border-line-base"
+            className="text-left active:bg-line-base/30 transition-colors"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '14px 16px',
+              backgroundColor: '#FFFFFF',
+              border: '0.5px solid #EEEEEE',
+              borderRadius: 12,
+            }}
           >
-            <div className="w-10 h-10 bg-brand-orange-light rounded-card flex items-center justify-center flex-shrink-0">
-              <Globe size={18} className="text-brand-orange" />
+            <span
+              style={{
+                flexShrink: 0,
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                backgroundColor: '#FFF1E6',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Globe size={14} color="#FF7A00" />
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 11, lineHeight: '14px', color: '#9CA3AF', marginBottom: 4 }}>
+                访问方式
+              </p>
+              <p style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, color: '#1A1A1A' }}>
+                {accessModeLabel}
+              </p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] leading-4 text-[#9CA3AF]">访问方式</p>
-              <p className="text-body font-medium text-[#1A1A1A]">{accessModeLabel}</p>
-            </div>
-            <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
+            <ChevronRight size={16} color="#9CA3AF" style={{ flexShrink: 0 }} />
           </button>
 
-          {/* Travel preferences row (collapsible, travel template only) */}
+          {/* Travel preferences (collapsible) */}
           {isTravel && (
             <div>
               <button
+                type="button"
                 onClick={() => setPrefsOpen(v => !v)}
-                className="w-full flex items-center gap-4 p-4 bg-surface-card rounded-card text-left active:bg-line-base/40 transition-colors border border-line-base"
+                className="text-left active:bg-line-base/30 transition-colors"
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '14px 16px',
+                  backgroundColor: '#FFFFFF',
+                  border: '0.5px solid #EEEEEE',
+                  borderRadius: 12,
+                }}
               >
-                <div className="w-10 h-10 bg-brand-orange-light rounded-card flex items-center justify-center flex-shrink-0">
-                  <MapPin size={18} className="text-brand-orange" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[12px] leading-4 text-[#9CA3AF]">行程偏好</p>
+                <span
+                  style={{
+                    flexShrink: 0,
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    backgroundColor: '#FFF1E6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <MapPin size={14} color="#FF7A00" />
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 11, lineHeight: '14px', color: '#9CA3AF', marginBottom: 4 }}>
+                    行程偏好
+                  </p>
                   {prefsConfigured ? (
-                    <p className="text-body font-medium text-[#1A1A1A] truncate">
+                    <p
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        lineHeight: 1.4,
+                        color: '#1A1A1A',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
                       {buildPrefsSummary(travelPrefs)}
                     </p>
                   ) : (
-                    <p className="text-body text-[#9CA3AF]">
+                    <p style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, color: '#9CA3AF' }}>
                       请填写预算、酒店等偏好
                     </p>
                   )}
                 </div>
-                {prefsOpen
-                  ? <ChevronUp size={16} className="text-ink-placeholder flex-shrink-0" />
-                  : <ChevronDown size={16} className="text-ink-placeholder flex-shrink-0" />}
+                <ChevronDown
+                  size={16}
+                  color="#9CA3AF"
+                  style={{
+                    flexShrink: 0,
+                    transition: 'transform 200ms ease',
+                    transform: prefsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                />
               </button>
               <AnimatePresence initial={false}>
                 {prefsOpen && (
@@ -427,7 +548,15 @@ export default function T03_GenerateConfirm() {
                     transition={{ duration: 0.22, ease: 'easeOut' }}
                     style={{ overflow: 'hidden' }}
                   >
-                    <div className="mt-2 bg-white border border-[#EEEEEE] rounded-card p-4">
+                    <div
+                      style={{
+                        marginTop: 8,
+                        padding: '14px 16px',
+                        backgroundColor: '#FFFFFF',
+                        border: '0.5px solid #EEEEEE',
+                        borderRadius: 12,
+                      }}
+                    >
                       <TravelPrefsFields prefs={travelPrefs} onChange={handlePrefsChange} />
                     </div>
                   </motion.div>
