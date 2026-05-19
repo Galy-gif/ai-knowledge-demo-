@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Eye, MoreHorizontal, Plus, X } from 'lucide-react'
+import { Check, Eye, MoreHorizontal, Plus, X } from 'lucide-react'
 import TopHeader from '../../components/layout/TopHeader'
 import BottomSheet from '../../components/ui/BottomSheet'
 import Toast from '../../components/common/Toast'
@@ -188,7 +188,7 @@ export default function W01_WatchManage() {
 
   // New watch form
   const [step, setStep] = useState(1)
-  const [platform, setPlatform] = useState<WatchPlatform | null>(null)
+  const [platforms, setPlatforms] = useState<WatchPlatform[]>([])
   const [watchType, setWatchType] = useState<WatchType>('author')
   const [selectedAuthors, setSelectedAuthors] = useState<string[]>([])
   const [authorSearch, setAuthorSearch] = useState('')
@@ -201,7 +201,7 @@ export default function W01_WatchManage() {
   const [notification, setNotification] = useState<'in_app' | 'push'>('in_app')
 
   const resetForm = () => {
-    setStep(1); setPlatform(null); setWatchType('author')
+    setStep(1); setPlatforms([]); setWatchType('author')
     setSelectedAuthors([]); setAuthorSearch('')
     setTopics([]); setTopicInput('')
     setKeywords([]); setKeywordInput('')
@@ -209,33 +209,44 @@ export default function W01_WatchManage() {
     setNotification('in_app')
   }
 
+  const togglePlatform = (p: WatchPlatform) => {
+    setPlatforms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])
+  }
+
   const currentTargets = watchType === 'author' ? selectedAuthors
     : watchType === 'topic' ? topics : keywords
 
-  const canStart = !!platform && currentTargets.length > 0
-  const canNextStep = step === 1 ? !!platform : step === 2 ? currentTargets.length > 0 : true
+  const canStart = platforms.length > 0 && currentTargets.length > 0
+  const canNextStep = step === 1 ? platforms.length > 0 : step === 2 ? currentTargets.length > 0 : true
 
   const handleStart = () => {
-    if (!canStart || !platform) return
-    const task = {
-      id: `watch_${Date.now()}`,
-      kbId,
-      platform,
-      type: watchType,
-      target: currentTargets,
-      strategy,
-      frequency,
-      notification,
-      status: 'running' as const,
-      createdAt: '刚刚',
-      lastFetchedAt: '—',
-      totalFetched: 0,
-      todayFetched: 0,
-    }
-    addTask(task)
+    if (!canStart) return
+    const baseId = Date.now()
+    platforms.forEach((p, idx) => {
+      addTask({
+        id: `watch_${baseId}_${idx}`,
+        kbId,
+        platform: p,
+        type: watchType,
+        target: currentTargets,
+        strategy,
+        frequency,
+        notification,
+        status: 'running' as const,
+        createdAt: '刚刚',
+        lastFetchedAt: '—',
+        totalFetched: 0,
+        todayFetched: 0,
+      })
+    })
     setShowNewSheet(false)
     resetForm()
-    showToast('✨ 已开始蹲守，AI 24 小时替你关注')
+    showToast(
+      platforms.length === 1
+        ? '已开始蹲守'
+        : `已在 ${platforms.length} 个平台开始蹲守`,
+      'success',
+    )
   }
 
   const handleAddTopic = () => {
@@ -356,21 +367,41 @@ export default function W01_WatchManage() {
           {/* ── Step 1: Platform ── */}
           {step === 1 && (
             <div>
-              <p className="text-[13px] font-semibold text-ink-primary mb-4">在哪里蹲？</p>
+              <p className="text-[13px] font-semibold text-ink-primary mb-1">在哪里蹲？</p>
+              <p className="text-[11px] text-ink-placeholder mb-4">可多选，每个平台会创建独立任务</p>
               <div className="grid grid-cols-3 gap-3">
                 {PLATFORMS.map(p => {
                   const cfg = PLATFORM_CONFIG[p]
-                  const selected = platform === p
+                  const selected = platforms.includes(p)
                   return (
                     <button
                       key={p}
-                      onClick={() => setPlatform(p)}
-                      className="flex flex-col items-center gap-1.5 py-3 rounded-card transition-all"
+                      onClick={() => togglePlatform(p)}
+                      aria-pressed={selected}
+                      className="relative flex flex-col items-center gap-1.5 py-3 rounded-card transition-all"
                       style={{
-                        backgroundColor: selected ? cfg.bg : '#FAFAFA',
-                        border: selected ? `1.5px solid ${cfg.color}` : '1.5px solid #EEEEEE',
+                        backgroundColor: selected ? '#FFF1E6' : '#FAFAFA',
+                        border: selected ? '1.5px solid #FF7A00' : '1.5px solid #EEEEEE',
                       }}
                     >
+                      {selected && (
+                        <span
+                          style={{
+                            position: 'absolute',
+                            top: 6,
+                            right: 6,
+                            width: 16,
+                            height: 16,
+                            borderRadius: '50%',
+                            backgroundColor: '#FF7A00',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Check size={10} color="#FFFFFF" strokeWidth={3} />
+                        </span>
+                      )}
                       <div
                         className="w-12 h-12 rounded-[10px] flex items-center justify-center font-bold text-[20px]"
                         style={{ backgroundColor: cfg.bg, color: cfg.color }}
@@ -409,7 +440,11 @@ export default function W01_WatchManage() {
                   <input
                     value={authorSearch}
                     onChange={e => setAuthorSearch(e.target.value)}
-                    placeholder={`输入${platform ? PLATFORM_CONFIG[platform].name : '平台'}作者名或主页链接`}
+                    placeholder={
+                      platforms.length > 1
+                        ? `输入作者名或主页链接（应用到 ${platforms.length} 个平台）`
+                        : '输入作者名或主页链接'
+                    }
                     className="w-full px-3.5 py-3 bg-[#F8F8F8] rounded-card text-[14px] text-ink-primary outline-none placeholder:text-ink-placeholder"
                   />
                   {selectedAuthors.length > 0 && (
@@ -644,7 +679,11 @@ export default function W01_WatchManage() {
                   canNextStep ? 'bg-brand-orange text-white' : 'bg-[#FFE4D0] text-white cursor-default'
                 }`}
               >
-                {step === 3 ? '高级设置 →' : '下一步 →'}
+                {step === 3
+                  ? '高级设置 →'
+                  : step === 1 && platforms.length > 0
+                    ? `下一步 →（${platforms.length}）`
+                    : '下一步 →'}
               </button>
             </div>
           )}
