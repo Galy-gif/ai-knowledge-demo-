@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { ChevronDown, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
 import { useApps } from '../../context/AppsContext'
+import { useUser } from '../../context/UserContext'
+import ExportItinerarySheet from '../../components/common/ExportItinerarySheet'
 import type { LightApp, TravelPreferences } from '../../mock/data'
 
 // ── Shared ────────────────────────────────────────────────────────────────────
@@ -537,7 +539,7 @@ function DayCard({ plan, defaultOpen }: { plan: DayPlan; defaultOpen: boolean })
   )
 }
 
-function TravelPlannerForm({ app }: { app: LightApp }) {
+function TravelPlannerForm({ app, onAdjust, onExport }: { app: LightApp; onAdjust: () => void; onExport: () => void }) {
   const prefs: TravelPreferences = app.travelPreferences ?? {
     budget: 'comfort',
     hotelPrefs: ['premium'],
@@ -642,11 +644,17 @@ function TravelPlannerForm({ app }: { app: LightApp }) {
             已基于「日本旅行攻略」知识库生成全套方案，可随时调整您的偏好重新规划。
           </p>
           <div className="flex gap-2 mt-3">
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-white border border-brand-orange text-brand-orange text-[12px] font-medium">
+            <button
+              onClick={onAdjust}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-white border border-brand-orange text-brand-orange text-[12px] font-medium transition-transform active:scale-95"
+            >
               <Sliders size={13} strokeWidth={2} />
               调整需求
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-brand-orange text-white text-[12px] font-medium">
+            <button
+              onClick={onExport}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-brand-orange text-white text-[12px] font-medium transition-transform active:scale-95"
+            >
               <Download size={13} strokeWidth={2} />
               导出行程
             </button>
@@ -661,10 +669,13 @@ function TravelPlannerForm({ app }: { app: LightApp }) {
 
 export default function T07_AppRuntime() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { apps, activeApp, touchApp } = useApps()
+  const { showToast } = useUser()
   const app = apps.find(item => item.id === id) ?? activeApp ?? apps[0]
 
   const [refreshing, setRefreshing] = useState(false)
+  const [showExport, setShowExport] = useState(false)
 
   useEffect(() => {
     if (app?.id) touchApp(app.id)
@@ -673,6 +684,19 @@ export default function T07_AppRuntime() {
   const handleRefresh = () => {
     setRefreshing(true)
     setTimeout(() => setRefreshing(false), 1200)
+  }
+
+  const handleAdjust = () => {
+    if (!app) return
+    navigate('/pwa/confirm', {
+      state: {
+        fromEdit: true,
+        templateId: app.templateId,
+        resultAppId: app.id,
+        travelPreferences: app.travelPreferences,
+        customRequirement: app.customRequirement,
+      },
+    })
   }
 
   if (!app) {
@@ -695,7 +719,7 @@ export default function T07_AppRuntime() {
       form = <DataDashboardForm />
       break
     case 'travel_planner':
-      form = <TravelPlannerForm app={app} />
+      form = <TravelPlannerForm app={app} onAdjust={handleAdjust} onExport={() => setShowExport(true)} />
       break
     case 'daily_tracker':
       if (app.id === 'app_fitness') form = <FitnessTrackerForm />
@@ -728,6 +752,12 @@ export default function T07_AppRuntime() {
         </div>
         {form}
       </div>
+
+      <ExportItinerarySheet
+        open={showExport}
+        onClose={() => setShowExport(false)}
+        onPick={msg => showToast(msg, 'success')}
+      />
     </PageLayout>
   )
 }

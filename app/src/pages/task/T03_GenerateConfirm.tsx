@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ChevronRight, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown, ChevronRight, ChevronUp, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
 import { getPwaTemplateById } from '../../mock/pwaTemplates'
@@ -54,6 +55,48 @@ const DEFAULT_TRAVEL_PREFS: TravelPreferences = {
   duration: 7,
 }
 
+const BUDGET_SUMMARY: Record<TravelBudget, string> = {
+  budget: '经济 ¥5,000 以下',
+  comfort: '舒适 ¥5,000-1.5万',
+  premium: '精品 ¥1.5万-3万',
+  luxury: '奢华 ¥3万以上',
+}
+
+const HOTEL_SUMMARY: Record<string, string> = {
+  chain: '连锁酒店',
+  premium: '精品酒店',
+  local: '当地民宿',
+  apartment: '公寓式',
+}
+
+const STYLE_SUMMARY: Record<string, string> = {
+  nature: '自然',
+  city: '城市',
+  history: '历史',
+  food: '美食',
+  shopping: '购物',
+}
+
+const COMPANION_SUMMARY: Record<TravelCompanions, string> = {
+  solo: '一人',
+  couple: '情侣',
+  family: '亲子',
+  friends: '朋友',
+}
+
+function buildPrefsSummary(prefs: TravelPreferences): string {
+  const parts: string[] = [BUDGET_SUMMARY[prefs.budget]]
+  if (prefs.hotelPrefs.length > 0) {
+    parts.push(prefs.hotelPrefs.map(h => HOTEL_SUMMARY[h] ?? h).join('/'))
+  }
+  if (prefs.tripStyles.length > 0) {
+    parts.push(prefs.tripStyles.map(s => STYLE_SUMMARY[s] ?? s).join(' + '))
+  }
+  parts.push(COMPANION_SUMMARY[prefs.companions])
+  parts.push(`${prefs.duration} 天`)
+  return parts.join(' · ')
+}
+
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
@@ -70,7 +113,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
   )
 }
 
-function TravelPrefsBlock({
+function TravelPrefsFields({
   prefs,
   onChange,
 }: {
@@ -89,101 +132,88 @@ function TravelPrefsBlock({
   }
 
   return (
-    <div className="mx-4 bg-white border border-[#EEEEEE] rounded-card p-4">
-      <div className="flex items-center gap-2 mb-1">
-        <MapPin size={16} className="text-brand-orange" strokeWidth={2} />
-        <p className="text-[14px] leading-5 font-semibold text-ink-primary">行程偏好</p>
+    <div className="space-y-3.5">
+      <div>
+        <p className="text-[13px] leading-5 text-ink-primary mb-2">预算</p>
+        <div className="flex flex-wrap gap-2">
+          {BUDGET_OPTIONS.map(opt => (
+            <Pill
+              key={opt.id}
+              active={prefs.budget === opt.id}
+              onClick={() => onChange({ ...prefs, budget: opt.id })}
+            >
+              {opt.label}
+            </Pill>
+          ))}
+        </div>
       </div>
-      <p className="text-[11px] leading-4 text-ink-placeholder mb-3.5">AI 将根据您的偏好定制行程</p>
 
-      <div className="space-y-3.5">
-        {/* 预算 */}
-        <div>
-          <p className="text-[13px] leading-5 text-ink-primary mb-2">预算</p>
-          <div className="flex flex-wrap gap-2">
-            {BUDGET_OPTIONS.map(opt => (
-              <Pill
-                key={opt.id}
-                active={prefs.budget === opt.id}
-                onClick={() => onChange({ ...prefs, budget: opt.id })}
-              >
-                {opt.label}
-              </Pill>
-            ))}
-          </div>
-        </div>
-
-        {/* 酒店偏好 */}
-        <div>
-          <p className="text-[13px] leading-5 text-ink-primary mb-2">酒店偏好</p>
-          <div className="flex flex-wrap gap-2">
-            {HOTEL_OPTIONS.map(opt => (
-              <Pill
-                key={opt.id}
-                active={prefs.hotelPrefs.includes(opt.id)}
-                onClick={() => toggleArrayItem('hotelPrefs', opt.id)}
-              >
-                {opt.label}
-              </Pill>
-            ))}
-          </div>
-        </div>
-
-        {/* 偏好类型 */}
-        <div>
-          <p className="text-[13px] leading-5 text-ink-primary mb-2">偏好类型（可多选）</p>
-          <div className="flex flex-wrap gap-2">
-            {TRIP_STYLE_OPTIONS.map(opt => (
-              <Pill
-                key={opt.id}
-                active={prefs.tripStyles.includes(opt.id)}
-                onClick={() => toggleArrayItem('tripStyles', opt.id)}
-              >
-                {opt.label}
-              </Pill>
-            ))}
-          </div>
-        </div>
-
-        {/* 出行成员 */}
-        <div>
-          <p className="text-[13px] leading-5 text-ink-primary mb-2">出行成员</p>
-          <div className="flex flex-wrap gap-2">
-            {COMPANION_OPTIONS.map(opt => (
-              <Pill
-                key={opt.id}
-                active={prefs.companions === opt.id}
-                onClick={() => onChange({ ...prefs, companions: opt.id })}
-              >
-                {opt.label}
-              </Pill>
-            ))}
-          </div>
-        </div>
-
-        {/* 出行天数 */}
-        <div>
-          <p className="text-[13px] leading-5 text-ink-primary mb-2">出行天数</p>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => stepDuration(-1)}
-              disabled={prefs.duration <= 2}
-              className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+      <div>
+        <p className="text-[13px] leading-5 text-ink-primary mb-2">酒店偏好</p>
+        <div className="flex flex-wrap gap-2">
+          {HOTEL_OPTIONS.map(opt => (
+            <Pill
+              key={opt.id}
+              active={prefs.hotelPrefs.includes(opt.id)}
+              onClick={() => toggleArrayItem('hotelPrefs', opt.id)}
             >
-              <Minus size={16} className="text-ink-secondary" strokeWidth={2} />
-            </button>
-            <p className="text-[18px] leading-6 font-semibold text-ink-primary tabular-nums w-8 text-center">{prefs.duration}</p>
-            <button
-              type="button"
-              onClick={() => stepDuration(1)}
-              disabled={prefs.duration >= 30}
-              className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+              {opt.label}
+            </Pill>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-[13px] leading-5 text-ink-primary mb-2">偏好类型（可多选）</p>
+        <div className="flex flex-wrap gap-2">
+          {TRIP_STYLE_OPTIONS.map(opt => (
+            <Pill
+              key={opt.id}
+              active={prefs.tripStyles.includes(opt.id)}
+              onClick={() => toggleArrayItem('tripStyles', opt.id)}
             >
-              <Plus size={16} className="text-ink-secondary" strokeWidth={2} />
-            </button>
-            <span className="text-[13px] text-ink-secondary">天</span>
-          </div>
+              {opt.label}
+            </Pill>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-[13px] leading-5 text-ink-primary mb-2">出行成员</p>
+        <div className="flex flex-wrap gap-2">
+          {COMPANION_OPTIONS.map(opt => (
+            <Pill
+              key={opt.id}
+              active={prefs.companions === opt.id}
+              onClick={() => onChange({ ...prefs, companions: opt.id })}
+            >
+              {opt.label}
+            </Pill>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-[13px] leading-5 text-ink-primary mb-2">出行天数</p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => stepDuration(-1)}
+            disabled={prefs.duration <= 2}
+            className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+          >
+            <Minus size={16} className="text-ink-secondary" strokeWidth={2} />
+          </button>
+          <p className="text-[18px] leading-6 font-semibold text-ink-primary tabular-nums w-8 text-center">{prefs.duration}</p>
+          <button
+            type="button"
+            onClick={() => stepDuration(1)}
+            disabled={prefs.duration >= 30}
+            className="w-9 h-9 rounded-[10px] border border-[#EEEEEE] flex items-center justify-center disabled:opacity-40 active:bg-surface-card"
+          >
+            <Plus size={16} className="text-ink-secondary" strokeWidth={2} />
+          </button>
+          <span className="text-[13px] text-ink-secondary">天</span>
         </div>
       </div>
     </div>
@@ -201,6 +231,7 @@ export default function T03_GenerateConfirm() {
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState
   const templateId: string | undefined = state?.templateId ?? template?.id
+  const isFromEdit = state?.fromEdit === true
 
   const initFeatures = (state?.selectedFeatures as string[] | undefined)
     ?? template?.defaultFeatures
@@ -216,11 +247,18 @@ export default function T03_GenerateConfirm() {
   const [travelPrefs, setTravelPrefs] = useState<TravelPreferences>(
     (state?.travelPreferences as TravelPreferences | undefined) ?? DEFAULT_TRAVEL_PREFS
   )
+  const [prefsConfigured, setPrefsConfigured] = useState<boolean>(state?.travelPreferences != null)
+  const [prefsOpen, setPrefsOpen] = useState(false)
   const [showSourceSheet, setShowSourceSheet] = useState(false)
   const [showFeaturesSheet, setShowFeaturesSheet] = useState(false)
   const [showAccessSheet, setShowAccessSheet] = useState(false)
 
   const isTravel = templateId === 'travel-plan'
+
+  const handlePrefsChange = (next: TravelPreferences) => {
+    setTravelPrefs(next)
+    setPrefsConfigured(true)
+  }
 
   const handleApplySources = (ids: string[], names: string[]) => {
     setSelectedKbIds(ids)
@@ -268,7 +306,7 @@ export default function T03_GenerateConfirm() {
 
   return (
     <PageLayout>
-      <TopHeader title="生成确认" showBack />
+      <TopHeader title={isFromEdit ? '调整需求' : '生成确认'} showBack />
       <div className="px-5 py-6 space-y-6">
         {/* App icon + name */}
         <div className="text-center">
@@ -346,13 +384,51 @@ export default function T03_GenerateConfirm() {
             </div>
             <ChevronRight size={16} className="text-ink-placeholder flex-shrink-0" />
           </button>
-        </div>
 
-        {isTravel && (
-          <div className="-mx-5">
-            <TravelPrefsBlock prefs={travelPrefs} onChange={setTravelPrefs} />
-          </div>
-        )}
+          {/* Travel preferences row (collapsible, travel template only) */}
+          {isTravel && (
+            <div>
+              <button
+                onClick={() => setPrefsOpen(v => !v)}
+                className="w-full flex items-center gap-4 p-4 bg-surface-card rounded-card text-left active:bg-line-base/40 transition-colors border border-line-base"
+              >
+                <div className="w-10 h-10 bg-brand-orange-light rounded-card flex items-center justify-center flex-shrink-0">
+                  <MapPin size={18} className="text-brand-orange" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-caption text-ink-placeholder">行程偏好</p>
+                  {prefsConfigured ? (
+                    <p className="text-body text-ink-primary font-semibold truncate">
+                      {buildPrefsSummary(travelPrefs)}
+                    </p>
+                  ) : (
+                    <p className="text-body font-semibold" style={{ color: '#FF7A00' }}>
+                      请填写预算、酒店等偏好
+                    </p>
+                  )}
+                </div>
+                {prefsOpen
+                  ? <ChevronUp size={16} className="text-ink-placeholder flex-shrink-0" />
+                  : <ChevronDown size={16} className="text-ink-placeholder flex-shrink-0" />}
+              </button>
+              <AnimatePresence initial={false}>
+                {prefsOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div className="mt-2 bg-white border border-[#EEEEEE] rounded-card p-4">
+                      <TravelPrefsFields prefs={travelPrefs} onChange={handlePrefsChange} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
 
         {/* Custom requirement block */}
         <div className="p-[14px] bg-white rounded-card border border-line-base">
@@ -377,13 +453,13 @@ export default function T03_GenerateConfirm() {
         <button
           onClick={handleStart}
           disabled={!canStart}
-          className={`w-full py-4 rounded-btn text-body font-medium flex items-center justify-center gap-2 transition-colors ${
+          className={`w-full py-4 rounded-btn text-body font-medium flex items-center justify-center gap-2 transition-colors active:scale-[0.98] ${
             canStart
               ? 'bg-brand-orange text-white'
               : 'bg-[#FFE4D0] text-white cursor-default'
           }`}
         >
-          开始生成 →
+          {isFromEdit ? '重新生成' : '开始生成 →'}
         </button>
       </div>
 

@@ -93,8 +93,11 @@ export default function T04_Generating() {
         if (prev >= steps.length - 1) {
           clearInterval(timer)
           setDone(true)
-          if (travelPreferences && resultAppId) {
-            updateApp(resultAppId, { travelPreferences })
+          if (resultAppId && (travelPreferences || customRequirement !== undefined)) {
+            updateApp(resultAppId, {
+              ...(travelPreferences ? { travelPreferences } : {}),
+              ...(customRequirement !== undefined ? { customRequirement } : {}),
+            })
           }
           setTimeout(() => navigate('/ask/task-datasource', {
             replace: true,

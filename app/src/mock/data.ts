@@ -153,6 +153,7 @@ export interface LightApp {
   dataSource: string
   runtimeType?: RuntimeType
   travelPreferences?: TravelPreferences
+  customRequirement?: string
 }
 
 export interface AiConversation {
