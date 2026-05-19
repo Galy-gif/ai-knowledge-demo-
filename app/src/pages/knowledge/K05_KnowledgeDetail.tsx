@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } fr
 import { useNavigate } from 'react-router-dom'
 import {
   Archive, ArrowDown, Award, Check, ChevronDown, ChevronLeft, ChevronRight, Eye, FileText, Folder, FolderInput, Globe2,
-  ArrowRight, Inbox, Lightbulb, Mic, MoreHorizontal, Network, PenLine, Plus, Search, Sparkles, SquarePen, Table2, Tag, Target, Trash2, Workflow,
+  ArrowRight, Inbox, Lightbulb, Mic, MoreHorizontal, Network, PenLine, Plus, Search, Sparkles, Table2, Tag, Target, Trash2, Workflow,
 } from 'lucide-react'
 import AskAIPanel from '../../components/common/AskAIPanel'
 import ConfirmDialog from '../../components/common/ConfirmDialog'
@@ -1845,7 +1845,6 @@ export default function K05_KnowledgeDetail() {
   const [showModeSheet, setShowModeSheet] = useState(false)
   const [showMoreMenu, setShowMoreMenu] = useState(false)
   const [draftManagementMode, setDraftManagementMode] = useState<KnowledgeManagementMode | null | undefined>(undefined)
-  const [modeGearActive, setModeGearActive] = useState(false)
   const [modeTransitioning, setModeTransitioning] = useState(false)
   const [outputStages, setOutputStages] = useState<OutputStage[]>(INITIAL_OUTPUT_STAGES)
   const [activeIdeaFilter, setActiveIdeaFilter] = useState<IdeaFilterId>('all')
@@ -1874,12 +1873,6 @@ export default function K05_KnowledgeDetail() {
   const effectiveFileCount = Math.max(kbFiles.length, activeBase?.fileCount ?? 0)
   const showEmptyState = effectiveFileCount === 0
   const isStructuredMode = isProjectMode || isSecondBrainMode || isOutputMode || isIdeaMode || isAiMode || isFreeMode
-  const managementModeLabel = getManagementModeLabel(activeBase?.managementMode)
-  const canEditManagementMode = Boolean(activeBase) &&
-    activeBase?.type !== 'subscribed' &&
-    activeBase?.id !== QUICK_NOTES_KB_ID &&
-    !activeBase?.isSystem &&
-    !activeBase?.locked
   const aiGroups = getAiGroups(aiReorganized)
   const visibleIdeaCards = activeIdeaFilter === 'all'
     ? IDEA_CARDS
@@ -2162,14 +2155,8 @@ export default function K05_KnowledgeDetail() {
     }
   }
 
-  const triggerModeGearFeedback = () => {
-    setModeGearActive(true)
-    window.setTimeout(() => setModeGearActive(false), 100)
-  }
-
   const openManagementModeSheet = () => {
     if (!activeBase) return
-    triggerModeGearFeedback()
 
     if (activeBase.type === 'subscribed') {
       showToast('订阅知识库不能修改管理方式')
@@ -2345,29 +2332,6 @@ export default function K05_KnowledgeDetail() {
         )}
       </div>
 
-      {!isUnconfiguredMode && (
-        <div className="flex h-9 flex-shrink-0 items-center bg-[#FFF1E6] px-4">
-          <button
-            type="button"
-            onClick={openManagementModeSheet}
-            className="flex min-w-0 flex-1 items-center text-left"
-          >
-            <span className="truncate text-[13px] leading-5 text-[#4A4A4A]">
-              {managementModeLabel}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={openManagementModeSheet}
-            className={`ml-3 flex h-8 w-8 items-center justify-end transition-transform duration-100 ${
-              modeGearActive ? 'rotate-45' : ''
-            }`}
-          >
-            <SquarePen size={16} className={canEditManagementMode ? 'text-[#9CA3AF]' : 'text-[#D1D5DB]'} />
-          </button>
-        </div>
-      )}
-
       {/* Watch status bar */}
       {(() => {
         const kbTasks = getKbTasks(activeBase?.id ?? '')
@@ -2378,7 +2342,12 @@ export default function K05_KnowledgeDetail() {
           <button
             type="button"
             onClick={() => navigate('/knowledge/watch', { state: { kbId: activeBase?.id, kbName: activeBase?.name } })}
-            className="flex h-9 flex-shrink-0 items-center justify-between px-4 bg-[#FFF1E6]"
+            className="flex flex-shrink-0 items-center justify-between bg-white"
+            style={{
+              borderLeft: '3px solid #FF7A00',
+              padding: '12px 14px',
+              marginBottom: 12,
+            }}
           >
             <div className="flex items-center gap-2">
               <Eye size={16} className="text-[#FF7A00] flex-shrink-0" />
