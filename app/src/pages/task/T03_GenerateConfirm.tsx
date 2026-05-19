@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronRight, Cpu, Database, Globe, MapPin, Minus, Pen, Plus } from 'lucide-react'
@@ -8,7 +8,15 @@ import { getPwaTemplateById } from '../../mock/pwaTemplates'
 import DataSourceSelectorSheet from '../../components/common/DataSourceSelectorSheet'
 import FeaturesEditSheet from '../../components/common/FeaturesEditSheet'
 import AccessModeSheet, { type AccessModeId, ACCESS_MODE_LABELS, DEFAULT_ACCESS_MODES } from '../../components/common/AccessModeSheet'
+import { useKnowledge } from '../../context/KnowledgeContext'
 import type { TravelBudget, TravelCompanions, TravelPreferences } from '../../mock/data'
+
+const TEMPLATE_DEFAULT_KB_IDS: Record<string, string[]> = {
+  'diet-log': ['kb_diet', 'kb_nutrition_lab'],
+  'fitness-planner': ['kb_training', 'kb_iron_gym'],
+  'fund-portfolio': ['kb_invest', 'kb_fund'],
+  'travel-plan': ['kb_travel_food'],
+}
 
 const CUSTOM_REQ_PLACEHOLDERS: Record<string, string> = {
   'diet-log': '如：我想让它能扫描食物图片自动识别',
@@ -223,6 +231,7 @@ function TravelPrefsFields({
 export default function T03_GenerateConfirm() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const { bases, subscribedBases } = useKnowledge()
   const template = getPwaTemplateById(state?.templateId)
   const templateName = state?.templateName ?? template?.name ?? '资料速查工具'
   const templateIcon = state?.templateIcon ?? template?.icon ?? '📊'
@@ -237,8 +246,24 @@ export default function T03_GenerateConfirm() {
     ?? template?.defaultFeatures
     ?? templateCoreFeatures.split('、').map((s: string) => s.trim())
 
-  const [selectedKbIds, setSelectedKbIds] = useState<string[]>(state?.selectedKbIds ?? [])
-  const [selectedKbNames, setSelectedKbNames] = useState<string[]>(state?.selectedKbNames ?? [])
+  const defaultKbs = useMemo(() => {
+    if (state?.selectedKbIds) {
+      return {
+        ids: state.selectedKbIds as string[],
+        names: (state.selectedKbNames as string[] | undefined) ?? [],
+      }
+    }
+    const defaultIds = templateId ? TEMPLATE_DEFAULT_KB_IDS[templateId] ?? [] : []
+    const allBases = [...bases, ...subscribedBases]
+    const present = defaultIds
+      .map(id => allBases.find(b => b.id === id))
+      .filter((b): b is NonNullable<typeof b> => Boolean(b))
+    return { ids: present.map(b => b.id), names: present.map(b => b.name) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [templateId])
+
+  const [selectedKbIds, setSelectedKbIds] = useState<string[]>(defaultKbs.ids)
+  const [selectedKbNames, setSelectedKbNames] = useState<string[]>(defaultKbs.names)
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>(initFeatures)
   const [selectedAccessModes, setSelectedAccessModes] = useState<AccessModeId[]>(
     (state?.selectedAccessModes as AccessModeId[] | undefined) ?? DEFAULT_ACCESS_MODES

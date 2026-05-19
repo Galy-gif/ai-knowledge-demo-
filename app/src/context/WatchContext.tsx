@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
-export type WatchPlatform = 'xiaohongshu' | 'bilibili' | 'wechat' | 'zhihu' | 'twitter' | 'weibo'
+export type WatchPlatform = 'xiaohongshu' | 'bilibili' | 'wechat' | 'zhihu' | 'twitter' | 'weibo' | 'xueqiu'
 export type WatchType = 'author' | 'topic' | 'keyword'
-export type WatchStrategy = 'ai_filter' | 'all_in' | 'inbox'
+export type WatchStrategy = 'ai_filter' | 'all_in'
 export type WatchFrequency = 'realtime' | 'hourly' | 'daily' | 'weekly'
 export type WatchStatus = 'running' | 'paused'
 
@@ -186,6 +186,84 @@ const INIT_TASKS: WatchTask[] = [
     lastFetchedAt: '今天',
     totalFetched: 6,
     todayFetched: 2,
+  },
+  // 减脂期饮食（kb_diet）
+  {
+    id: 'watch_011',
+    kbId: 'kb_diet',
+    platform: 'xiaohongshu',
+    type: 'keyword',
+    target: ['减脂餐'],
+    strategy: 'ai_filter',
+    frequency: 'daily',
+    notification: 'in_app',
+    status: 'running',
+    createdAt: '4 天前',
+    lastFetchedAt: '今天',
+    totalFetched: 11,
+    todayFetched: 2,
+  },
+  {
+    id: 'watch_012',
+    kbId: 'kb_diet',
+    platform: 'wechat',
+    type: 'author',
+    target: ['营养师顾中一'],
+    strategy: 'ai_filter',
+    frequency: 'daily',
+    notification: 'in_app',
+    status: 'running',
+    createdAt: '1 周前',
+    lastFetchedAt: '今天',
+    totalFetched: 5,
+    todayFetched: 1,
+  },
+  // 训练计划笔记（kb_training）
+  {
+    id: 'watch_013',
+    kbId: 'kb_training',
+    platform: 'bilibili',
+    type: 'author',
+    target: ['硬派健身'],
+    strategy: 'ai_filter',
+    frequency: 'daily',
+    notification: 'in_app',
+    status: 'running',
+    createdAt: '5 天前',
+    lastFetchedAt: '今天',
+    totalFetched: 8,
+    todayFetched: 2,
+  },
+  {
+    id: 'watch_014',
+    kbId: 'kb_training',
+    platform: 'xiaohongshu',
+    type: 'topic',
+    target: ['#训练计划'],
+    strategy: 'ai_filter',
+    frequency: 'daily',
+    notification: 'in_app',
+    status: 'paused',
+    createdAt: '2 周前',
+    lastFetchedAt: '4 天前',
+    totalFetched: 6,
+    todayFetched: 0,
+  },
+  // 投资学习笔记（kb_invest）
+  {
+    id: 'watch_015',
+    kbId: 'kb_invest',
+    platform: 'xueqiu',
+    type: 'keyword',
+    target: ['指数定投'],
+    strategy: 'ai_filter',
+    frequency: 'daily',
+    notification: 'in_app',
+    status: 'running',
+    createdAt: '6 天前',
+    lastFetchedAt: '今天',
+    totalFetched: 7,
+    todayFetched: 1,
   },
 ]
 

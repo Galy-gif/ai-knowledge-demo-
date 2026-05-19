@@ -138,7 +138,8 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '设计系统实战': 'not-recommended',
   },
   'diet-log': {
-    '日本旅行攻略': 'recommended',
+    '减脂期饮食': 'recommended',
+    '营养与减脂研究室': 'recommended',
     '读书摘录': 'normal',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
@@ -146,6 +147,8 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '设计系统实战': 'not-recommended',
   },
   'fitness-planner': {
+    '训练计划笔记': 'recommended',
+    '撸铁训练馆': 'recommended',
     '读书摘录': 'not-recommended',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',
@@ -154,6 +157,8 @@ const TEMPLATE_KB_FIT: Record<string, Record<string, PwaFitLevel>> = {
     '设计系统实战': 'not-recommended',
   },
   'fund-portfolio': {
+    '投资学习笔记': 'recommended',
+    '基金组合搭配': 'recommended',
     '读书摘录': 'normal',
     '产品资料库': 'not-recommended',
     '用户访谈库': 'not-recommended',

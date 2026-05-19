@@ -749,6 +749,21 @@ export default function T07_AppRuntime() {
       <div className={`${isTravel ? 'pt-3 pb-6' : 'px-5 py-4'} space-y-3`}>
         <div className={isTravel ? 'px-4' : ''}>
           <SyncBar dataSource={app.dataSource} color={isTravel ? 'teal' : 'orange'} />
+          <p
+            style={{
+              fontSize: 11,
+              color: '#9CA3AF',
+              textAlign: 'center',
+              marginTop: 8,
+            }}
+          >
+            基于
+            {app.dataSource
+              .split(/\s*[+＋、]\s*/)
+              .map(name => `「${name}」`)
+              .join(' + ')}
+            生成
+          </p>
         </div>
         {form}
       </div>

@@ -17,6 +17,7 @@ const PLATFORM_CONFIG: Record<WatchPlatform, { name: string; char: string; color
   zhihu:       { name: '知乎',   char: '知', color: '#0084FF', bg: '#F0F8FF' },
   twitter:     { name: 'X',      char: 'X',  color: '#1A1A1A', bg: '#F5F5F5' },
   weibo:       { name: '微博',   char: '博', color: '#E6162D', bg: '#FFF1F2' },
+  xueqiu:      { name: '雪球',   char: '雪', color: '#1873CF', bg: '#E6F0FA' },
 }
 
 const PLATFORMS = Object.keys(PLATFORM_CONFIG) as WatchPlatform[]
@@ -527,7 +528,6 @@ export default function W01_WatchManage() {
                 {([
                   { id: 'ai_filter', emoji: '🤖', title: '智能过滤（推荐）', desc: 'AI 判断高相关的进知识库，无关内容自动剔除' },
                   { id: 'all_in',    emoji: '📥', title: '全部进库',         desc: '所有蹲到的内容都进，自己整理' },
-                  { id: 'inbox',     emoji: '📨', title: '进收件箱',         desc: '不直接入库，每天打开 App 自己挑' },
                 ] as { id: WatchStrategy; emoji: string; title: string; desc: string }[]).map(opt => (
                   <button
                     key={opt.id}
