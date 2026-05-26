@@ -235,7 +235,7 @@ const PARA_FOLDER_FILES: Record<string, FolderMockFile[]> = {
     { id: 'fpl_4', title: 'Chrome 插件市场调研.docx', type: 'doc', meta: 'Word · 10 页', time: '1 周前' },
     { id: 'fpl_5', title: 'AI 助手类插件对比.docx', type: 'doc', meta: 'Word · 8 页', time: '2 周前' },
     { id: 'fpl_6', title: '插件权限模型设计', type: 'url', meta: '网页 · Chrome Dev', time: '3 周前' },
-    { id: 'fpl_7', title: '端侧知识库插件 PoC', type: 'url', meta: '网页 · GitHub', time: '1 个月前' },
+    { id: 'fpl_7', title: '端侧兴趣库插件 PoC', type: 'url', meta: '网页 · GitHub', time: '1 个月前' },
   ],
   folder_early_interviews: [
     { id: 'fei_1', title: '早期用户访谈 01.m4a', type: 'audio', meta: '音频 · 44 分钟', time: '2 个月前' },
@@ -418,7 +418,7 @@ const INITIAL_OUTPUT_STAGES: OutputStage[] = [
           'audio',
           '收集中',
           '访谈对象反复提到移动端资料沉淀困难，临时搜索结果很难复用。',
-          '## 用户访谈录音 0312\n\n关键观点：用户在手机上看到有价值网页时，往往只是截图或转发给自己，后续很难整理成可复用资料。\n\n可转化为产品机会：\n\n- 一键保存当前网页\n- 自动识别网页中的观点和数据\n- 与已有知识库形成关联',
+          '## 用户访谈录音 0312\n\n关键观点：用户在手机上看到有价值网页时，往往只是截图或转发给自己，后续很难整理成可复用资料。\n\n可转化为产品机会：\n\n- 一键保存当前网页\n- 自动识别网页中的观点和数据\n- 与已有兴趣库形成关联',
           '45分钟',
         ),
       },
@@ -434,7 +434,7 @@ const INITIAL_OUTPUT_STAGES: OutputStage[] = [
           'doc',
           '收集中',
           'Q3 搜索转化和资料保存行为出现明显增长。',
-          '## Q3 数据报表\n\n| 指标 | Q2 | Q3 | 变化 |\n|---|---|---|---|\n| 网页搜索次数 | 12.4万 | 18.7万 | +50.8% |\n| 保存到知识库 | 2.1万 | 4.8万 | +128.5% |\n| AI 摘要使用 | 8.6万 | 13.2万 | +53.4% |',
+          '## Q3 数据报表\n\n| 指标 | Q2 | Q3 | 变化 |\n|---|---|---|---|\n| 网页搜索次数 | 12.4万 | 18.7万 | +50.8% |\n| 保存到兴趣库 | 2.1万 | 4.8万 | +128.5% |\n| AI 摘要使用 | 8.6万 | 13.2万 | +53.4% |',
           'xlsx',
         ),
       },
@@ -466,7 +466,7 @@ const INITIAL_OUTPUT_STAGES: OutputStage[] = [
           'image',
           '收集中',
           '团队围绕 AI 浏览器的移动端入口和资料复用展开讨论。',
-          '## 团队脑暴笔记\n\n照片中记录了三个方向：移动端搜索入口、知识库自动沉淀、从网页生成轻应用。当前最适合进入复盘报告的是“资料离成果还差几步”的工作流表达。',
+          '## 团队脑暴笔记\n\n照片中记录了三个方向：移动端搜索入口、兴趣库自动沉淀、从网页生成轻应用。当前最适合进入复盘报告的是“资料离成果还差几步”的工作流表达。',
           '5张照片',
         ),
       },
@@ -523,7 +523,7 @@ const INITIAL_OUTPUT_STAGES: OutputStage[] = [
           'doc',
           '整理中',
           'Q3 数据显示用户保存资料和 AI 摘要行为同步增长。',
-          '## 数据趋势摘要\n\nQ3 的关键变化是“搜索后保存”的比例显著上升。说明用户不再满足于即时答案，而希望把有价值的网页和结论沉淀到长期知识库里。',
+          '## 数据趋势摘要\n\nQ3 的关键变化是“搜索后保存”的比例显著上升。说明用户不再满足于即时答案，而希望把有价值的网页和结论沉淀到长期兴趣库里。',
         ),
       },
     ],
@@ -587,7 +587,7 @@ const INITIAL_OUTPUT_STAGES: OutputStage[] = [
           'doc',
           undefined,
           '从 7 篇关键资料中提炼出的季度产品复盘报告，已完成分享。',
-          '## Q3 产品复盘报告 v1.0\n\n本报告基于竞品评测、用户访谈、市场分析和 Q3 数据报表整理而成。\n\n## 核心结论\n\nAI 浏览器的产品机会集中在“从浏览到沉淀再到成果”的连续工作流。当前用户已经具备搜索和收藏习惯，但缺少把资料加工成报告、看板或轻应用的中间层。\n\n## 下一步\n\n- 完成移动端保存链路优化\n- 将网页搜索结果接入知识库\n- 在重点资料页提供一键生成成果入口',
+          '## Q3 产品复盘报告 v1.0\n\n本报告基于竞品评测、用户访谈、市场分析和 Q3 数据报表整理而成。\n\n## 核心结论\n\nAI 浏览器的产品机会集中在“从浏览到沉淀再到成果”的连续工作流。当前用户已经具备搜索和收藏习惯，但缺少把资料加工成报告、看板或轻应用的中间层。\n\n## 下一步\n\n- 完成移动端保存链路优化\n- 将网页搜索结果接入兴趣库\n- 在重点资料页提供一键生成成果入口',
           '32页',
         ),
       },
@@ -682,7 +682,7 @@ const IDEA_CARDS: IdeaCardData[] = [
     id: 'idea_save_naming',
     label: '用户洞察',
     time: '1 月前',
-    body: "用户调研：把'保存'按钮换成'放进知识库'后，使用率提升 3 倍。命名重要。",
+    body: "用户调研：把'保存'按钮换成'放进兴趣库'后，使用率提升 3 倍。命名重要。",
     related: ['产品方法论'],
   },
 ]
@@ -1468,7 +1468,7 @@ function AIOrganizingOverlay({ step }: { step: number }) {
         <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#FFF1E6]">
           <Sparkles size={22} className="animate-pulse text-[#FF7A00]" />
         </div>
-        <p className="text-[15px] font-semibold leading-5 text-ink-primary">AI 正在重新整理你的知识库...</p>
+        <p className="text-[15px] font-semibold leading-5 text-ink-primary">AI 正在重新整理你的兴趣库...</p>
         <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#EEEEEE]">
           <div className="h-full rounded-full bg-[#FF7A00] transition-all duration-500" style={{ width: progress }} />
         </div>
@@ -1512,7 +1512,7 @@ function KnowledgeEmptyState({
             ? '开始添加，或者先选个整理方式'
             : isFree
               ? '想到什么就丢进来'
-              : `这个知识库会用「${getManagementModeLabel(mode)}」帮你整理，开始添加吧`}
+              : `这个兴趣库会用「${getManagementModeLabel(mode)}」帮你整理，开始添加吧`}
         </p>
 
         <div className="mt-8 flex items-center justify-center gap-3">
@@ -2159,12 +2159,12 @@ export default function K05_KnowledgeDetail() {
     if (!activeBase) return
 
     if (activeBase.type === 'subscribed') {
-      showToast('订阅知识库不能修改管理方式')
+      showToast('订阅兴趣库不能修改管理方式')
       return
     }
 
     if (activeBase.id === QUICK_NOTES_KB_ID || activeBase.isSystem || activeBase.locked) {
-      showToast('我的速记为系统默认知识库，不可修改管理方式')
+      showToast('我的速记为系统默认兴趣库，不可修改管理方式')
       return
     }
 
@@ -2320,7 +2320,7 @@ export default function K05_KnowledgeDetail() {
             <button onClick={() => navigate('/knowledge')} className="relative z-10 p-1 -ml-1 mr-2 text-ink-secondary">
               <ChevronLeft size={24} />
             </button>
-            <span className="absolute left-16 right-16 text-center text-h2 text-ink-primary truncate">{activeBase?.name ?? '知识库'}</span>
+            <span className="absolute left-16 right-16 text-center text-h2 text-ink-primary truncate">{activeBase?.name ?? '兴趣库'}</span>
             <button
               type="button"
               onClick={() => setShowMoreMenu(true)}
@@ -2750,7 +2750,7 @@ export default function K05_KnowledgeDetail() {
             className="h-11 min-w-0 flex-1 flex items-center gap-2 px-4 bg-[#F5F5F5] rounded-pill border border-transparent text-left"
           >
             <Search size={15} className="text-ink-placeholder flex-shrink-0" />
-            <span className="flex-1 min-w-0 truncate text-body text-ink-placeholder">问 AI 关于「{activeBase?.name ?? '知识库'}」…</span>
+            <span className="flex-1 min-w-0 truncate text-body text-ink-placeholder">问 AI 关于「{activeBase?.name ?? '兴趣库'}」…</span>
             <Mic size={17} className="text-ink-placeholder flex-shrink-0" />
           </button>
           <button
@@ -2769,7 +2769,7 @@ export default function K05_KnowledgeDetail() {
         open={showAskPanel}
         onClose={() => setShowAskPanel(false)}
         scope="knowledge"
-        scopeName={activeBase?.name ?? '知识库'}
+        scopeName={activeBase?.name ?? '兴趣库'}
         scopeId={activeBase?.id ?? ''}
       />
 
@@ -2880,12 +2880,12 @@ export default function K05_KnowledgeDetail() {
           setMovingFile(null)
           setMovingStructuredTarget(null)
         }}
-        title="移动到哪个知识库"
+        title="移动到哪个兴趣库"
         titleAlign="center"
         titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
       >
         <div className="px-5 pt-2 pb-4">
-          <p className="text-caption text-ink-secondary text-center mb-4">选择目标知识库</p>
+          <p className="text-caption text-ink-secondary text-center mb-4">选择目标兴趣库</p>
           <div className="space-y-2">
             {targetBases.map(base => (
               <button

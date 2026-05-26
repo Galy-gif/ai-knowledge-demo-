@@ -731,7 +731,7 @@ function TravelPlannerForm({ app, onAdjust, onExport }: { app: LightApp; onAdjus
         <div className="rounded-card p-3.5" style={{ backgroundColor: '#FFF1E6' }}>
           <p className="text-[14px] font-semibold text-ink-primary">✨ AI 助手</p>
           <p className="text-[12px] text-ink-secondary leading-5 mt-1.5">
-            已基于「日本旅行攻略」知识库生成全套方案，可随时调整您的偏好重新规划。
+            已基于「日本旅行攻略」兴趣库生成全套方案，可随时调整您的偏好重新规划。
           </p>
           <div className="flex gap-2 mt-3">
             <button

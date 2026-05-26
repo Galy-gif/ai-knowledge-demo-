@@ -10,13 +10,13 @@ import DocumentReader, { useDocumentReader } from '../../components/common/Docum
 import { useUser } from '../../context/UserContext'
 import type { SaveSourceContent } from '../../context/KnowledgeContext'
 
-const FULL_ANSWER = `## 知识库知识管理应该怎么运营？
+const FULL_ANSWER = `## 兴趣库知识管理应该怎么运营？
 
-运营知识库的核心在于建立可持续的内容生命周期管理体系。以下是经过实践验证的方法论：
+运营兴趣库的核心在于建立可持续的内容生命周期管理体系。以下是经过实践验证的方法论：
 
 ### 1. 运营目标
 
-通过系统化的内容组织和精细化的用户运营，提升知识库内容的使用效率和用户满意度，支撑增长策略知识库的增长与维护。
+通过系统化的内容组织和精细化的用户运营，提升兴趣库内容的使用效率和用户满意度，支撑增长策略兴趣库的增长与维护。
 
 **内容分层策略：**
 - 核心内容（长青型）→ SOP 文档、基础方法论
@@ -39,17 +39,17 @@ const FULL_ANSWER = `## 知识库知识管理应该怎么运营？
 
 ### 5. 结论
 
-将知识库运营视为一个持续迭代的产品来维护，而非静态文档库。定期清理过期内容，保持知识新鲜度。`
+将兴趣库运营视为一个持续迭代的产品来维护，而非静态文档库。定期清理过期内容，保持知识新鲜度。`
 
 const STEPS = [
   { label: '分析需求', sub: '理解你的提问意图' },
-  { label: '生成回答', sub: '基于知识库内容检索' },
+  { label: '生成回答', sub: '基于兴趣库内容检索' },
   { label: '整理建议', sub: '提取相关追问' },
 ]
 
 const SUGGESTIONS = [
-  '如何衡量知识库的运营效果？',
-  '有哪些好的知识库内容模板？',
+  '如何衡量兴趣库的运营效果？',
+  '有哪些好的兴趣库内容模板？',
   '怎么让团队成员积极贡献内容？',
 ]
 
@@ -86,7 +86,7 @@ export default function Q04_AiAnswer() {
   const navigate = useNavigate()
 
   const { showToast } = useUser()
-  const question = (state as { question?: string })?.question ?? '增长策略知识库应该怎么运营？'
+  const question = (state as { question?: string })?.question ?? '增长策略兴趣库应该怎么运营？'
   const selectedKbIds = (state as { selectedKbIds?: string[] })?.selectedKbIds ?? []
   const selectedKbNames = (state as { selectedKbNames?: string[] })?.selectedKbNames ?? []
   const [phase, setPhase] = useState<'steps' | 'answer'>('steps')
@@ -94,7 +94,7 @@ export default function Q04_AiAnswer() {
   const [input, setInput] = useState('')
   const [showKbSheet, setShowKbSheet] = useState(false)
   const [savePayload, setSavePayload] = useState<SaveSourceContent>({ title: 'AI 回答整理', body: FULL_ANSWER, type: 'ai-answer' })
-  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到知识库')
+  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到兴趣库')
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
   const [pendingText, setPendingText] = useState('')
   const [showX02, setShowX02] = useState(false)
@@ -143,7 +143,7 @@ export default function Q04_AiAnswer() {
     title: string,
     body: string,
     type: SaveSourceContent['type'] = 'ai-answer',
-    sheetTitle = '添加到知识库',
+    sheetTitle = '添加到兴趣库',
     metadata?: SaveSourceContent['metadata'],
   ) => {
     setSavePayload({ title, body, type, metadata })
@@ -174,7 +174,7 @@ export default function Q04_AiAnswer() {
           <p className="text-body font-medium text-ink-primary">{question}</p>
           {selectedKbNames.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="text-micro text-ink-placeholder self-center">参考知识库</span>
+              <span className="text-micro text-ink-placeholder self-center">参考兴趣库</span>
               {selectedKbNames.map(name => (
                 <span key={name} className="text-micro px-2 py-0.5 bg-brand-orange-light text-brand-orange rounded-pill">
                   {name}
@@ -320,7 +320,7 @@ export default function Q04_AiAnswer() {
         onClose={() => setShowKbSheet(false)}
         sourceContent={savePayload}
         title={saveSheetTitle}
-        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」知识库` : `已保存到「${kb.name}」`}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」兴趣库` : `已保存到「${kb.name}」`}
       />
 
       {/* ── X02 AI追问 ── */}
@@ -390,7 +390,7 @@ export default function Q04_AiAnswer() {
             </p>
           </div>
           <p className="text-body text-ink-primary leading-relaxed mb-4">
-            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持知识库持续活跃和高价值的关键运营策略。
+            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持兴趣库持续活跃和高价值的关键运营策略。
           </p>
           <div className="flex items-center gap-2">
             <button

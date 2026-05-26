@@ -223,7 +223,7 @@ const quickNoteFiles: KnowledgeFile[] = [
     summary: '统一 AI 回答页的来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。',
     content: `## 背景
 
-当前 AI 回答页面混用了知识库来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
+当前 AI 回答页面混用了兴趣库来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
 
 ## 核心洞察
 
@@ -233,9 +233,9 @@ const quickNoteFiles: KnowledgeFile[] = [
 
 ## 方案
 
-将知识库来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
+将兴趣库来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
 
-- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 知识库 / 🌐 网页）
+- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 兴趣库 / 🌐 网页）
 - **同步渐入**：在流式输出结束后 200ms 延迟滑入，避免"后补"感
 - **引用高亮**：正文中被引用的句子加橙黄色底线，点击可展开对应来源卡片
 
@@ -281,10 +281,10 @@ const quickNoteFiles: KnowledgeFile[] = [
     createdAt: '刚刚',
     updatedAt: '刚刚',
     tags: ['速记', 'AI问答'],
-    summary: '从 AI 多轮追问中提炼出的知识库运营指标、内容更新节奏和后续行动建议。',
+    summary: '从 AI 多轮追问中提炼出的兴趣库运营指标、内容更新节奏和后续行动建议。',
     content: `## AI 追问整理
 
-围绕知识库运营效果，当前可以优先关注三个指标：
+围绕兴趣库运营效果，当前可以优先关注三个指标：
 
 - 内容使用率：每篇内容在近 30 天内被阅读、引用和追问的次数
 - 检索满意率：用户首次提问是否找到可用答案
@@ -292,7 +292,7 @@ const quickNoteFiles: KnowledgeFile[] = [
 
 ## 下一步
 
-把这些指标放进周报模板里，并为每个知识库指定内容 Owner。`,
+把这些指标放进周报模板里，并为每个兴趣库指定内容 Owner。`,
   },
 ]
 
@@ -303,13 +303,13 @@ const freeMiscFiles: KnowledgeFile[] = [
   { id: 'free4', kbId: 'kb_free_misc', name: '会议录音片段.m4a', type: 'audio', size: '8MB', uploadedAt: '1小时前', summary: '下午讨论导入流程时的录音片段。' },
   { id: 'free5', kbId: 'kb_free_misc', name: '桌面端信息架构草稿.pdf', type: 'pdf', size: '2.3MB', pageCount: 18, wordCount: 5200, uploadedAt: '2小时前', summary: '桌面端信息架构的早期草稿。' },
   { id: 'free6', kbId: 'kb_free_misc', name: '周会待办清单.txt', type: 'txt', size: '12KB', wordCount: 860, uploadedAt: '今天 11:20', summary: '周会产生的待办项，未做分类。' },
-  { id: 'free7', kbId: 'kb_free_misc', name: '浏览器侧边栏灵感', type: 'note', size: '420字', wordCount: 420, uploadedAt: '今天 09:40', summary: '侧边栏可以承载当前网页摘要和知识库入口。' },
+  { id: 'free7', kbId: 'kb_free_misc', name: '浏览器侧边栏灵感', type: 'note', size: '420字', wordCount: 420, uploadedAt: '今天 09:40', summary: '侧边栏可以承载当前网页摘要和兴趣库入口。' },
   { id: 'free8', kbId: 'kb_free_misc', name: 'Notion 模板页面', type: 'url', size: '—', uploadedAt: '昨天', summary: '一个可参考的模板页面。' },
   { id: 'free9', kbId: 'kb_free_misc', name: '用户反馈截图 0513.png', type: 'image', size: '780KB', uploadedAt: '昨天', summary: '用户在群里反馈空态引导太强的截图。' },
   { id: 'free10', kbId: 'kb_free_misc', name: '产品命名备忘', type: 'note', size: '300字', wordCount: 300, uploadedAt: '昨天', summary: '关于自由收纳、我的速记等命名的备忘。' },
   { id: 'free11', kbId: 'kb_free_misc', name: '竞品首页布局.docx', type: 'doc', size: '640KB', pageCount: 6, wordCount: 2100, uploadedAt: '2天前', summary: '几个竞品首页布局和首屏文案对比。' },
   { id: 'free12', kbId: 'kb_free_misc', name: '导入来源 checklist.txt', type: 'txt', size: '9KB', wordCount: 720, uploadedAt: '2天前', summary: '粘贴链接、最近浏览、跨端导入等来源清单。' },
-  { id: 'free13', kbId: 'kb_free_misc', name: 'Claude 对话记录', type: 'url', size: '—', uploadedAt: '3天前', summary: '一次关于知识库分类逻辑的对话记录。' },
+  { id: 'free13', kbId: 'kb_free_misc', name: 'Claude 对话记录', type: 'url', size: '—', uploadedAt: '3天前', summary: '一次关于兴趣库分类逻辑的对话记录。' },
   { id: 'free14', kbId: 'kb_free_misc', name: '设计评审录音.m4a', type: 'audio', size: '18MB', uploadedAt: '3天前', summary: '设计评审会上关于管理方式入口的讨论。' },
   { id: 'free15', kbId: 'kb_free_misc', name: '状态机草图.png', type: 'image', size: '920KB', uploadedAt: '4天前', summary: '滑动、长按、多选的状态机手绘图。' },
   { id: 'free16', kbId: 'kb_free_misc', name: '保存到库流程.pdf', type: 'pdf', size: '1.6MB', pageCount: 12, wordCount: 3600, uploadedAt: '4天前', summary: '统一保存到库流程说明。' },
@@ -322,7 +322,7 @@ const freeMiscFiles: KnowledgeFile[] = [
 export const mockKnowledgeBases: KnowledgeBase[] = [
   {
     id: 'kb_unconfigured',
-    name: '未命名知识库',
+    name: '未命名兴趣库',
     icon: 'inbox',
     color: '#9CA3AF',
     fileCount: 0,
@@ -617,7 +617,7 @@ export const mockFiles: KnowledgeFile[] = [
     pageCount: 22,
     wordCount: 7600,
     uploadedAt: '1周前',
-    summary: '知识库 AI 能力升级的完整产品方案，含流式检索、来源溯源、多模态输入三大子方案的技术选型与 UI 规范。',
+    summary: '兴趣库 AI 能力升级的完整产品方案，含流式检索、来源溯源、多模态输入三大子方案的技术选型与 UI 规范。',
   },
   {
     id: 'f8',
@@ -653,7 +653,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '16MB',
     uploadedAt: '今天',
-    summary: '周会录音导入，重点包括知识库最近入口、多选入库和公开演示前的交互修正。',
+    summary: '周会录音导入，重点包括兴趣库最近入口、多选入库和公开演示前的交互修正。',
   },
   {
     id: 'f18',
@@ -662,7 +662,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'image',
     size: '1.4MB',
     uploadedAt: '4小时前',
-    summary: '知识库、问答、轻应用三大模块的信息架构图，标注了统一保存到库的核心路径。',
+    summary: '兴趣库、问答、轻应用三大模块的信息架构图，标注了统一保存到库的核心路径。',
   },
   // 用户访谈库 (kb2)
   {
@@ -683,7 +683,7 @@ export const mockFiles: KnowledgeFile[] = [
     size: '480KB',
     pageCount: 5,
     uploadedAt: '3天前',
-    summary: '设计师用户，最在意视觉化组织方式，希望知识库支持"思维导图视图"和"卡片看板"两种浏览模式。',
+    summary: '设计师用户，最在意视觉化组织方式，希望兴趣库支持"思维导图视图"和"卡片看板"两种浏览模式。',
   },
   {
     id: 'f12',
@@ -702,7 +702,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '18MB',
     uploadedAt: '5天前',
-    summary: 'AI 转写完成。运营负责人，使用知识库协同管理团队 SOP，痛点在于多人协作时的版本冲突与权限混乱。',
+    summary: 'AI 转写完成。运营负责人，使用兴趣库协同管理团队 SOP，痛点在于多人协作时的版本冲突与权限混乱。',
   },
   {
     id: 'f16',
@@ -711,7 +711,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '21MB',
     uploadedAt: '昨天',
-    summary: '第二轮移动端用户访谈录音，已完成转写，围绕知识库选择反馈和跨知识库追问展开。',
+    summary: '第二轮移动端用户访谈录音，已完成转写，围绕兴趣库选择反馈和跨兴趣库追问展开。',
   },
   {
     id: 'f17',
@@ -722,7 +722,7 @@ export const mockFiles: KnowledgeFile[] = [
     pageCount: 9,
     wordCount: 2600,
     uploadedAt: '2天前',
-    summary: '用户调研问卷题目与答卷结构，覆盖知识库创建、内容导入、AI 追问三个核心场景。',
+    summary: '用户调研问卷题目与答卷结构，覆盖兴趣库创建、内容导入、AI 追问三个核心场景。',
   },
   // 读书摘录 (kb3)
   {
@@ -1293,7 +1293,7 @@ export const mockTeams: Team[] = [
     followCount: 5400,
     kbCount: 2,
     contentCount: 76,
-    description: 'TeamFlow 研究所关注团队知识协作、流程治理和跨职能沟通，让知识库真正变成团队工作台。',
+    description: 'TeamFlow 研究所关注团队知识协作、流程治理和跨职能沟通，让兴趣库真正变成团队工作台。',
     isSubscribed: false,
     knowledgeBases: [
       {
@@ -2198,7 +2198,7 @@ export const mockApps: LightApp[] = [
 ]
 
 export const mockAiSuggestions = [
-  '如何在知识库中快速找到历史决策？',
+  '如何在兴趣库中快速找到历史决策？',
   '帮我总结今天工作资料里的关键信息',
   '分析竞品报告里最值得关注的3个点',
   '帮我把这篇文章整理成结构化要点',
@@ -2217,7 +2217,7 @@ export const mockWebResults: WebSource[] = [
   },
   {
     id: 'w2',
-    title: 'AI 知识库产品的内容召回优化实践',
+    title: 'AI 兴趣库产品的内容召回优化实践',
     url: 'https://uxnotes.cn/kb-recall',
     site: 'uxnotes.cn',
     snippet: '向量检索与关键词混合策略的工程实现，如何在召回率和精准率之间找到平衡点。',

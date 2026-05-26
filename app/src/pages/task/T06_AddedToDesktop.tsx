@@ -36,7 +36,7 @@ export default function T06_AddedToDesktop() {
 
         <div className="flex items-center gap-2 mb-8 text-caption text-ink-placeholder">
           <RefreshCw size={13} />
-          <span>后续会自动同步知识库的最新内容</span>
+          <span>后续会自动同步兴趣库的最新内容</span>
         </div>
 
         <div className="w-full space-y-3">
@@ -50,7 +50,7 @@ export default function T06_AddedToDesktop() {
             onClick={() => navigate('/knowledge')}
             className="w-full py-3.5 text-ink-secondary text-body"
           >
-            返回知识库
+            返回兴趣库
           </button>
         </div>
       </div>

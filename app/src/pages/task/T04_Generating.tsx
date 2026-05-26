@@ -9,7 +9,7 @@ interface Step { label: string; desc: string }
 
 const DEFAULT_STEPS: Step[] = [
   { label: '解析需求', desc: '理解任务目标与数据范围' },
-  { label: '读取知识库', desc: '从工作资料中提取关键数据' },
+  { label: '读取兴趣库', desc: '从工作资料中提取关键数据' },
   { label: '设计界面', desc: '生成专属交互界面' },
   { label: '编写逻辑', desc: '实现检索与对比功能' },
   { label: '测试验证', desc: '确保功能可用性' },
@@ -19,14 +19,14 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
   'diet-log': [
     { label: '分析需求', desc: '理解你的饮食打卡需求' },
     { label: '构建结构', desc: '搭建热量与营养记录框架' },
-    { label: '连接数据', desc: '对接「健康计划」知识库' },
+    { label: '连接数据', desc: '对接「健康计划」兴趣库' },
     { label: '生成界面', desc: '设计日常打卡视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
   'fitness-planner': [
     { label: '分析需求', desc: '理解你的训练跟踪需求' },
     { label: '构建结构', desc: '搭建训练量与身体指标框架' },
-    { label: '连接数据', desc: '对接「健身资料」知识库' },
+    { label: '连接数据', desc: '对接「健身资料」兴趣库' },
     { label: '生成界面', desc: '设计训练打卡视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
@@ -40,14 +40,14 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
   'interview-bank': [
     { label: '分析需求', desc: '理解你的备考需求' },
     { label: '构建结构', desc: '搭建题目与掌握度框架' },
-    { label: '连接数据', desc: '对接「面试资料」知识库' },
+    { label: '连接数据', desc: '对接「面试资料」兴趣库' },
     { label: '生成界面', desc: '设计题库学习视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
   'travel-plan': [
     { label: '理解您的旅行偏好', desc: '解析预算、酒店、行程风格与同行人' },
     { label: '构建结构', desc: '搭建行程与预算框架' },
-    { label: '连接数据', desc: '对接「日本旅行攻略」知识库' },
+    { label: '连接数据', desc: '对接「日本旅行攻略」兴趣库' },
     { label: '生成界面', desc: '设计每日行程视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
@@ -145,7 +145,7 @@ export default function T04_Generating() {
           <p className="text-body text-ink-secondary mt-1">{steps[currentStep]?.desc}</p>
           {selectedKbNames.length > 0 && (
             <p className="text-caption text-ink-placeholder mt-2">
-              基于 {selectedKbNames.length === 1 ? selectedKbNames[0] : `${selectedKbNames.length} 个知识库`}
+              基于 {selectedKbNames.length === 1 ? selectedKbNames[0] : `${selectedKbNames.length} 个兴趣库`}
             </p>
           )}
         </div>

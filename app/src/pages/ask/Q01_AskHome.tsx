@@ -35,7 +35,7 @@ const MODE_META: Record<AskMode, {
 }> = {
   ai: {
     label: 'AI 问答',
-    desc: '用知识库和 AI 帮你回答问题',
+    desc: '用兴趣库和 AI 帮你回答问题',
     placeholder: '输入你的问题或内容…',
     Icon: Sparkles,
     suggestions: [
@@ -50,7 +50,7 @@ const MODE_META: Record<AskMode, {
     placeholder: '搜索网页...',
     Icon: Search,
     suggestions: [
-      '搜索 AI 知识库产品的最新趋势',
+      '搜索 AI 兴趣库产品的最新趋势',
       '查找知识管理工具的竞品动态',
       '帮我整理公开资料里的增长案例',
     ],
@@ -62,7 +62,7 @@ const MODE_META: Record<AskMode, {
     Icon: Zap,
     suggestions: [
       '帮我做一个竞品数据速查工具',
-      '生成一个知识库周报自动生成器',
+      '生成一个兴趣库周报自动生成器',
       '做一个用户访谈问题生成器',
     ],
   },
@@ -430,7 +430,7 @@ export default function Q01_AskHome() {
               <div
                 role="button"
                 tabIndex={0}
-                aria-label={`知识库：${kbSlotLabel}（点击修改，点击 × 清除）`}
+                aria-label={`兴趣库：${kbSlotLabel}（点击修改，点击 × 清除）`}
                 onClick={() => navigate('/ask/select-kb')}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/ask/select-kb') } }}
                 className="flex items-center gap-1 rounded-full cursor-pointer select-none"
@@ -460,7 +460,7 @@ export default function Q01_AskHome() {
                 <span
                   role="button"
                   tabIndex={0}
-                  aria-label="清除知识库"
+                  aria-label="清除兴趣库"
                   onClick={clearKb}
                   onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') clearKb(e) }}
                   style={{
@@ -486,7 +486,7 @@ export default function Q01_AskHome() {
                 style={{ backgroundColor: '#F8F8F8', padding: '5px 10px' }}
               >
                 <AtSign size={11} className="text-[#4A4A4A]" />
-                <span style={{ fontSize: 11, lineHeight: '14px', color: '#4A4A4A' }}>知识库</span>
+                <span style={{ fontSize: 11, lineHeight: '14px', color: '#4A4A4A' }}>兴趣库</span>
               </button>
             )}
           </div>

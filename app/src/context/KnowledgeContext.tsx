@@ -92,7 +92,7 @@ function getSummary(body: string) {
     .split('\n')
     .map(line => line.replace(/^\s*[-*>]+\s*/, '').trim())
     .find(Boolean)
-    ?.slice(0, 88) || '内容已保存，可在知识库中继续编辑和引用。'
+    ?.slice(0, 88) || '内容已保存，可在兴趣库中继续编辑和引用。'
 }
 
 function typeIncludesExcerpt(type: SaveSourceType) {

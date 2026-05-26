@@ -165,7 +165,7 @@ export default function K07_Uploading() {
       {/* Bottom note */}
       <div className="flex-shrink-0 border-t border-line-base px-5 py-3 flex items-center justify-between bg-white">
         <p className="text-caption text-ink-placeholder">
-          上传完成后将自动添加到「{activeBase?.name ?? '知识库'}」
+          上传完成后将自动添加到「{activeBase?.name ?? '兴趣库'}」
         </p>
         <button className="text-caption text-brand-orange">更改</button>
       </div>

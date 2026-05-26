@@ -6,7 +6,7 @@ import { useKnowledge } from '../../context/KnowledgeContext'
 
 const TASK_SUGGESTIONS = [
   '帮我做一个竞品数据速查工具',
-  '生成一个知识库周报自动生成器',
+  '生成一个兴趣库周报自动生成器',
   '做一个用户访谈问题生成器',
 ]
 

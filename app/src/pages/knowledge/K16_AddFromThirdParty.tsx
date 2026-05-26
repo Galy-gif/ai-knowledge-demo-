@@ -15,7 +15,7 @@ export default function K16_AddFromThirdParty() {
 
   const handleAdd = () => {
     if (disabled) return
-    showToast('已添加链接到知识库')
+    showToast('已添加链接到兴趣库')
     setValue('')
     setTimeout(() => navigate(-1), 500)
   }

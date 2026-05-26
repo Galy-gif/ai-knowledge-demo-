@@ -4,7 +4,7 @@ import { MessageCircle, Compass, BookOpen, User } from 'lucide-react'
 const tabs = [
   { label: '问一问', icon: MessageCircle, path: '/ask' },
   { label: '发现', icon: Compass, path: '/discover' },
-  { label: '知识库', icon: BookOpen, path: '/knowledge' },
+  { label: '兴趣库', icon: BookOpen, path: '/knowledge' },
   { label: '我的', icon: User, path: '/profile' },
 ]
 

@@ -11,9 +11,9 @@ import DocumentReader, { useDocumentReader } from '../../components/common/Docum
 import { useUser } from '../../context/UserContext'
 import type { SaveSourceContent } from '../../context/KnowledgeContext'
 
-const ROUND1_SUMMARY = '运营知识库的核心在于建立可持续的内容生命周期管理体系，涵盖运营目标、内容分发、社区运营、数据看板 4 个结构化模块。'
+const ROUND1_SUMMARY = '运营兴趣库的核心在于建立可持续的内容生命周期管理体系，涵盖运营目标、内容分发、社区运营、数据看板 4 个结构化模块。'
 
-const ROUND2_ANSWER = `衡量知识库运营效果可以从以下维度建立评估体系：
+const ROUND2_ANSWER = `衡量兴趣库运营效果可以从以下维度建立评估体系：
 
 **核心指标**
 - **内容使用率**：每篇文档的月均阅读次数，衡量内容价值
@@ -65,7 +65,7 @@ export default function Q05_AiAnswerMulti() {
   const navigate = useNavigate()
 
   const { showToast } = useUser()
-  const { question = '知识库如何运营？', followUp = '如何衡量运营效果？' } = (state as { question?: string; followUp?: string }) ?? {}
+  const { question = '兴趣库如何运营？', followUp = '如何衡量运营效果？' } = (state as { question?: string; followUp?: string }) ?? {}
   const selectedKbIds = (state as { selectedKbIds?: string[] })?.selectedKbIds ?? []
   const selectedKbNames = (state as { selectedKbNames?: string[] })?.selectedKbNames ?? []
 
@@ -73,7 +73,7 @@ export default function Q05_AiAnswerMulti() {
   const [input, setInput]                   = useState('')
   const [showKbSheet, setShowKbSheet]       = useState(false)
   const [savePayload, setSavePayload]       = useState<SaveSourceContent>({ title: 'AI 追问整理', body: ROUND2_ANSWER, type: 'ai-answer' })
-  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到知识库')
+  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到兴趣库')
   const [feedback, setFeedback]             = useState<'up' | 'down' | null>(null)
   const [pendingText, setPendingText]       = useState('')
   const [showX02, setShowX02]               = useState(false)
@@ -116,7 +116,7 @@ export default function Q05_AiAnswerMulti() {
     title: string,
     body: string,
     type: SaveSourceContent['type'] = 'ai-answer',
-    sheetTitle = '添加到知识库',
+    sheetTitle = '添加到兴趣库',
     metadata?: SaveSourceContent['metadata'],
   ) => {
     setSavePayload({ title, body, type, metadata })
@@ -137,7 +137,7 @@ export default function Q05_AiAnswerMulti() {
       >
         {selectedKbNames.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            <span className="text-micro text-ink-placeholder self-center">参考知识库</span>
+            <span className="text-micro text-ink-placeholder self-center">参考兴趣库</span>
             {selectedKbNames.map(name => (
               <span key={name} className="text-micro px-2 py-0.5 bg-brand-orange-light text-brand-orange rounded-pill">
                 {name}
@@ -274,7 +274,7 @@ export default function Q05_AiAnswerMulti() {
         onClose={() => setShowKbSheet(false)}
         sourceContent={savePayload}
         title={saveSheetTitle}
-        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」知识库` : `已保存到「${kb.name}」`}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」兴趣库` : `已保存到「${kb.name}」`}
       />
       <Toast />
 
@@ -345,7 +345,7 @@ export default function Q05_AiAnswerMulti() {
             </p>
           </div>
           <p className="text-body text-ink-primary leading-relaxed mb-4">
-            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持知识库持续活跃和高价值的关键运营策略。
+            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持兴趣库持续活跃和高价值的关键运营策略。
           </p>
           <div className="flex items-center gap-2">
             <button

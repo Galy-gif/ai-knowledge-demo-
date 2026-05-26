@@ -118,7 +118,7 @@ function ToggleRow({ label, sub, value, onChange }: {
 }
 
 const SEARCH_SUGGESTIONS = ['竞品分析报告', '用户访谈录音', '增长方法论', 'AI 追问整理']
-const SEARCH_HISTORY = ['来源卡片', '周会纪要', '知识库运营']
+const SEARCH_HISTORY = ['来源卡片', '周会纪要', '兴趣库运营']
 
 function SearchResultRow({ file, base, onClick }: { file: KnowledgeFile; base?: KnowledgeBase; onClick: () => void }) {
   const cfg = getFileTypeVisual(file.type)
@@ -137,7 +137,7 @@ function SearchResultRow({ file, base, onClick }: { file: KnowledgeFile; base?: 
       <div className="flex-1 min-w-0">
         <p className="text-card-title text-ink-primary truncate">{file.name}</p>
         <p className="text-caption text-ink-placeholder truncate">
-          {base?.name ?? '知识库'} · {file.summary ?? file.uploadedAt}
+          {base?.name ?? '兴趣库'} · {file.summary ?? file.uploadedAt}
         </p>
       </div>
       <ChevronRight size={15} className="text-ink-placeholder flex-shrink-0" />
@@ -224,7 +224,7 @@ export default function K01_KnowledgeHome() {
       type: 'personal',
     }
     addBase(kb)
-    showToast('知识库创建成功')
+    showToast('兴趣库创建成功')
     setShowCreate(false)
     setCreateStep('basic')
     navigate('/knowledge/detail')
@@ -245,7 +245,7 @@ export default function K01_KnowledgeHome() {
 
   const startRename = (kb: KnowledgeBase) => {
     if (kb.isSystem || kb.locked) {
-      showToast('我的速记为系统默认知识库，不可重命名', 'info')
+      showToast('我的速记为系统默认兴趣库，不可重命名', 'info')
       return
     }
     setRenamingBase(kb)
@@ -263,12 +263,12 @@ export default function K01_KnowledgeHome() {
 
   const confirmDeleteBase = (kb: KnowledgeBase) => {
     if (kb.isSystem || kb.locked) {
-      showToast('我的速记为系统默认知识库，不可删除', 'info')
+      showToast('我的速记为系统默认兴趣库，不可删除', 'info')
       return
     }
     showConfirm({
       title: `删除「${kb.name}」？`,
-      description: `此知识库包含 ${kb.fileCount} 个文件，删除后所有内容将一并丢失，无法恢复。`,
+      description: `此兴趣库包含 ${kb.fileCount} 个文件，删除后所有内容将一并丢失，无法恢复。`,
       confirmText: '删除',
       danger: true,
       onConfirm: () => {
@@ -281,7 +281,7 @@ export default function K01_KnowledgeHome() {
   const confirmUnsubscribe = (kb: KnowledgeBase) => {
     showConfirm({
       title: `取消订阅「${kb.name}」？`,
-      description: '取消后该团队的更新将不再同步到你的知识库，已下载的内容不会删除。',
+      description: '取消后该团队的更新将不再同步到你的兴趣库，已下载的内容不会删除。',
       confirmText: '取消订阅',
       danger: true,
       onConfirm: () => {
@@ -416,7 +416,7 @@ export default function K01_KnowledgeHome() {
         <div className="space-y-4">
           {groupedSearchResults.map(group => (
             <section key={group.base?.id ?? 'unknown'}>
-              <p className="text-caption text-ink-secondary mb-2">{group.base?.name ?? '未知知识库'}</p>
+              <p className="text-caption text-ink-secondary mb-2">{group.base?.name ?? '未知兴趣库'}</p>
               <div className="space-y-2">
                 {group.files.map(file => (
                   <SearchResultRow
@@ -468,16 +468,16 @@ export default function K01_KnowledgeHome() {
                       setSearchActive(false)
                       setSearchQuery('')
                     }}
-                    placeholder="搜索所有知识库内的内容..."
+                    placeholder="搜索所有兴趣库内的内容..."
                   />
                 </div>
               ) : (
                 <div className="flex items-center justify-between h-10 transition-opacity duration-[250ms]">
-                  <h1 className="text-[22px] leading-7 font-semibold text-ink-primary">知识库</h1>
+                  <h1 className="text-[22px] leading-7 font-semibold text-ink-primary">兴趣库</h1>
                   <div className="flex items-center gap-4">
                     <button
                       type="button"
-                      aria-label="搜索知识库"
+                      aria-label="搜索兴趣库"
                       onClick={() => setSearchActive(true)}
                       className="w-8 h-8 flex items-center justify-center text-ink-secondary active:text-brand-orange"
                     >
@@ -485,7 +485,7 @@ export default function K01_KnowledgeHome() {
                     </button>
                     <button
                       type="button"
-                      aria-label="发现知识库"
+                      aria-label="发现兴趣圈子"
                       onClick={() => navigate('/knowledge/square')}
                       className="w-8 h-8 flex items-center justify-center text-ink-secondary active:text-brand-orange"
                     >
@@ -522,7 +522,7 @@ export default function K01_KnowledgeHome() {
           >
             <RecentSection />
 
-            {/* 个人知识库 */}
+            {/* 个人兴趣库 */}
             <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
               <button
                 onClick={event => {
@@ -532,7 +532,7 @@ export default function K01_KnowledgeHome() {
                 className="w-full flex items-center justify-between px-4 py-3 border-b border-line-base"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-caption font-medium text-ink-secondary">个人知识库</span>
+                  <span className="text-caption font-medium text-ink-secondary">个人兴趣库</span>
                   <span className="text-micro px-1.5 py-0.5 bg-surface-card text-ink-placeholder rounded-pill">{bases.length}</span>
                 </div>
                 <ChevronDown size={16} className={`text-ink-placeholder transition-transform ${personalExpanded ? '' : '-rotate-90'}`} />
@@ -600,13 +600,13 @@ export default function K01_KnowledgeHome() {
                     <div className="w-10 h-10 rounded-card border border-dashed border-brand-orange-mid flex items-center justify-center flex-shrink-0">
                       <Plus size={18} className="text-brand-orange" />
                     </div>
-                    <span className="text-body">新建知识库</span>
+                    <span className="text-body">新建兴趣库</span>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* 订阅知识库 */}
+            {/* 订阅兴趣库 */}
             <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
               <button
                 onClick={event => {
@@ -616,7 +616,7 @@ export default function K01_KnowledgeHome() {
                 className="w-full flex items-center justify-between px-4 py-3 border-b border-line-base"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-caption font-medium text-ink-secondary">订阅知识库</span>
+                  <span className="text-caption font-medium text-ink-secondary">订阅兴趣库</span>
                   <span className="text-micro px-1.5 py-0.5 bg-surface-card text-ink-placeholder rounded-pill">{subscribedBases.length}</span>
                 </div>
                 <ChevronDown size={16} className={`text-ink-placeholder transition-transform ${subscribedExpanded ? '' : '-rotate-90'}`} />
@@ -670,7 +670,7 @@ export default function K01_KnowledgeHome() {
                     <div className="w-10 h-10 rounded-card border border-dashed border-brand-orange-mid flex items-center justify-center flex-shrink-0">
                       <Globe size={18} className="text-brand-orange" />
                     </div>
-                    <span className="text-body">浏览知识库广场</span>
+                    <span className="text-body">浏览兴趣圈子</span>
                   </button>
                 </div>
               )}
@@ -678,7 +678,7 @@ export default function K01_KnowledgeHome() {
           </div>
         )}
 
-        {/* ── K03 新建知识库抽屉 ── */}
+        {/* ── K03 新建兴趣库抽屉 ── */}
         <BottomSheet
           open={showCreate}
           onClose={() => setShowCreate(false)}
@@ -695,7 +695,7 @@ export default function K01_KnowledgeHome() {
               <button onClick={() => setShowCreate(false)} className="text-body text-ink-secondary w-10">取消</button>
             )}
             <span className="text-body font-semibold text-ink-primary">
-              {createStep === 'management' ? '选择管理方式' : '新建知识库'}
+              {createStep === 'management' ? '选择管理方式' : '新建兴趣库'}
             </span>
             {createStep === 'basic' ? (
               <button
@@ -743,14 +743,14 @@ export default function K01_KnowledgeHome() {
                   className="w-full px-0 py-2.5 border-b border-line-base text-body text-ink-primary outline-none bg-transparent placeholder:text-ink-placeholder"
                 />
                 <p className="mt-2 mb-1 text-[12px] leading-4 text-[#9CA3AF]">
-                  {newName.trim() ? '可以点击右上角「下一步」了' : '先填写知识库名称'}
+                  {newName.trim() ? '可以点击右上角「下一步」了' : '先填写兴趣库名称'}
                 </p>
 
                 {/* Description */}
                 <textarea
                   value={newDesc}
                   onChange={e => setNewDesc(e.target.value)}
-                  placeholder="简单描述这个知识库的内容..."
+                  placeholder="简单描述这个兴趣库的内容..."
                   rows={2}
                   className="w-full px-0 py-2.5 border-b border-line-base text-body text-ink-secondary outline-none bg-transparent placeholder:text-ink-placeholder resize-none mb-4"
                 />
@@ -785,7 +785,7 @@ export default function K01_KnowledgeHome() {
                 <p className="text-caption text-ink-placeholder px-5 pt-3 pb-1">AI 设置</p>
                 <ToggleRow
                   label="允许 AI 在同一问中引用"
-                  sub="AI 回答时可检索此知识库"
+                  sub="AI 回答时可检索此兴趣库"
                   value={aiRef}
                   onChange={setAiRef}
                 />
@@ -800,7 +800,7 @@ export default function K01_KnowledgeHome() {
             <div className="flex h-full min-h-0 flex-col px-5 pt-4">
               <div className="flex-shrink-0">
                 <p className="text-[13px] leading-5 text-[#4A4A4A] text-center">
-                  决定了知识库怎么帮你整理内容，之后可以改
+                  决定了兴趣库怎么帮你整理内容，之后可以改
                 </p>
               </div>
               <div className="mt-4 flex-1 min-h-0 space-y-3 overflow-y-auto scrollbar-hide pb-4">
@@ -835,7 +835,7 @@ export default function K01_KnowledgeHome() {
         <BottomSheet
           open={Boolean(renamingBase)}
           onClose={() => setRenamingBase(null)}
-          title="知识库设置"
+          title="兴趣库设置"
           titleAlign="center"
           titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
           heightClassName="h-[85%] max-h-[85%]"
@@ -858,7 +858,7 @@ export default function K01_KnowledgeHome() {
             <input
               value={renameName}
               onChange={event => setRenameName(event.target.value)}
-              placeholder="知识库名称"
+              placeholder="兴趣库名称"
               className="w-full px-4 py-3 bg-surface-card rounded-card border border-line-base text-body text-ink-primary outline-none placeholder:text-ink-placeholder"
             />
             <div className="mt-5">

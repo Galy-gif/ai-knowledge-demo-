@@ -108,8 +108,8 @@ export default function DataSourceSelectorSheet({
 
   const canComplete = draftIds.length > 0
   const countLabel = draftIds.length === 0
-    ? '未选择知识库'
-    : `已选 ${draftIds.length} 个知识库`
+    ? '未选择兴趣库'
+    : `已选 ${draftIds.length} 个兴趣库`
 
   const handleComplete = () => {
     if (!canComplete) return
@@ -138,10 +138,10 @@ export default function DataSourceSelectorSheet({
       }
     >
       <div className="px-5 pt-2 pb-4">
-        <p className="text-caption text-ink-secondary mb-4 text-center">AI 将基于选中的知识库内容生成轻应用</p>
+        <p className="text-caption text-ink-secondary mb-4 text-center">AI 将基于选中的兴趣库内容生成轻应用</p>
 
         {/* Personal KBs */}
-        <p className="text-[13px] font-semibold text-ink-primary pb-2">个人知识库</p>
+        <p className="text-[13px] font-semibold text-ink-primary pb-2">个人兴趣库</p>
         <div className="space-y-2 mb-5">
           {personalBases.map(base => (
             <BaseRow
@@ -156,7 +156,7 @@ export default function DataSourceSelectorSheet({
         </div>
 
         {/* Subscribed KBs */}
-        <p className="text-[13px] font-semibold text-ink-primary pb-2">订阅知识库</p>
+        <p className="text-[13px] font-semibold text-ink-primary pb-2">订阅兴趣库</p>
         <div className="space-y-2 mb-5">
           {subscribedBases.map(base => (
             <BaseRow
