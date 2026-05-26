@@ -246,7 +246,7 @@ export default function Q01_AskHome() {
                 AI
               </span>
             </div>
-            <p className="mt-3.5 text-[13px] leading-5 text-[#6B6B6B]">你的移动 AI 知识工作台</p>
+            <div className="mt-3.5 h-5" aria-hidden="true" />
           </div>
 
           {/* Suggestions */}
