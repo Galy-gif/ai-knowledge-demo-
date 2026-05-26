@@ -120,6 +120,27 @@ export interface DiscoverKb {
   inRecommend?: boolean
 }
 
+export type DiscoverContentKind = 'movie' | 'drama' | 'short_drama' | 'variety' | 'documentary' | 'novel'
+
+export interface DiscoverFeedItem {
+  id: string
+  kind: DiscoverContentKind
+  title: string
+  subtitle: string
+  cover: { emoji: string; gradient: [string, string] }
+  tags: string[]
+  score: string
+  meta: string
+  hot?: boolean
+  highlight?: string
+}
+
+export interface DiscoverCategory {
+  id: string
+  label: string
+  kinds: DiscoverContentKind[] | 'all'
+}
+
 export interface DiscoverKbContentItem {
   id: string
   title: string
@@ -2188,5 +2209,207 @@ export const mockWebResults: WebSource[] = [
     snippet: '梳理过去3年知识管理赛道的产品演进路径，AI 嵌入方式从辅助写作到主动检索的转变。',
     publishedAt: '2026年3月15日',
     readTime: '15分钟',
+  },
+]
+
+export const mockDiscoverCategories: DiscoverCategory[] = [
+  { id: 'all', label: '推荐', kinds: 'all' },
+  { id: 'movie', label: '电影', kinds: ['movie'] },
+  { id: 'drama', label: '剧集', kinds: ['drama'] },
+  { id: 'short_drama', label: '短剧', kinds: ['short_drama'] },
+  { id: 'variety', label: '综艺', kinds: ['variety'] },
+  { id: 'doc', label: '纪录片', kinds: ['documentary'] },
+  { id: 'novel', label: '小说', kinds: ['novel'] },
+]
+
+export const mockDiscoverFeed: DiscoverFeedItem[] = [
+  {
+    id: 'discover_movie_1',
+    kind: 'movie',
+    title: '星际穿越',
+    subtitle: '父女羁绊穿过时间与宇宙，硬科幻外壳下藏着很柔软的情感回声。',
+    cover: { emoji: '🚀', gradient: ['#8FA8B5', '#7A93A0'] },
+    tags: ['高分', '科幻', '亲情'],
+    score: '9.4',
+    meta: '169分钟 · 科幻',
+    hot: true,
+    highlight: '本周飙升榜 Top 3',
+  },
+  {
+    id: 'discover_drama_1',
+    kind: 'drama',
+    title: '漫长的季节',
+    subtitle: '一桩旧案牵出东北小城往事，幽默、伤感和悬疑慢慢叠在一起。',
+    cover: { emoji: '🎭', gradient: ['#A8B5C7', '#92A4B5'] },
+    tags: ['完结', '悬疑', '口碑'],
+    score: '9.0',
+    meta: '12集 · 2023',
+    hot: true,
+  },
+  {
+    id: 'discover_variety_1',
+    kind: 'variety',
+    title: '乘风2024',
+    subtitle: '舞台、唱跳和姐姐们的真实相处，是适合周末连看的热闹综艺。',
+    cover: { emoji: '🎤', gradient: ['#E8B89A', '#D9A283'] },
+    tags: ['舞台', '女性', '热播'],
+    score: '8.2',
+    meta: '12期 · 音综',
+    highlight: '同好讨论热度上升',
+  },
+  {
+    id: 'discover_documentary_1',
+    kind: 'documentary',
+    title: '舌尖上的中国',
+    subtitle: '从餐桌到山海，跟着食物看见普通人的生活、乡土和时间。',
+    cover: { emoji: '🍜', gradient: ['#B8B8A8', '#A4A492'] },
+    tags: ['经典', '美食', '治愈'],
+    score: '9.3',
+    meta: '7集 · 纪录片',
+  },
+  {
+    id: 'discover_short_1',
+    kind: 'short_drama',
+    title: '她从风里来',
+    subtitle: '都市女性重启人生的小体量爽剧，节奏快，适合碎片时间刷完。',
+    cover: { emoji: '📱', gradient: ['#A89BB0', '#928499'] },
+    tags: ['短剧', '逆袭', '完结'],
+    score: '8.1',
+    meta: '36集 · 都市',
+    hot: true,
+  },
+  {
+    id: 'discover_novel_1',
+    kind: 'novel',
+    title: '凡人修仙传',
+    subtitle: '普通少年踏入修仙世界，靠谨慎和韧性一点点走出自己的路。',
+    cover: { emoji: '📖', gradient: ['#B8A8C7', '#A492B5'] },
+    tags: ['修仙', '长篇', '经典'],
+    score: '8.8',
+    meta: '仙侠 · 连载完结',
+    highlight: '书友收藏量持续上涨',
+  },
+  {
+    id: 'discover_movie_2',
+    kind: 'movie',
+    title: '盗梦空间',
+    subtitle: '梦境层层嵌套，动作和谜题一起推进，结尾仍然值得反复讨论。',
+    cover: { emoji: '🌀', gradient: ['#C7B8A8', '#B5A492'] },
+    tags: ['悬疑', '科幻', '经典'],
+    score: '9.3',
+    meta: '148分钟 · 悬疑',
+  },
+  {
+    id: 'discover_drama_2',
+    kind: 'drama',
+    title: '去有风的地方',
+    subtitle: '慢节奏田园治愈剧，把离开、休息和重新开始讲得很舒服。',
+    cover: { emoji: '🌿', gradient: ['#B8A8C7', '#A492B5'] },
+    tags: ['完结', '治愈', '生活'],
+    score: '8.7',
+    meta: '40集 · 生活',
+  },
+  {
+    id: 'discover_variety_2',
+    kind: 'variety',
+    title: '快乐再出发',
+    subtitle: '老友旅行和临场音乐混在一起，松弛、好笑，也有很多真诚瞬间。',
+    cover: { emoji: '🎸', gradient: ['#C7A8B0', '#B5929B'] },
+    tags: ['旅行', '音乐', '下饭'],
+    score: '8.9',
+    meta: '综艺 · 轻松',
+    hot: true,
+  },
+  {
+    id: 'discover_documentary_2',
+    kind: 'documentary',
+    title: '人生一串',
+    subtitle: '夜市烟火气和烧烤故事都很鲜活，看完很容易想约朋友吃夜宵。',
+    cover: { emoji: '🍢', gradient: ['#9BB0A8', '#849690'] },
+    tags: ['美食', '烟火气', '下饭'],
+    score: '8.8',
+    meta: '6集 · 美食',
+  },
+  {
+    id: 'discover_short_2',
+    kind: 'short_drama',
+    title: '反派今天也很忙',
+    subtitle: '穿书设定加轻喜剧节奏，主角一边自救一边把剧情带跑偏。',
+    cover: { emoji: '⚡', gradient: ['#8FA8B5', '#7A93A0'] },
+    tags: ['穿书', '喜剧', '热播'],
+    score: '8.0',
+    meta: '48集 · 轻喜',
+  },
+  {
+    id: 'discover_novel_2',
+    kind: 'novel',
+    title: '长安十二时辰',
+    subtitle: '一日长安里的危机与追逐，节奏紧密，细节有浓厚历史质感。',
+    cover: { emoji: '🏮', gradient: ['#C7B8A8', '#B5A492'] },
+    tags: ['历史', '悬疑', '改编'],
+    score: '8.6',
+    meta: '历史 · 完结',
+  },
+  {
+    id: 'discover_movie_3',
+    kind: 'movie',
+    title: '寻梦环游记',
+    subtitle: '绚烂亡灵世界里讲家人、梦想和记忆，是很适合重看的动画电影。',
+    cover: { emoji: '🎺', gradient: ['#C2A89B', '#AE9384'] },
+    tags: ['动画', '音乐', '治愈'],
+    score: '9.1',
+    meta: '105分钟 · 动画',
+  },
+  {
+    id: 'discover_drama_3',
+    kind: 'drama',
+    title: '开端',
+    subtitle: '公交车循环里的悬疑故事，短小紧凑，每集都在推动新信息。',
+    cover: { emoji: '🚌', gradient: ['#A8C7B5', '#92B5A4'] },
+    tags: ['完结', '悬疑', '短篇'],
+    score: '8.5',
+    meta: '15集 · 悬疑',
+  },
+  {
+    id: 'discover_variety_3',
+    kind: 'variety',
+    title: '声生不息',
+    subtitle: '经典歌曲被重新演绎，适合边听边收藏自己的通勤歌单。',
+    cover: { emoji: '🎙️', gradient: ['#C7BFA8', '#B5AC92'] },
+    tags: ['音综', '经典', '舞台'],
+    score: '8.4',
+    meta: '12期 · 音乐',
+  },
+  {
+    id: 'discover_documentary_3',
+    kind: 'documentary',
+    title: '如果国宝会说话',
+    subtitle: '每集几分钟，用轻巧方式打开文物背后的时代与人的痕迹。',
+    cover: { emoji: '🏺', gradient: ['#A8C7B5', '#92B5A4'] },
+    tags: ['文博', '短片', '知识'],
+    score: '9.4',
+    meta: '100集 · 人文',
+    highlight: '适合碎片时间收藏',
+  },
+  {
+    id: 'discover_short_3',
+    kind: 'short_drama',
+    title: '月光便利店',
+    subtitle: '深夜便利店连接不同客人的小愿望，温暖奇幻，单集负担很轻。',
+    cover: { emoji: '🌙', gradient: ['#C2A89B', '#AE9384'] },
+    tags: ['奇幻', '治愈', '短剧'],
+    score: '8.2',
+    meta: '24集 · 奇幻',
+  },
+  {
+    id: 'discover_novel_3',
+    kind: 'novel',
+    title: '庆余年',
+    subtitle: '少年入局庙堂与江湖，权谋、喜剧和成长线都很有爽感。',
+    cover: { emoji: '📚', gradient: ['#B8B8A8', '#A4A492'] },
+    tags: ['权谋', '轻喜', '热门'],
+    score: '8.7',
+    meta: '架空 · 长篇',
+    hot: true,
   },
 ]

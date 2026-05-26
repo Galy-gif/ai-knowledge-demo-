@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ChevronRight, Grid2X2, Search, UserRound, X } from 'lucide-react'
 import PhoneFrame from './components/layout/PhoneFrame'
-import TabLayout from './components/layout/TabLayout'
 import MultiSelectActionBar from './components/common/MultiSelectActionBar'
 
 // Global
@@ -34,6 +32,7 @@ import Q04_AiAnswer from './pages/ask/Q04_AiAnswer'
 import Q05_AiAnswerMulti from './pages/ask/Q05_AiAnswerMulti'
 import Q06_WebSearchResults from './pages/ask/Q06_WebSearchResults'
 import Q07_WebArticle from './pages/ask/Q07_WebArticle'
+import D01_DiscoverHome from './pages/discover/D01_DiscoverHome'
 
 // Task
 import T01_TaskMode from './pages/task/T01_TaskMode'
@@ -50,93 +49,6 @@ import T10_TemplatePreview from './pages/task/T10_TemplatePreview'
 // Profile
 import M01_ProfileHome from './pages/profile/M01_ProfileHome'
 import M02_ProfileEdit from './pages/profile/M02_ProfileEdit'
-
-const DISCOVER_TABS = ['推荐', '小说', '找短剧', '男生', '女生', '漫剧']
-
-function DiscoverHome() {
-  return (
-    <TabLayout>
-      <div className="flex h-full flex-col bg-surface-card">
-        <div className="flex-shrink-0 bg-white px-4 pt-5 pb-3">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-[12px] border border-line-base bg-white px-3 text-left text-ink-placeholder"
-            >
-              <Search size={18} className="flex-shrink-0" />
-              <span className="truncate text-[13px] leading-5">搜索娱乐内容或榜单</span>
-            </button>
-            <button type="button" className="flex w-9 flex-shrink-0 flex-col items-center gap-0.5 text-ink-secondary">
-              <Grid2X2 size={20} strokeWidth={1.8} />
-              <span className="text-[10px] leading-3">分类</span>
-            </button>
-            <button type="button" className="flex w-9 flex-shrink-0 flex-col items-center gap-0.5 text-ink-secondary">
-              <UserRound size={20} strokeWidth={1.8} />
-              <span className="text-[10px] leading-3">我的</span>
-            </button>
-            <button
-              type="button"
-              aria-label="关闭发现页"
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-surface-card text-ink-secondary"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <div className="mt-4 flex gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            {DISCOVER_TABS.map(tab => {
-              const active = tab === '小说'
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  className={`relative pb-2 text-[16px] leading-6 font-semibold ${
-                    active ? 'text-ink-primary' : 'text-ink-placeholder'
-                  }`}
-                >
-                  {tab}
-                  {active && (
-                    <span className="absolute left-1/2 bottom-0 h-1 w-6 -translate-x-1/2 rounded-pill bg-brand-orange" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
-          <section className="rounded-card border border-line-base bg-white shadow-card">
-            <div className="flex items-center justify-between px-4 pt-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-[20px] leading-7 font-semibold text-ink-primary">推荐榜</h2>
-                <button type="button" className="text-[15px] leading-5 font-semibold text-ink-placeholder">
-                  高分榜
-                </button>
-                <button type="button" className="text-[15px] leading-5 font-semibold text-ink-placeholder">
-                  完结榜
-                </button>
-              </div>
-              <button type="button" aria-label="查看推荐榜" className="text-ink-placeholder">
-                <ChevronRight size={20} />
-              </button>
-            </div>
-            <div className="h-64" />
-          </section>
-
-          <section className="rounded-card border border-line-base bg-white shadow-card">
-            <div className="flex items-center justify-between px-4 pt-4">
-              <h2 className="text-[20px] leading-7 font-semibold text-ink-primary">完结推荐</h2>
-              <button type="button" aria-label="查看完结推荐" className="text-ink-placeholder">
-                <ChevronRight size={20} />
-              </button>
-            </div>
-            <div className="h-44" />
-          </section>
-        </div>
-      </div>
-    </TabLayout>
-  )
-}
 
 export default function App() {
   return (
@@ -175,7 +87,7 @@ export default function App() {
           <Route path="/ask/web-article" element={<Q07_WebArticle />} />
 
           {/* Discover */}
-          <Route path="/discover" element={<DiscoverHome />} />
+          <Route path="/discover" element={<D01_DiscoverHome />} />
 
           {/* Task / PWA */}
           <Route path="/ask/task-mode" element={<T01_TaskMode />} />
