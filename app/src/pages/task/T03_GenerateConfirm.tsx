@@ -14,14 +14,14 @@ import type { TravelBudget, TravelCompanions, TravelPreferences } from '../../mo
 const TEMPLATE_DEFAULT_KB_IDS: Record<string, string[]> = {
   'diet-log': ['kb_diet', 'kb_nutrition_lab'],
   'fitness-planner': ['kb_training', 'kb_iron_gym'],
-  'fund-portfolio': ['kb_invest', 'kb_fund'],
+  'watchlist-helper': ['kb_film'],
   'travel-plan': ['kb_travel_food'],
 }
 
 const CUSTOM_REQ_PLACEHOLDERS: Record<string, string> = {
   'diet-log': '如：我想让它能扫描食物图片自动识别',
   'fitness-planner': '如：我希望它能根据心率自动推荐训练强度',
-  'fund-portfolio': '如：我想要每天的涨跌推送，且能模拟买卖',
+  'watchlist-helper': '如：希望能根据我的评分自动推荐相似剧集',
   'travel-plan': '如：希望避开人多景点、想体验温泉',
 }
 const DEFAULT_CUSTOM_REQ_PLACEHOLDER = '如：我想让它具备 XX 功能'
@@ -247,9 +247,10 @@ export default function T03_GenerateConfirm() {
     ?? templateCoreFeatures.split('、').map((s: string) => s.trim())
 
   const defaultKbs = useMemo(() => {
-    if (state?.selectedKbIds) {
+    const stateSelectedKbIds = state?.selectedKbIds as string[] | undefined
+    if (stateSelectedKbIds && stateSelectedKbIds.length > 0) {
       return {
-        ids: state.selectedKbIds as string[],
+        ids: stateSelectedKbIds,
         names: (state.selectedKbNames as string[] | undefined) ?? [],
       }
     }

@@ -30,11 +30,11 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
     { label: '生成界面', desc: '设计训练打卡视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
-  'fund-portfolio': [
-    { label: '分析需求', desc: '理解你的投资跟踪需求' },
-    { label: '构建结构', desc: '搭建资产与持仓数据框架' },
-    { label: '连接数据', desc: '对接「财经资料库」' },
-    { label: '生成界面', desc: '设计资产看板视图' },
+  'watchlist-helper': [
+    { label: '分析需求', desc: '理解你的追剧口味与追更习惯' },
+    { label: '构建结构', desc: '搭建片单收藏与观看进度框架' },
+    { label: '连接数据', desc: '对接「电影深度评论」兴趣库' },
+    { label: '生成界面', desc: '设计追剧看板与评分视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
   'interview-bank': [

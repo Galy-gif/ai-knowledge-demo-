@@ -149,7 +149,7 @@ export interface DiscoverKbContentItem {
   type: string
 }
 
-export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker' | 'travel_planner'
+export type RuntimeType = 'learning_list' | 'data_dashboard' | 'daily_tracker' | 'travel_planner' | 'watchlist'
 
 export type TravelBudget = 'budget' | 'comfort' | 'premium' | 'luxury'
 export type TravelCompanions = 'solo' | 'couple' | 'family' | 'friends'
@@ -464,6 +464,17 @@ export const mockSubscribedKBs: KnowledgeBase[] = [
     color: '#EC4899',
     fileCount: 124,
     updatedAt: '昨天',
+    managementMode: null,
+    isSubscribed: true,
+    type: 'subscribed',
+  },
+  {
+    id: 'kb_film',
+    name: '电影深度评论',
+    icon: '🎬',
+    color: '#F97316',
+    fileCount: 234,
+    updatedAt: '今天',
     managementMode: null,
     isSubscribed: true,
     type: 'subscribed',
@@ -2116,6 +2127,18 @@ export const mockApps: LightApp[] = [
     lastUsedAt: '1小时前',
     dataSource: '投资学习笔记 + 基金组合搭配',
     runtimeType: 'data_dashboard',
+  },
+  {
+    id: 'app_watchlist',
+    name: '我的追剧片单',
+    icon: '🎬',
+    description: '片单收藏、追更进度、个人评分',
+    templateId: 'watchlist-helper',
+    createdAt: '刚刚',
+    lastOpenedAt: '刚刚',
+    lastUsedAt: '刚刚',
+    dataSource: '电影深度评论 + 追剧笔记',
+    runtimeType: 'watchlist',
   },
   {
     id: 'app_words',

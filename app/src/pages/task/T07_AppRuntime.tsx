@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
-import { ChevronDown, ChevronRight, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
+import { Bell, ChevronDown, ChevronRight, ChevronUp, Download, MoreHorizontal, RefreshCw, Sliders } from 'lucide-react'
 import { useApps } from '../../context/AppsContext'
 import { useUser } from '../../context/UserContext'
 import ExportItinerarySheet from '../../components/common/ExportItinerarySheet'
@@ -80,6 +80,50 @@ function AiTip({ text }: { text: string }) {
     </div>
   )
 }
+
+interface WatchingItem {
+  emoji: string
+  title: string
+  genre: string
+  progressText: string
+  next: string
+  pct: number
+  gradient: string
+}
+
+interface WantItem {
+  emoji: string
+  title: string
+  meta: string
+}
+
+interface RatedItem {
+  title: string
+  score: string
+  emoji: string
+  gradient: string
+}
+
+const WATCHING_ITEMS: WatchingItem[] = [
+  { emoji: '🎭', title: '漫长的季节', genre: '悬疑剧情 · 12 集', progressText: '第 8 集 / 12 集（67%）', next: '6 月 15 日更新', pct: 67, gradient: 'linear-gradient(135deg, #F8CFA6 0%, #FF9F45 100%)' },
+  { emoji: '⚔️', title: '黑暗荣耀 第二季', genre: '复仇悬疑 · 8 集', progressText: '第 5 集 / 8 集（63%）', next: '已完结 · 一口气看', pct: 63, gradient: 'linear-gradient(135deg, #FECACA 0%, #FB923C 100%)' },
+  { emoji: '🌌', title: '三体（动画版）', genre: '科幻 · 15 集', progressText: '第 9 集 / 15 集（60%）', next: '6 月 18 日更新', pct: 60, gradient: 'linear-gradient(135deg, #FDBA74 0%, #F97316 100%)' },
+]
+
+const WANT_ITEMS: WantItem[] = [
+  { emoji: '📽️', title: '繁花', meta: '王家卫 · 推荐指数 9.2' },
+  { emoji: '🏜️', title: '沙丘 2', meta: '科幻巨作 · 即将上映' },
+  { emoji: '🕵️', title: '流人', meta: '英剧悬疑 · Apple TV+' },
+  { emoji: '🎪', title: '异形：夺命舰', meta: '6 月 14 日院线' },
+]
+
+const RATED_ITEMS: RatedItem[] = [
+  { title: '星际穿越', score: '9.4', emoji: '🌌', gradient: 'linear-gradient(135deg, #FED7AA 0%, #FFEDD5 100%)' },
+  { title: '寻梦环游记', score: '9.0', emoji: '🎸', gradient: 'linear-gradient(135deg, #FDBA74 0%, #FDE68A 100%)' },
+  { title: '漫长的季节', score: '9.0', emoji: '🎭', gradient: 'linear-gradient(135deg, #FECACA 0%, #FED7AA 100%)' },
+  { title: '黑暗荣耀', score: '8.8', emoji: '⚔️', gradient: 'linear-gradient(135deg, #FFEDD5 0%, #FDBA74 100%)' },
+  { title: '让子弹飞', score: '9.2', emoji: '🎬', gradient: 'linear-gradient(135deg, #FCD34D 0%, #FB923C 100%)' },
+]
 
 // ── Form 1: Learning List ─────────────────────────────────────────────────────
 
@@ -711,6 +755,118 @@ function TravelPlannerForm({ app, onAdjust, onExport }: { app: LightApp; onAdjus
   )
 }
 
+// ── Form 6: Watchlist ─────────────────────────────────────────────────────────
+
+function WatchlistForm() {
+  const { showToast } = useUser()
+  const stats = [
+    ['5', '在看'],
+    ['12', '想看'],
+    ['28', '已看'],
+    ['8.4', '平均评分'],
+  ]
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-card p-4 text-white" style={{ background: 'linear-gradient(135deg, #FF7A00 0%, #FDBA74 100%)' }}>
+        <p className="text-micro opacity-80 mb-3">本周追剧概览</p>
+        <div className="grid grid-cols-4 gap-2 mb-3">
+          {stats.map(([value, label]) => (
+            <div key={label}>
+              <p className="text-[24px] leading-7 font-bold">{value}</p>
+              <p className="text-[11px] leading-4 opacity-80 mt-0.5">{label}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] leading-4 opacity-85">上周追完 3 部，再追 2 部就能达成「月度 5 部」目标</p>
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
+          <p className="text-micro text-ink-placeholder font-medium">正在追更</p>
+        </div>
+        {WATCHING_ITEMS.map((item, i) => (
+          <div key={item.title} className={`flex gap-3 px-4 py-3 ${i !== WATCHING_ITEMS.length - 1 ? 'border-b border-line-base' : ''}`}>
+            <div
+              className="w-12 h-16 rounded-[10px] flex items-center justify-center text-[24px] flex-shrink-0"
+              style={{ background: item.gradient }}
+            >
+              {item.emoji}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-caption text-ink-primary font-semibold truncate">{item.title}</p>
+                  <p className="text-micro text-ink-placeholder mt-0.5">{item.genre}</p>
+                </div>
+                <p className="text-[10px] leading-3 text-brand-orange flex-shrink-0 mt-0.5">{item.next}</p>
+              </div>
+              <div className="mt-2">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-micro text-ink-secondary">{item.progressText}</p>
+                </div>
+                <div className="h-1 rounded-full overflow-hidden" style={{ backgroundColor: '#F3F4F6' }}>
+                  <div className="h-full rounded-full bg-brand-orange" style={{ width: `${item.pct}%` }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base flex items-center justify-between">
+          <p className="text-micro text-ink-placeholder font-medium">想看清单</p>
+          <button
+            onClick={() => showToast('mock：添加片单')}
+            className="text-[11px] leading-4 font-medium text-brand-orange px-2.5 py-1 rounded-pill bg-brand-orange-light"
+          >
+            + 添加
+          </button>
+        </div>
+        {WANT_ITEMS.map((item, i) => (
+          <div key={item.title} className={`flex items-center gap-3 px-4 py-3 ${i !== WANT_ITEMS.length - 1 ? 'border-b border-line-base' : ''}`}>
+            <span className="text-[20px] flex-shrink-0">{item.emoji}</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-caption text-ink-primary font-medium truncate">{item.title}</p>
+              <p className="text-micro text-ink-placeholder mt-0.5 truncate">{item.meta}</p>
+            </div>
+            <button
+              onClick={() => showToast('mock：已设置开播提醒', 'success')}
+              className="w-8 h-8 rounded-full bg-surface-card text-brand-orange flex items-center justify-center flex-shrink-0"
+              aria-label="开播提醒"
+            >
+              <Bell size={14} strokeWidth={2.2} />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
+        <p className="text-micro text-ink-placeholder font-medium mb-3">我的高分剧</p>
+        <div className="overflow-x-auto scrollbar-hide -mx-1">
+          <div className="flex gap-2 px-1">
+            {RATED_ITEMS.map(item => (
+              <div key={item.title} className="w-[92px] flex-shrink-0">
+                <div
+                  className="h-[110px] rounded-[12px] flex items-center justify-center text-[30px]"
+                  style={{ background: item.gradient }}
+                >
+                  {item.emoji}
+                </div>
+                <p className="text-[12px] leading-4 font-medium text-ink-primary mt-1.5 line-clamp-1">{item.title}</p>
+                <p className="text-[11px] leading-4 text-brand-orange font-semibold">{item.score}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <AiTip text="你最近偏好悬疑与年代题材，新上线的《回响》《白色橄榄树》或许你会喜欢。在「电影深度评论」兴趣库里也有相关长评可参考。" />
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function T07_AppRuntime() {
@@ -766,6 +922,9 @@ export default function T07_AppRuntime() {
       break
     case 'travel_planner':
       form = <TravelPlannerForm app={app} onAdjust={handleAdjust} onExport={() => setShowExport(true)} />
+      break
+    case 'watchlist':
+      form = <WatchlistForm />
       break
     case 'daily_tracker':
       if (app.id === 'app_fitness') form = <FitnessTrackerForm />
