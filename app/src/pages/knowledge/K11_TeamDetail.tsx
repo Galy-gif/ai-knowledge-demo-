@@ -31,12 +31,12 @@ export default function K11_TeamDetail() {
   if (!kb) {
     return (
       <div className="flex flex-col h-full relative bg-white">
-        <TopHeader title="兴趣库详情" showBack />
+        <TopHeader title="资料包详情" showBack />
         <div className="flex flex-col items-center justify-center flex-1 px-8 text-center py-20">
           <div className="text-5xl mb-4">📭</div>
-          <h2 className="text-h2 text-ink-primary mb-2">兴趣库不存在</h2>
+          <h2 className="text-h2 text-ink-primary mb-2">资料包不存在</h2>
           <p className="text-body text-ink-secondary mb-8">
-            该兴趣库可能已下架，或链接地址有误。
+            该资料包可能已下架，或链接地址有误。
           </p>
           <button
             onClick={() => navigate('/knowledge/square')}
@@ -64,7 +64,7 @@ export default function K11_TeamDetail() {
 
   return (
     <div className="flex flex-col h-full relative bg-white">
-      <TopHeader title="兴趣库详情" showBack />
+      <TopHeader title="资料包详情" showBack />
 
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
@@ -138,7 +138,7 @@ export default function K11_TeamDetail() {
               : 'bg-brand-orange text-white'
           }`}
         >
-          {kb.isSubscribed ? '已订阅 · 取消订阅' : '+ 订阅此兴趣库'}
+          {kb.isSubscribed ? '已订阅 · 取消订阅' : '+ 订阅此资料包'}
         </button>
       </div>
 

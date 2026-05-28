@@ -57,7 +57,7 @@ function DiscoverFeedCard({
             event.stopPropagation()
             onSave(item)
           }}
-          aria-label="加入兴趣库"
+          aria-label="加入资料包"
           className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-brand-orange shadow-sm active:bg-brand-orange-light"
         >
           <Plus size={13} strokeWidth={2.5} />
@@ -165,8 +165,8 @@ export default function D01_DiscoverHome() {
           open={showKbSheet}
           onClose={() => setShowKbSheet(false)}
           sourceContent={savePayload}
-          title="加入兴趣库"
-          successToast={kb => `已加入「${kb.name}」兴趣库`}
+          title="加入资料包"
+          successToast={kb => `已加入「${kb.name}」资料包`}
         />
       </div>
     </TabLayout>

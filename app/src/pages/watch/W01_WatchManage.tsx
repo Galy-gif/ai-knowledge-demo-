@@ -172,7 +172,7 @@ function getSearchResults(query: string) {
 export default function W01_WatchManage() {
   const { state } = useLocation()
   const navigate = useNavigate()
-  const kbName: string = state?.kbName ?? '当前兴趣库'
+  const kbName: string = state?.kbName ?? '当前资料包'
   const kbId: string = state?.kbId ?? 'kb1'
 
   const { getKbTasks, toggleTask, deleteTask, addTask } = useWatch()
@@ -562,7 +562,7 @@ export default function W01_WatchManage() {
               <p className="text-[13px] font-semibold text-ink-primary mb-4">蹲到的内容怎么办？</p>
               <div className="space-y-2.5">
                 {([
-                  { id: 'ai_filter', emoji: '🤖', title: '智能过滤（推荐）', desc: 'AI 判断高相关的进兴趣库，无关内容自动剔除' },
+                  { id: 'ai_filter', emoji: '🤖', title: '智能过滤（推荐）', desc: 'AI 判断高相关的进资料包，无关内容自动剔除' },
                   { id: 'all_in',    emoji: '📥', title: '全部进库',         desc: '所有蹲到的内容都进，自己整理' },
                 ] as { id: WatchStrategy; emoji: string; title: string; desc: string }[]).map(opt => (
                   <button

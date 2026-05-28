@@ -15,6 +15,7 @@ import K08_FileDetail from './pages/knowledge/K08_FileDetail'
 import K09_FolderDetail from './pages/knowledge/K09_FolderDetail'
 import K10_KnowledgeSquare from './pages/knowledge/K10_KnowledgeSquare'
 import K11_TeamDetail from './pages/knowledge/K11_TeamDetail'
+import K12_CategoryRecommend from './pages/knowledge/K12_CategoryRecommend'
 import K13_RecentAll from './pages/knowledge/K13_RecentAll'
 import K14_AddFromSource from './pages/knowledge/K14_AddFromSource'
 import K15_AddFromUpload from './pages/knowledge/K15_AddFromUpload'
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/knowledge/square" element={<K10_KnowledgeSquare />} />
           <Route path="/knowledge/team/:id" element={<K11_TeamDetail />} />
           <Route path="/knowledge/kb/:id" element={<K11_TeamDetail />} />
+          <Route path="/knowledge/recommend/:categoryId" element={<K12_CategoryRecommend />} />
           <Route path="/knowledge/recent" element={<K13_RecentAll />} />
           <Route path="/knowledge/watch" element={<W01_WatchManage />} />
           <Route path="/watch/today" element={<W02_TodayItems />} />

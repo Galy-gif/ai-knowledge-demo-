@@ -19,7 +19,7 @@ export const PRESET_SKILLS: MagicAction[] = [
   {
     id: 'skill_related',
     name: '找相关',
-    desc: '在你的兴趣库中找相关资料',
+    desc: '在你的资料包中找相关资料',
     placeholder: '输入你想找资料的话题…',
     type: 'preset',
   },

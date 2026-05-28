@@ -14,10 +14,10 @@ export default function T02_TaskResult() {
   const matchedTemplate = findMatchingPwaTemplate(requirement)
   const [customMode, setCustomMode] = useState(false)
   const sourceLabel = selectedKbNames.length === 0
-    ? '未限定兴趣库'
+    ? '未限定资料包'
     : selectedKbNames.length === 1
       ? selectedKbNames[0]
-      : `${selectedKbNames.length} 个兴趣库`
+      : `${selectedKbNames.length} 个资料包`
 
   return (
     <PageLayout>

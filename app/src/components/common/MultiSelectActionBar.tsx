@@ -33,7 +33,7 @@ export default function MultiSelectActionBar() {
   const selectedKbIds = Array.from(new Set(selectedFiles.map(file => file.kbId)))
   const excludedKbId = selectedKbIds.length === 1 ? selectedKbIds[0] : null
   const targets = [...bases, ...subscribedBases].filter(kb => kb.id !== excludedKbId)
-  const sheetTitle = sheetMode === 'move' ? '移动到哪个兴趣库' : '复制到哪个兴趣库'
+  const sheetTitle = sheetMode === 'move' ? '移动到哪个资料包' : '复制到哪个资料包'
 
   const runBatch = (targetKbId: string, targetName: string) => {
     if (sheetMode === 'move') {
@@ -49,7 +49,7 @@ export default function MultiSelectActionBar() {
 
   const openFileAction = (mode: Exclude<SheetMode, null>) => {
     if (fileActionsDisabled) {
-      showToast(noSelection ? '请先选择要操作的内容' : hasBaseSelection ? '兴趣库不能移动或复制到兴趣库里' : '请先选择文件', 'info')
+      showToast(noSelection ? '请先选择要操作的内容' : hasBaseSelection ? '资料包不能移动或复制到资料包里' : '请先选择文件', 'info')
       return
     }
     setSheetMode(mode)
@@ -57,10 +57,10 @@ export default function MultiSelectActionBar() {
 
   const getDeleteDescription = () => {
     if (baseCount > 0 && fileCount > 0) {
-      return `你将删除 ${baseCount} 个兴趣库和 ${fileCount} 个文件。兴趣库内的所有内容也将一并丢失。此操作无法撤销。`
+      return `你将删除 ${baseCount} 个资料包和 ${fileCount} 个文件。资料包内的所有内容也将一并丢失。此操作无法撤销。`
     }
     if (baseCount > 0) {
-      return `你将删除 ${baseCount} 个兴趣库。其中包含的所有内容也将一并丢失。此操作无法撤销。`
+      return `你将删除 ${baseCount} 个资料包。其中包含的所有内容也将一并丢失。此操作无法撤销。`
     }
     return `你将删除 ${fileCount} 个文件。此操作无法撤销。`
   }
@@ -71,7 +71,7 @@ export default function MultiSelectActionBar() {
       return
     }
     if (hasSystemBase) {
-      showToast('我的速记为系统默认兴趣库，不可删除。请先取消勾选', 'info')
+      showToast('我的速记为系统默认资料包，不可删除。请先取消勾选', 'info')
       return
     }
     showConfirm({

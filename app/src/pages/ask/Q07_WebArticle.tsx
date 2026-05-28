@@ -98,7 +98,7 @@ export default function Q07_WebArticle() {
     body: `# ${DEFAULT_ARTICLE.title}\n\n来源：${DEFAULT_ARTICLE.site}\n\n${ARTICLE_CONTENT}`,
     type: 'web',
   })
-  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到兴趣库')
+  const [saveSheetTitle, setSaveSheetTitle] = useState('添加到资料包')
   const [showAnnotations, setShowAnnotations] = useState(false)
   const [showX02,        setShowX02]        = useState(false)
   const [showX03,        setShowX03]        = useState(false)
@@ -138,7 +138,7 @@ export default function Q07_WebArticle() {
     title: string,
     body: string,
     type: SaveSourceContent['type'] = 'web',
-    sheetTitle = '添加到兴趣库',
+    sheetTitle = '添加到资料包',
     metadata?: SaveSourceContent['metadata'],
   ) => {
     setSavePayload({ title, body, type, metadata })
@@ -204,7 +204,7 @@ export default function Q07_WebArticle() {
           </div>
           {selectedKbNames.length > 0 && (
             <div className="mt-3 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <span className="text-micro text-ink-placeholder flex-shrink-0">结合兴趣库</span>
+              <span className="text-micro text-ink-placeholder flex-shrink-0">结合资料包</span>
               {selectedKbNames.map(name => (
                 <span key={name} className="text-micro px-2 py-0.5 bg-brand-orange-light text-brand-orange rounded-pill whitespace-nowrap flex-shrink-0">
                   {name}
@@ -225,7 +225,7 @@ export default function Q07_WebArticle() {
             <Sparkles size={18} className="text-brand-orange flex-shrink-0" />
             <div>
               <p className="text-body font-medium text-brand-orange">保存到库</p>
-              <p className="text-caption text-brand-orange/70">选择目标兴趣库，默认保存到「我的速记」</p>
+              <p className="text-caption text-brand-orange/70">选择目标资料包，默认保存到「我的速记」</p>
             </div>
           </button>
 
@@ -330,7 +330,7 @@ export default function Q07_WebArticle() {
               onClick={() => openKbSheet(article.title, `# ${article.title}\n\n来源：${article.site}\n\n${ARTICLE_CONTENT}`, 'web')}
               className="px-3 py-1.5 bg-brand-orange-light rounded-pill text-caption text-brand-orange whitespace-nowrap flex-shrink-0"
             >
-              添加到兴趣库
+              添加到资料包
             </button>
           </div>
 
@@ -361,7 +361,7 @@ export default function Q07_WebArticle() {
         onClose={() => setShowKbSheet(false)}
         sourceContent={savePayload}
         title={saveSheetTitle}
-        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」兴趣库` : `已保存到「${kb.name}」`}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」资料包` : `已保存到「${kb.name}」`}
       />
 
       <DocumentActionSheet

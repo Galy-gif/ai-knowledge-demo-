@@ -301,7 +301,7 @@ export default function T03_GenerateConfirm() {
     ? null
     : selectedKbNames.length > 0
       ? selectedKbNames.slice(0, 3).join('、') + (selectedKbNames.length > 3 ? '…' : '')
-      : `已选 ${selectedKbIds.length} 个兴趣库`
+      : `已选 ${selectedKbIds.length} 个资料包`
 
   const accessModeLabel = selectedAccessModes
     .map(m => ACCESS_MODE_LABELS[m])
@@ -396,7 +396,7 @@ export default function T03_GenerateConfirm() {
                 </p>
               ) : (
                 <p style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, color: '#FF7A00' }}>
-                  请选择兴趣库 →
+                  请选择资料包 →
                 </p>
               )}
             </div>

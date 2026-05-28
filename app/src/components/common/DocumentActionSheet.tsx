@@ -10,7 +10,7 @@ const ACTIONS: Record<DocType, ActionItem[]> = {
   knowledge: [
     { icon: Share2,       label: '分享文档',   id: 'share' },
     { icon: Link2,        label: '复制链接',   id: 'copy-link' },
-    { icon: FolderPlus,   label: '保存到兴趣库', id: 'kb', sub: '选择目标兴趣库' },
+    { icon: FolderPlus,   label: '保存到资料包', id: 'kb', sub: '选择目标资料包' },
     { icon: Flag,         label: '举报',       id: 'report' },
   ],
   note: [
@@ -23,7 +23,7 @@ const ACTIONS: Record<DocType, ActionItem[]> = {
   web: [
     { icon: Share2,       label: '分享文章',     id: 'share' },
     { icon: Link2,        label: '复制链接',     id: 'copy-link' },
-    { icon: FolderPlus,   label: '保存到兴趣库', id: 'kb', sub: '选择目标兴趣库' },
+    { icon: FolderPlus,   label: '保存到资料包', id: 'kb', sub: '选择目标资料包' },
     { icon: ExternalLink, label: '在浏览器中打开', id: 'open' },
     { icon: Flag,         label: '举报',         id: 'report' },
   ],

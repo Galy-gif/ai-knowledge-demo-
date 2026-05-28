@@ -21,7 +21,7 @@ interface AskAIPanelProps {
 }
 
 function buildAnswer(question: string, scopeName: string, scope: Scope, round: number) {
-  const sourceLabel = scope === 'knowledge' ? '兴趣库' : '文档'
+  const sourceLabel = scope === 'knowledge' ? '资料包' : '文档'
   const followUpPrefix = round > 0 ? '结合上一轮上下文继续看，' : ''
   return `${followUpPrefix}基于「${scopeName}」${sourceLabel}内容，可以从三个层面回答：
 
@@ -114,7 +114,7 @@ export default function AskAIPanel({ open, onClose, scope, scopeName, scopeId }:
               <div className="w-12 h-12 mx-auto rounded-card-lg bg-brand-orange-light flex items-center justify-center mb-3">
                 <Sparkles size={20} className="text-brand-orange" />
               </div>
-              <p className="text-card-title text-ink-primary">在当前兴趣库内提问</p>
+              <p className="text-card-title text-ink-primary">在当前资料包内提问</p>
               <p className="text-caption text-ink-placeholder mt-1">AI 会默认检索这里的全部内容作为上下文</p>
             </div>
           ) : (

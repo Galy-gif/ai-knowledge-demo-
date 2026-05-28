@@ -53,8 +53,8 @@ export default function T05_DataSourceConfirm() {
   const fileList = TEMPLATE_FILE_LISTS[templateId ?? ''] ?? DEFAULT_FILES
 
   const dataSourceTitle = selectedKbNames.length === 0
-    ? '未限定兴趣库'
-    : selectedKbNames.length === 1 ? selectedKbNames[0] : `${selectedKbNames.length} 个兴趣库`
+    ? '未限定资料包'
+    : selectedKbNames.length === 1 ? selectedKbNames[0] : `${selectedKbNames.length} 个资料包`
 
   const passState = {
     requirement: state?.requirement,
@@ -131,7 +131,7 @@ export default function T05_DataSourceConfirm() {
           </div>
           <div className="flex items-center gap-2 text-caption text-ink-placeholder">
             <RefreshCw size={13} />
-            <span>后续会自动同步兴趣库的最新内容</span>
+            <span>后续会自动同步资料包的最新内容</span>
           </div>
         </div>
 

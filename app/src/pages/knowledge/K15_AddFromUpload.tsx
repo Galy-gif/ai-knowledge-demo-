@@ -136,7 +136,7 @@ export default function K15_AddFromUpload() {
             className="w-full py-3 bg-brand-orange text-white rounded-btn text-body font-medium flex items-center justify-center gap-2"
           >
             <Check size={16} />
-            添加到兴趣库
+            添加到资料包
           </button>
         </div>
       )}

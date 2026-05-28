@@ -61,7 +61,7 @@ function KnowledgeRow({ kb, selected, onClick }: { kb: KnowledgeBase; selected: 
   )
 }
 
-export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent, onSaved, successToast, title = '添加到兴趣库' }: SaveSheetProps) {
+export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent, onSaved, successToast, title = '添加到资料包' }: SaveSheetProps) {
   const { bases, subscribedBases, addBase, saveToKnowledgeBase } = useKnowledge()
   const { showToast } = useUser()
   const [selectedKbId, setSelectedKbId] = useState<string>('')
@@ -149,14 +149,14 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
         fullHeight
       >
         <div className="flex h-full min-h-0 flex-col px-5 pt-2">
-          <p className="text-caption text-ink-secondary mb-4 text-center">选择要保存的兴趣库</p>
+          <p className="text-caption text-ink-secondary mb-4 text-center">选择要保存的资料包</p>
 
           <div className="mb-4 flex h-10 items-center gap-2 rounded-[10px] bg-[#F5F5F5] px-3">
             <Search size={18} className="flex-shrink-0 text-ink-placeholder" />
             <input
               value={query}
               onChange={event => setQuery(event.target.value)}
-              placeholder="搜索兴趣库..."
+              placeholder="搜索资料包..."
               className="min-w-0 flex-1 bg-transparent text-body text-ink-primary outline-none placeholder:text-ink-placeholder"
               autoComplete="off"
             />
@@ -174,7 +174,7 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
           <div className="min-h-0 flex-1 overflow-y-auto scrollbar-hide pb-3">
             {filteredPersonalBases.length > 0 && (
               <>
-                <p className="text-caption text-ink-secondary mb-2">个人兴趣库</p>
+                <p className="text-caption text-ink-secondary mb-2">个人资料包</p>
                 <div className="space-y-2 mb-4">
                   {filteredPersonalBases.map(kb => (
                     <KnowledgeRow
@@ -190,7 +190,7 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
 
             {filteredSubscribedBases.length > 0 && (
               <>
-                <p className="text-caption text-ink-secondary mb-2">订阅兴趣库</p>
+                <p className="text-caption text-ink-secondary mb-2">订阅资料包</p>
                 <div className="space-y-2 mb-4">
                   {filteredSubscribedBases.map(kb => (
                     <KnowledgeRow
@@ -209,7 +209,7 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
                 onClick={() => openCreate(query.trim())}
                 className="w-full rounded-card border border-dashed border-line-base bg-surface-card px-4 py-6 text-center text-body text-ink-secondary active:bg-line-base/40"
               >
-                没有找到相关兴趣库，可以新建一个 <span className="text-brand-orange">→</span>
+                没有找到相关资料包，可以新建一个 <span className="text-brand-orange">→</span>
               </button>
             )}
           </div>
@@ -220,7 +220,7 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
               className="w-full flex items-center justify-center gap-2 py-3 mb-3 rounded-pill border border-brand-orange text-brand-orange text-body font-medium"
             >
               <Plus size={16} />
-              新建兴趣库
+              新建资料包
             </button>
 
             <button
@@ -237,7 +237,7 @@ export default function SaveToKnowledgeBaseSheet({ open, onClose, sourceContent,
       <BottomSheet
         open={open && showCreate}
         onClose={() => setShowCreate(false)}
-        title="新建兴趣库"
+        title="新建资料包"
         titleAlign="center"
         titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
         headerLeft={

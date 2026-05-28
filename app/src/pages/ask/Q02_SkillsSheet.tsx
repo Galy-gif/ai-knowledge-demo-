@@ -410,10 +410,10 @@ function CreateView({ goBack }: { goBack: () => void }) {
           </div>
         </Field>
 
-        <Field label="关联兴趣库（可选）">
+        <Field label="关联资料包（可选）">
           <button
             type="button"
-            onClick={() => showToast('兴趣库多选（mock）')}
+            onClick={() => showToast('资料包多选（mock）')}
             style={{
               ...INPUT_STYLE,
               display: 'flex',
@@ -424,7 +424,7 @@ function CreateView({ goBack }: { goBack: () => void }) {
             }}
           >
             <span style={{ flex: 1, fontSize: 12, color: '#9CA3AF' }}>
-              {kbs.length > 0 ? kbs.join('、') : '选择一个或多个兴趣库'}
+              {kbs.length > 0 ? kbs.join('、') : '选择一个或多个资料包'}
             </span>
             <ChevronRight size={13} color="#9CA3AF" style={{ flexShrink: 0 }} />
           </button>
@@ -543,10 +543,10 @@ function FromAIView({ goBack }: { goBack: () => void }) {
           />
         </Field>
 
-        <Field label="关联兴趣库">
+        <Field label="关联资料包">
           <button
             type="button"
-            onClick={() => showToast('兴趣库多选（mock）')}
+            onClick={() => showToast('资料包多选（mock）')}
             style={{
               ...INPUT_STYLE,
               display: 'flex',

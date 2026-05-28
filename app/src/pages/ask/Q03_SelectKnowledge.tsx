@@ -20,20 +20,20 @@ export default function Q03_SelectKnowledge() {
 
   const handleConfirm = () => {
     setAskSelectedBaseIds(selectedIds)
-    showToast(selectedIds.length > 0 ? `已选择 ${selectedIds.length} 个兴趣库` : '已不限定兴趣库')
+    showToast(selectedIds.length > 0 ? `已选择 ${selectedIds.length} 个资料包` : '已不限定资料包')
     navigate(-1)
   }
 
   return (
     <PageLayout>
-      <TopHeader title="选择兴趣库" showBack right={
+      <TopHeader title="选择资料包" showBack right={
         <div className="flex items-center gap-3">
           <button onClick={() => setSelectedIds([])} className="text-ink-secondary text-body">清空</button>
           <button onClick={handleConfirm} className="text-brand-orange text-body font-medium">确定</button>
         </div>
       } />
       <div className="px-5 py-4 space-y-2">
-        <p className="text-caption text-ink-placeholder mb-3">选择问答、网页搜索和任务生成时参考的兴趣库，可多选</p>
+        <p className="text-caption text-ink-placeholder mb-3">选择问答、网页搜索和任务生成时参考的资料包，可多选</p>
         {allBases.map(kb => (
           <button key={kb.id} onClick={() => toggle(kb.id)}
             className={`w-full flex items-center gap-3 p-4 rounded-card border ${selectedIds.includes(kb.id) ? 'border-brand-orange bg-brand-orange-light' : 'border-line-base bg-white'}`}>

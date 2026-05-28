@@ -223,7 +223,7 @@ const quickNoteFiles: KnowledgeFile[] = [
     summary: '统一 AI 回答页的来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。',
     content: `## 背景
 
-当前 AI 回答页面混用了兴趣库来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
+当前 AI 回答页面混用了资料包来源和网页来源两套卡片样式，用户难以判断信息出处，在多轮追问场景中尤为明显。产品目标是通过统一来源展示逻辑，强化信息可追溯感，提升用户对 AI 回答的信任度。
 
 ## 核心洞察
 
@@ -233,9 +233,9 @@ const quickNoteFiles: KnowledgeFile[] = [
 
 ## 方案
 
-将兴趣库来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
+将资料包来源与网页来源统一为"来源卡片"组件，在回答正文末尾以小卡片形式呈现，支持点击跳转原文。具体设计要点：
 
-- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 兴趣库 / 🌐 网页）
+- **样式统一**：两类来源使用同一卡片模板，用图标区分来源类型（📁 资料包 / 🌐 网页）
 - **同步渐入**：在流式输出结束后 200ms 延迟滑入，避免"后补"感
 - **引用高亮**：正文中被引用的句子加橙黄色底线，点击可展开对应来源卡片
 
@@ -281,10 +281,10 @@ const quickNoteFiles: KnowledgeFile[] = [
     createdAt: '刚刚',
     updatedAt: '刚刚',
     tags: ['速记', 'AI问答'],
-    summary: '从 AI 多轮追问中提炼出的兴趣库运营指标、内容更新节奏和后续行动建议。',
+    summary: '从 AI 多轮追问中提炼出的资料包运营指标、内容更新节奏和后续行动建议。',
     content: `## AI 追问整理
 
-围绕兴趣库运营效果，当前可以优先关注三个指标：
+围绕资料包运营效果，当前可以优先关注三个指标：
 
 - 内容使用率：每篇内容在近 30 天内被阅读、引用和追问的次数
 - 检索满意率：用户首次提问是否找到可用答案
@@ -292,7 +292,7 @@ const quickNoteFiles: KnowledgeFile[] = [
 
 ## 下一步
 
-把这些指标放进周报模板里，并为每个兴趣库指定内容 Owner。`,
+把这些指标放进周报模板里，并为每个资料包指定内容 Owner。`,
   },
 ]
 
@@ -303,13 +303,13 @@ const freeMiscFiles: KnowledgeFile[] = [
   { id: 'free4', kbId: 'kb_free_misc', name: '会议录音片段.m4a', type: 'audio', size: '8MB', uploadedAt: '1小时前', summary: '下午讨论导入流程时的录音片段。' },
   { id: 'free5', kbId: 'kb_free_misc', name: '桌面端信息架构草稿.pdf', type: 'pdf', size: '2.3MB', pageCount: 18, wordCount: 5200, uploadedAt: '2小时前', summary: '桌面端信息架构的早期草稿。' },
   { id: 'free6', kbId: 'kb_free_misc', name: '周会待办清单.txt', type: 'txt', size: '12KB', wordCount: 860, uploadedAt: '今天 11:20', summary: '周会产生的待办项，未做分类。' },
-  { id: 'free7', kbId: 'kb_free_misc', name: '浏览器侧边栏灵感', type: 'note', size: '420字', wordCount: 420, uploadedAt: '今天 09:40', summary: '侧边栏可以承载当前网页摘要和兴趣库入口。' },
+  { id: 'free7', kbId: 'kb_free_misc', name: '浏览器侧边栏灵感', type: 'note', size: '420字', wordCount: 420, uploadedAt: '今天 09:40', summary: '侧边栏可以承载当前网页摘要和资料包入口。' },
   { id: 'free8', kbId: 'kb_free_misc', name: 'Notion 模板页面', type: 'url', size: '—', uploadedAt: '昨天', summary: '一个可参考的模板页面。' },
   { id: 'free9', kbId: 'kb_free_misc', name: '用户反馈截图 0513.png', type: 'image', size: '780KB', uploadedAt: '昨天', summary: '用户在群里反馈空态引导太强的截图。' },
   { id: 'free10', kbId: 'kb_free_misc', name: '产品命名备忘', type: 'note', size: '300字', wordCount: 300, uploadedAt: '昨天', summary: '关于自由收纳、我的速记等命名的备忘。' },
   { id: 'free11', kbId: 'kb_free_misc', name: '竞品首页布局.docx', type: 'doc', size: '640KB', pageCount: 6, wordCount: 2100, uploadedAt: '2天前', summary: '几个竞品首页布局和首屏文案对比。' },
   { id: 'free12', kbId: 'kb_free_misc', name: '导入来源 checklist.txt', type: 'txt', size: '9KB', wordCount: 720, uploadedAt: '2天前', summary: '粘贴链接、最近浏览、跨端导入等来源清单。' },
-  { id: 'free13', kbId: 'kb_free_misc', name: 'Claude 对话记录', type: 'url', size: '—', uploadedAt: '3天前', summary: '一次关于兴趣库分类逻辑的对话记录。' },
+  { id: 'free13', kbId: 'kb_free_misc', name: 'Claude 对话记录', type: 'url', size: '—', uploadedAt: '3天前', summary: '一次关于资料包分类逻辑的对话记录。' },
   { id: 'free14', kbId: 'kb_free_misc', name: '设计评审录音.m4a', type: 'audio', size: '18MB', uploadedAt: '3天前', summary: '设计评审会上关于管理方式入口的讨论。' },
   { id: 'free15', kbId: 'kb_free_misc', name: '状态机草图.png', type: 'image', size: '920KB', uploadedAt: '4天前', summary: '滑动、长按、多选的状态机手绘图。' },
   { id: 'free16', kbId: 'kb_free_misc', name: '保存到库流程.pdf', type: 'pdf', size: '1.6MB', pageCount: 12, wordCount: 3600, uploadedAt: '4天前', summary: '统一保存到库流程说明。' },
@@ -322,7 +322,7 @@ const freeMiscFiles: KnowledgeFile[] = [
 export const mockKnowledgeBases: KnowledgeBase[] = [
   {
     id: 'kb_unconfigured',
-    name: '未命名兴趣库',
+    name: '未命名资料包',
     icon: 'inbox',
     color: '#9CA3AF',
     fileCount: 0,
@@ -617,7 +617,7 @@ export const mockFiles: KnowledgeFile[] = [
     pageCount: 22,
     wordCount: 7600,
     uploadedAt: '1周前',
-    summary: '兴趣库 AI 能力升级的完整产品方案，含流式检索、来源溯源、多模态输入三大子方案的技术选型与 UI 规范。',
+    summary: '资料包 AI 能力升级的完整产品方案，含流式检索、来源溯源、多模态输入三大子方案的技术选型与 UI 规范。',
   },
   {
     id: 'f8',
@@ -653,7 +653,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '16MB',
     uploadedAt: '今天',
-    summary: '周会录音导入，重点包括兴趣库最近入口、多选入库和公开演示前的交互修正。',
+    summary: '周会录音导入，重点包括资料包最近入口、多选入库和公开演示前的交互修正。',
   },
   {
     id: 'f18',
@@ -662,7 +662,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'image',
     size: '1.4MB',
     uploadedAt: '4小时前',
-    summary: '兴趣库、问答、小应用三大模块的信息架构图，标注了统一保存到库的核心路径。',
+    summary: '资料包、问答、小应用三大模块的信息架构图，标注了统一保存到库的核心路径。',
   },
   // 用户访谈库 (kb2)
   {
@@ -683,7 +683,7 @@ export const mockFiles: KnowledgeFile[] = [
     size: '480KB',
     pageCount: 5,
     uploadedAt: '3天前',
-    summary: '设计师用户，最在意视觉化组织方式，希望兴趣库支持"思维导图视图"和"卡片看板"两种浏览模式。',
+    summary: '设计师用户，最在意视觉化组织方式，希望资料包支持"思维导图视图"和"卡片看板"两种浏览模式。',
   },
   {
     id: 'f12',
@@ -702,7 +702,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '18MB',
     uploadedAt: '5天前',
-    summary: 'AI 转写完成。运营负责人，使用兴趣库协同管理团队 SOP，痛点在于多人协作时的版本冲突与权限混乱。',
+    summary: 'AI 转写完成。运营负责人，使用资料包协同管理团队 SOP，痛点在于多人协作时的版本冲突与权限混乱。',
   },
   {
     id: 'f16',
@@ -711,7 +711,7 @@ export const mockFiles: KnowledgeFile[] = [
     type: 'audio',
     size: '21MB',
     uploadedAt: '昨天',
-    summary: '第二轮移动端用户访谈录音，已完成转写，围绕兴趣库选择反馈和跨兴趣库追问展开。',
+    summary: '第二轮移动端用户访谈录音，已完成转写，围绕资料包选择反馈和跨资料包追问展开。',
   },
   {
     id: 'f17',
@@ -722,7 +722,7 @@ export const mockFiles: KnowledgeFile[] = [
     pageCount: 9,
     wordCount: 2600,
     uploadedAt: '2天前',
-    summary: '用户调研问卷题目与答卷结构，覆盖兴趣库创建、内容导入、AI 追问三个核心场景。',
+    summary: '用户调研问卷题目与答卷结构，覆盖资料包创建、内容导入、AI 追问三个核心场景。',
   },
   // 读书摘录 (kb3)
   {
@@ -1293,7 +1293,7 @@ export const mockTeams: Team[] = [
     followCount: 5400,
     kbCount: 2,
     contentCount: 76,
-    description: 'TeamFlow 研究所关注团队知识协作、流程治理和跨职能沟通，让兴趣库真正变成团队工作台。',
+    description: 'TeamFlow 研究所关注团队知识协作、流程治理和跨职能沟通，让资料包真正变成团队工作台。',
     isSubscribed: false,
     knowledgeBases: [
       {
@@ -2252,7 +2252,7 @@ export const mockApps: LightApp[] = [
 ]
 
 export const mockAiSuggestions = [
-  '如何在兴趣库中快速找到历史决策？',
+  '如何在资料包中快速找到历史决策？',
   '帮我总结今天工作资料里的关键信息',
   '分析竞品报告里最值得关注的3个点',
   '帮我把这篇文章整理成结构化要点',
@@ -2271,7 +2271,7 @@ export const mockWebResults: WebSource[] = [
   },
   {
     id: 'w2',
-    title: 'AI 兴趣库产品的内容召回优化实践',
+    title: 'AI 资料包产品的内容召回优化实践',
     url: 'https://uxnotes.cn/kb-recall',
     site: 'uxnotes.cn',
     snippet: '向量检索与关键词混合策略的工程实现，如何在召回率和精准率之间找到平衡点。',
@@ -2491,23 +2491,20 @@ export const mockDiscoverFeed: DiscoverFeedItem[] = [
   },
 ]
 
-// ─── 兴趣库内容分类（全局收藏）──────────────────────────────────────────────
+// ─── 资料包内容分类（全局收藏）──────────────────────────────────────────────
 
 export type CollectionCategoryId =
-  | 'reading' | 'video' | 'image' | 'audio' | 'novel' | 'tool'
-  | 'product' | 'place' | 'data' | 'community' | 'file' | 'temp'
+  | 'article' | 'qa' | 'quote' | 'novel' | 'video' | 'short_drama' | 'music'
 
 export interface CollectionCategory {
   id: CollectionCategoryId
   label: string
-  emoji: string
-  secondaryTags: string[]
 }
 
 export interface CollectionItem {
   id: string
   categoryId: CollectionCategoryId
-  secondaryTag: string
+  tagLabel: string
   title: string
   summary: string
   source: string
@@ -2515,70 +2512,91 @@ export interface CollectionItem {
   thumbGradient: [string, string]
   thumbEmoji: string
   savedAt: string
+  savedOrder: number   // 越大越新，用于"不整理"模式按时间倒序排列
+}
+
+export interface CollectionCategoryRecommend {
+  id: string
+  categoryId: CollectionCategoryId
+  name: string
+  reason: string
+  coverEmoji: string
+  coverColor: string
 }
 
 export const mockCollectionCategories: CollectionCategory[] = [
-  { id: 'reading', label: '阅读内容', emoji: '📖', secondaryTags: ['新闻资讯', '深度文章', '教程攻略', '观点评论', '博客专栏', '公众号文章', '知乎回答'] },
-  { id: 'video', label: '视频内容', emoji: '🎬', secondaryTags: ['短视频', '长视频', '课程视频', '教程视频', '直播回放', '访谈视频', '影视片段'] },
-  { id: 'image', label: '图片灵感', emoji: '🖼️', secondaryTags: ['单图', '图集', '设计参考', '穿搭参考', '摄影作品', '截图', '表情包', '素材图'] },
-  { id: 'audio', label: '音频内容', emoji: '🎧', secondaryTags: ['音乐', '歌单', '专辑', '播客', '有声书', '音频课程'] },
-  { id: 'novel', label: '小说文学', emoji: '📚', secondaryTags: ['网文小说', '短篇小说', '文学作品', '连载章节', '书籍页面', '书评'] },
-  { id: 'tool', label: '工具资源', emoji: '🛠️', secondaryTags: ['AI工具', '在线工具', '插件扩展', '模板资源', '下载资源', '代码项目', '查询工具'] },
-  { id: 'product', label: '商品服务', emoji: '🛒', secondaryTags: ['实物商品', '课程商品', '软件订阅', '服务套餐', '优惠活动', '测评对比'] },
-  { id: 'place', label: '地点出行', emoji: '📍', secondaryTags: ['餐厅', '酒店', '景点', '门店', '路线', '城市攻略', '交通信息'] },
-  { id: 'data', label: '数据动态', emoji: '📈', secondaryTags: ['股票行情', '币价行情', '榜单排名', '统计图表', '数据看板', '公告动态'] },
-  { id: 'community', label: '讨论社区', emoji: '💬', secondaryTags: ['问答讨论', '论坛帖子', '评论区', '社区经验', '测评反馈', '避坑内容'] },
-  { id: 'file', label: '文件资料', emoji: '📁', secondaryTags: ['PDF', 'Word', 'PPT', 'Excel', '论文', '研报', '白皮书', '说明书', '课件'] },
-  { id: 'temp', label: '临时收集', emoji: '📥', secondaryTags: ['待阅读', '待分类', '失效链接', '重复内容', '普通网页'] },
+  { id: 'article',     label: '文章' },
+  { id: 'qa',          label: '问答' },
+  { id: 'quote',       label: '金句' },
+  { id: 'novel',       label: '小说' },
+  { id: 'video',       label: '视频' },
+  { id: 'short_drama', label: '短剧' },
+  { id: 'music',       label: '音乐' },
 ]
 
 export const mockCollectionItems: CollectionItem[] = [
-  { id: 'collection_reading_1', categoryId: 'reading', secondaryTag: '深度文章', title: '2026 年值得关注的 5 个 AI 应用方向', summary: '从办公、教育到个人创作，梳理下一阶段真正能落地的产品机会。', source: '36氪', sourceEmoji: '⚫', thumbGradient: ['#D8CFC2', '#BFAF9D'], thumbEmoji: '🤖', savedAt: '2小时前' },
-  { id: 'collection_reading_2', categoryId: 'reading', secondaryTag: '公众号文章', title: '小团队如何搭建可持续的内容资产库', summary: '把日常资料、会议结论和行业观察沉淀成团队可复用知识。', source: '微信公众号', sourceEmoji: '🟢', thumbGradient: ['#C8D8CC', '#AABDAE'], thumbEmoji: '🗂️', savedAt: '昨天' },
-  { id: 'collection_reading_3', categoryId: 'reading', secondaryTag: '知乎回答', title: '为什么很多人收藏文章后再也不看', summary: '从信息焦虑和任务触发角度，讨论收藏夹失效的常见原因。', source: '知乎', sourceEmoji: '🔵', thumbGradient: ['#C9D4E2', '#A9B8CB'], thumbEmoji: '💭', savedAt: '3天前' },
-  { id: 'collection_reading_4', categoryId: 'reading', secondaryTag: '教程攻略', title: '用飞书和 Notion 管理研究资料的完整流程', summary: '覆盖收集、标注、归档和复盘步骤，适合轻量研究项目。', source: '少数派', sourceEmoji: '🟠', thumbGradient: ['#E1D0C6', '#C6B0A2'], thumbEmoji: '🧭', savedAt: '上周' },
-  { id: 'collection_video_1', categoryId: 'video', secondaryTag: '教程视频', title: '从零搭建个人知识库 · 全流程演示', summary: '演示浏览器剪藏、标签整理和每周复盘的实际操作方式。', source: 'B站', sourceEmoji: '🅱️', thumbGradient: ['#C8D7DF', '#A7BBC6'], thumbEmoji: '🎓', savedAt: '刚刚' },
-  { id: 'collection_video_2', categoryId: 'video', secondaryTag: '短视频', title: '3 分钟看懂 AI 浏览器的新交互', summary: '用几个真实任务展示侧边栏助手和页面总结的使用场景。', source: '抖音', sourceEmoji: '🎵', thumbGradient: ['#D8C8D6', '#BBA7BA'], thumbEmoji: '⚡', savedAt: '2小时前' },
-  { id: 'collection_video_3', categoryId: 'video', secondaryTag: '课程视频', title: '信息架构入门：从卡片分类开始', summary: '通过电商和内容社区案例解释分类、标签与筛选的差异。', source: 'YouTube', sourceEmoji: '▶️', thumbGradient: ['#DCCBC0', '#C0AA9D'], thumbEmoji: '🧩', savedAt: '昨天' },
-  { id: 'collection_video_4', categoryId: 'video', secondaryTag: '访谈视频', title: '独立开发者如何维护长期项目', summary: '聊产品节奏、用户反馈和收入模型，适合做工具产品参考。', source: 'B站', sourceEmoji: '🅱️', thumbGradient: ['#CBD6C8', '#AEBDA9'], thumbEmoji: '🎙️', savedAt: '上周' },
-  { id: 'collection_image_1', categoryId: 'image', secondaryTag: '设计参考', title: '低饱和卡片式移动端首页参考', summary: '一组适合内容收藏产品的浅色卡片和标签筛选视觉参考。', source: 'Pinterest', sourceEmoji: '📌', thumbGradient: ['#D7CEC2', '#BDAF9E'], thumbEmoji: '🎨', savedAt: '昨天' },
-  { id: 'collection_image_2', categoryId: 'image', secondaryTag: '穿搭参考', title: '通勤衬衫和浅色外套搭配合集', summary: '偏轻熟的春夏通勤穿搭，颜色克制，适合日常参考。', source: '小红书', sourceEmoji: '📕', thumbGradient: ['#E0D4CD', '#C6B5AB'], thumbEmoji: '👔', savedAt: '2小时前' },
-  { id: 'collection_image_3', categoryId: 'image', secondaryTag: '摄影作品', title: '雨后街角的霓虹色彩观察', summary: '夜景街拍样张，适合做城市氛围和暗光配色灵感。', source: '花瓣', sourceEmoji: '🌸', thumbGradient: ['#C8D0DC', '#AAB4C2'], thumbEmoji: '🌧️', savedAt: '3天前' },
-  { id: 'collection_image_4', categoryId: 'image', secondaryTag: '截图', title: '播客 App 的播放页信息层级截图', summary: '记录封面、进度条和推荐列表在小屏里的布局处理。', source: '本地截图', sourceEmoji: '🖼️', thumbGradient: ['#D2D8C8', '#B6BDA9'], thumbEmoji: '📱', savedAt: '上周' },
-  { id: 'collection_audio_1', categoryId: 'audio', secondaryTag: '播客', title: '和产品经理聊聊 AI 时代的信息整理', summary: '讨论收藏、检索和自动摘要如何改变个人知识工作流。', source: '小宇宙', sourceEmoji: '🎙️', thumbGradient: ['#D4C8DA', '#B5A7BE'], thumbEmoji: '🎧', savedAt: '刚刚' },
-  { id: 'collection_audio_2', categoryId: 'audio', secondaryTag: '歌单', title: '适合深度工作的低速电子歌单', summary: '节奏稳定、歌词干扰少，适合作为写作和整理资料背景音。', source: '网易云', sourceEmoji: '🎵', thumbGradient: ['#C7D7D5', '#A7BDBA'], thumbEmoji: '🎼', savedAt: '昨天' },
-  { id: 'collection_audio_3', categoryId: 'audio', secondaryTag: '有声书', title: '《原则》有声书第 4 章', summary: '关于决策系统和反馈机制的章节，适合搭配读书笔记收藏。', source: '喜马拉雅', sourceEmoji: '📻', thumbGradient: ['#DAD0BE', '#C0B196'], thumbEmoji: '📚', savedAt: '3天前' },
-  { id: 'collection_audio_4', categoryId: 'audio', secondaryTag: '音频课程', title: '用户访谈前的提纲设计方法', summary: '讲开放问题、追问顺序和访谈后整理方式，可直接复用。', source: '得到', sourceEmoji: '🎧', thumbGradient: ['#D5C7C8', '#BDA9AB'], thumbEmoji: '📝', savedAt: '上周' },
-  { id: 'collection_novel_1', categoryId: 'novel', secondaryTag: '网文小说', title: '诡秘之主：廷根篇重读笔记', summary: '整理早期伏笔、人物关系和世界观设定，方便后续回看。', source: '起点', sourceEmoji: '📖', thumbGradient: ['#CBC6D8', '#ADA6BE'], thumbEmoji: '🕯️', savedAt: '昨天' },
-  { id: 'collection_novel_2', categoryId: 'novel', secondaryTag: '连载章节', title: '长夜余火最新章节：旧世界线索', summary: '章节里出现新的地名和组织暗线，后续可能影响主线推进。', source: '微信读书', sourceEmoji: '📗', thumbGradient: ['#C7D5CA', '#A9BAAD'], thumbEmoji: '🌌', savedAt: '刚刚' },
-  { id: 'collection_novel_3', categoryId: 'novel', secondaryTag: '文学作品', title: '博尔赫斯短篇里的迷宫意象', summary: '摘录几个关于图书馆、镜子和无限分岔的段落。', source: '豆瓣阅读', sourceEmoji: '📚', thumbGradient: ['#D8CFBF', '#BFB095'], thumbEmoji: '🪞', savedAt: '3天前' },
-  { id: 'collection_novel_4', categoryId: 'novel', secondaryTag: '书评', title: '《明朝那些事儿》为什么容易读进去', summary: '从叙事节奏和人物塑造角度分析历史通俗写作的吸引力。', source: '晋江', sourceEmoji: '🌿', thumbGradient: ['#D1D8C6', '#B5BEA6'], thumbEmoji: '🏮', savedAt: '上周' },
-  { id: 'collection_tool_1', categoryId: 'tool', secondaryTag: 'AI工具', title: 'NotebookLM：适合资料问答的 AI 笔记工具', summary: '支持上传材料后提问和生成摘要，适合研究型工作流。', source: '工具站', sourceEmoji: '🔧', thumbGradient: ['#C8D4D8', '#AAB9BF'], thumbEmoji: '🧠', savedAt: '2小时前' },
-  { id: 'collection_tool_2', categoryId: 'tool', secondaryTag: '代码项目', title: 'open-interpreter 本地自动化项目', summary: '一个可在本机执行任务的开源项目，适合研究 Agent 能力边界。', source: 'GitHub', sourceEmoji: '🐙', thumbGradient: ['#D2D2C6', '#B7B7AA'], thumbEmoji: '💻', savedAt: '昨天' },
-  { id: 'collection_tool_3', categoryId: 'tool', secondaryTag: '插件扩展', title: '网页高亮同步到知识库的浏览器插件', summary: '支持划词、高亮和一键保存，适合作为全局收藏入口参考。', source: 'Chrome 商店', sourceEmoji: '🧩', thumbGradient: ['#D7CBC8', '#BEADA9'], thumbEmoji: '🔖', savedAt: '3天前' },
-  { id: 'collection_tool_4', categoryId: 'tool', secondaryTag: '模板资源', title: '产品需求文档 PRD 模板合集', summary: '包含背景、用户故事、流程图和验收标准模块，可快速套用。', source: '工具站', sourceEmoji: '🔧', thumbGradient: ['#D8D0C2', '#C0B29D'], thumbEmoji: '📋', savedAt: '上周' },
-  { id: 'collection_product_1', categoryId: 'product', secondaryTag: '实物商品', title: '人体工学升降桌近期好价记录', summary: '对比三款桌腿稳定性、桌板尺寸和售后服务，准备618再看。', source: '京东', sourceEmoji: '🔴', thumbGradient: ['#D8C8C8', '#BFA9A9'], thumbEmoji: '🪑', savedAt: '2小时前' },
-  { id: 'collection_product_2', categoryId: 'product', secondaryTag: '软件订阅', title: '设计协作工具年付方案对比', summary: '记录 Figma、即时设计和 Motiff 的团队席位价格差异。', source: '官网', sourceEmoji: '💳', thumbGradient: ['#C8D2D8', '#A9B7BF'], thumbEmoji: '🧾', savedAt: '昨天' },
-  { id: 'collection_product_3', categoryId: 'product', secondaryTag: '课程商品', title: '数据分析入门课试听笔记', summary: '课程偏实操，案例覆盖 SQL、可视化和业务指标拆解。', source: '淘宝', sourceEmoji: '🛍️', thumbGradient: ['#DCD1C5', '#C3B3A2'], thumbEmoji: '📊', savedAt: '3天前' },
-  { id: 'collection_product_4', categoryId: 'product', secondaryTag: '测评对比', title: '三款降噪耳机通勤体验对比', summary: '重点记录佩戴舒适度、地铁降噪和多设备切换表现。', source: '什么值得买', sourceEmoji: '🛒', thumbGradient: ['#C7D4CE', '#A8B9AF'], thumbEmoji: '🎧', savedAt: '上周' },
-  { id: 'collection_place_1', categoryId: 'place', secondaryTag: '餐厅', title: '人均 80 的宝藏湘菜馆', summary: '小炒黄牛肉和擂椒皮蛋很稳，晚高峰排队但翻台较快。', source: '大众点评', sourceEmoji: '🍴', thumbGradient: ['#D8CCBE', '#C0AE98'], thumbEmoji: '🌶️', savedAt: '刚刚' },
-  { id: 'collection_place_2', categoryId: 'place', secondaryTag: '城市攻略', title: '周末两天逛苏州老城区路线', summary: '把园林、咖啡店和夜游路线串起来，适合轻松慢逛。', source: '小红书', sourceEmoji: '📕', thumbGradient: ['#CBD8C9', '#ADBEAA'], thumbEmoji: '🏯', savedAt: '昨天' },
-  { id: 'collection_place_3', categoryId: 'place', secondaryTag: '酒店', title: '杭州西湖边适合步行的酒店清单', summary: '按离地铁、湖边步行距离和早餐评价整理了几个备选。', source: '携程', sourceEmoji: '✈️', thumbGradient: ['#C8D5DD', '#A9BBC6'], thumbEmoji: '🏨', savedAt: '3天前' },
-  { id: 'collection_place_4', categoryId: 'place', secondaryTag: '交通信息', title: '虹桥到浦东机场夜间换乘方案', summary: '记录末班车时间、打车预估和机场大巴备选路线。', source: '高德', sourceEmoji: '🗺️', thumbGradient: ['#D7D0C4', '#BEB39F'], thumbEmoji: '🚇', savedAt: '上周' },
-  { id: 'collection_data_1', categoryId: 'data', secondaryTag: '股票行情', title: '半导体设备板块周涨幅跟踪', summary: '重点关注成交额变化和几家龙头公司的公告节奏。', source: '雪球', sourceEmoji: '📊', thumbGradient: ['#C8D5CF', '#A9BBAF'], thumbEmoji: '📈', savedAt: '2小时前' },
-  { id: 'collection_data_2', categoryId: 'data', secondaryTag: '榜单排名', title: '5 月 AI 应用下载量榜单', summary: '头部产品增长放缓，垂直场景工具的留存表现更突出。', source: 'QuestMobile', sourceEmoji: '📋', thumbGradient: ['#D8D3C7', '#BBB39F'], thumbEmoji: '🏆', savedAt: '昨天' },
-  { id: 'collection_data_3', categoryId: 'data', secondaryTag: '币价行情', title: 'BTC 关键支撑位和资金费率观察', summary: '记录近期波动区间、合约情绪和几个重要宏观时间点。', source: '东方财富', sourceEmoji: '📈', thumbGradient: ['#C8D0DA', '#A9B4C2'], thumbEmoji: '₿', savedAt: '3天前' },
-  { id: 'collection_data_4', categoryId: 'data', secondaryTag: '数据看板', title: '内容收藏 App 留存指标拆解', summary: '从首日保存、二次打开和搜索使用率三条线观察活跃质量。', source: '内部看板', sourceEmoji: '📊', thumbGradient: ['#D4C8D8', '#B8A8BE'], thumbEmoji: '📉', savedAt: '上周' },
-  { id: 'collection_community_1', categoryId: 'community', secondaryTag: '问答讨论', title: '大家如何整理每天刷到的碎片信息', summary: '高赞回复集中在自动归档、稍后读和定期清理三个方向。', source: 'Reddit', sourceEmoji: '🟠', thumbGradient: ['#D8CDC8', '#BFAEA8'], thumbEmoji: '💬', savedAt: '刚刚' },
-  { id: 'collection_community_2', categoryId: 'community', secondaryTag: '社区经验', title: '研究生文献管理避坑经验楼', summary: '讨论命名规则、同步盘冲突和引用管理软件迁移问题。', source: '豆瓣小组', sourceEmoji: '🟢', thumbGradient: ['#C9D8C8', '#ABBEA9'], thumbEmoji: '🎓', savedAt: '昨天' },
-  { id: 'collection_community_3', categoryId: 'community', secondaryTag: '评论区', title: 'AI 搜索产品更新后的用户反馈', summary: '评论里集中提到结果可信度、引用来源和长文阅读体验。', source: '即刻', sourceEmoji: '💬', thumbGradient: ['#C8D2DA', '#A9B6C2'], thumbEmoji: '🗣️', savedAt: '3天前' },
-  { id: 'collection_community_4', categoryId: 'community', secondaryTag: '避坑内容', title: '装修群里总结的十个预算坑', summary: '从橱柜五金、增项报价到灯光布线，都有具体案例可参考。', source: '贴吧', sourceEmoji: '💬', thumbGradient: ['#D8D0C2', '#BFB19C'], thumbEmoji: '⚠️', savedAt: '上周' },
-  { id: 'collection_file_1', categoryId: 'file', secondaryTag: 'PDF', title: '2026 中国智能办公行业研究报告', summary: '包含市场规模、典型产品和企业采购关注因素，适合竞品分析。', source: '本地文件', sourceEmoji: '📄', thumbGradient: ['#CDD4D8', '#AFB9BE'], thumbEmoji: '📑', savedAt: '2小时前' },
-  { id: 'collection_file_2', categoryId: 'file', secondaryTag: 'PPT', title: '全局收藏 App 概念方案 v0.3', summary: '梳理定位、核心场景和三个月内的产品迭代重点。', source: '云文档', sourceEmoji: '☁️', thumbGradient: ['#D6CCC7', '#BEAEA8'], thumbEmoji: '📽️', savedAt: '昨天' },
-  { id: 'collection_file_3', categoryId: 'file', secondaryTag: 'Excel', title: '内容来源渠道 ROI 统计表', summary: '按渠道记录新增收藏、打开率和转化到小应用的比例。', source: '云文档', sourceEmoji: '☁️', thumbGradient: ['#C8D8CE', '#A9BEAF'], thumbEmoji: '📊', savedAt: '3天前' },
-  { id: 'collection_file_4', categoryId: 'file', secondaryTag: '论文', title: 'Retrieval-Augmented Generation 综述论文', summary: '介绍检索增强生成的典型架构、评估指标和常见工程问题。', source: '本地文件', sourceEmoji: '📄', thumbGradient: ['#D8D3C8', '#BDB5A7'], thumbEmoji: '🧪', savedAt: '上周' },
-  { id: 'collection_temp_1', categoryId: 'temp', secondaryTag: '待阅读', title: '还没来得及看的长文：AI Agent 产品复盘', summary: '先临时收进来，等周末再拆成产品机会和交互参考。', source: '网页链接', sourceEmoji: '🔗', thumbGradient: ['#D8D6CA', '#BDBAA8'], thumbEmoji: '⏳', savedAt: '刚刚' },
-  { id: 'collection_temp_2', categoryId: 'temp', secondaryTag: '待分类', title: '一个看起来有用的表格自动化脚本', summary: '暂时不确定归到工具还是数据，先放临时收集里待整理。', source: '网页链接', sourceEmoji: '🔗', thumbGradient: ['#CDD8D5', '#AFBDBA'], thumbEmoji: '🧰', savedAt: '2小时前' },
-  { id: 'collection_temp_3', categoryId: 'temp', secondaryTag: '普通网页', title: '某产品官网的新功能介绍页', summary: '页面信息不多，但交互演示和 pricing 文案值得后续参考。', source: '网页链接', sourceEmoji: '🔗', thumbGradient: ['#D6C8D8', '#BBA9BF'], thumbEmoji: '🌐', savedAt: '昨天' },
-  { id: 'collection_temp_4', categoryId: 'temp', secondaryTag: '失效链接', title: '旧版 AI 浏览器插件下载地址', summary: '页面已经无法打开，保留记录方便之后查找替代来源。', source: '网页链接', sourceEmoji: '🔗', thumbGradient: ['#D8CBCB', '#BFAAAA'], thumbEmoji: '🕸️', savedAt: '上周' },
+  // 文章 article
+  { id: 'col_article_1', categoryId: 'article', tagLabel: '深度文章', title: '2026 年值得关注的 5 个 AI 应用方向', summary: '从办公、教育到个人创作，梳理下一阶段真正能落地的产品机会。', source: '36氪', sourceEmoji: '⚫', thumbGradient: ['#D8CFC2', '#BFAF9D'], thumbEmoji: '🤖', savedAt: '2小时前', savedOrder: 95 },
+  { id: 'col_article_2', categoryId: 'article', tagLabel: '公众号文章', title: '小团队如何搭建可持续的内容资产库', summary: '把日常资料、会议结论和行业观察沉淀成团队可复用知识。', source: '微信公众号', sourceEmoji: '🟢', thumbGradient: ['#C8D8CC', '#AABDAE'], thumbEmoji: '🗂️', savedAt: '昨天', savedOrder: 80 },
+  { id: 'col_article_3', categoryId: 'article', tagLabel: '教程攻略', title: '用飞书和 Notion 管理研究资料的完整流程', summary: '覆盖收集、标注、归档和复盘步骤，适合轻量研究项目。', source: '少数派', sourceEmoji: '🟠', thumbGradient: ['#E1D0C6', '#C6B0A2'], thumbEmoji: '🧭', savedAt: '上周', savedOrder: 40 },
+  { id: 'col_article_4', categoryId: 'article', tagLabel: '观点评论', title: '信息管理工具的黄金圈：为什么大多数人用不起来', summary: '从目的出发而非功能出发，解释笔记软件频繁切换背后的原因。', source: '少数派', sourceEmoji: '🟠', thumbGradient: ['#D6D0C8', '#BDB69C'], thumbEmoji: '💡', savedAt: '3天前', savedOrder: 60 },
+  // 问答 qa
+  { id: 'col_qa_1', categoryId: 'qa', tagLabel: '知乎回答', title: '为什么很多人收藏文章后再也不看', summary: '从信息焦虑和任务触发角度，讨论收藏夹失效的常见原因。', source: '知乎', sourceEmoji: '🔵', thumbGradient: ['#C9D4E2', '#A9B8CB'], thumbEmoji: '💭', savedAt: '3天前', savedOrder: 59 },
+  { id: 'col_qa_2', categoryId: 'qa', tagLabel: '问答讨论', title: '大家如何整理每天刷到的碎片信息', summary: '高赞回复集中在自动归档、稍后读和定期清理三个方向。', source: 'Reddit', sourceEmoji: '🟠', thumbGradient: ['#D8CDC8', '#BFAEA8'], thumbEmoji: '💬', savedAt: '刚刚', savedOrder: 100 },
+  { id: 'col_qa_3', categoryId: 'qa', tagLabel: '知乎回答', title: 'AI 工具能真正替代人类的文献整理工作吗', summary: '讨论自动归纳和人工筛选的边界，结合实际研究场景给出建议。', source: '知乎', sourceEmoji: '🔵', thumbGradient: ['#C8D4D8', '#AAB9BF'], thumbEmoji: '🤔', savedAt: '2天前', savedOrder: 70 },
+  { id: 'col_qa_4', categoryId: 'qa', tagLabel: '问答讨论', title: '独立开发做到月收入 3 万需要几年', summary: '多个独立开发者分享真实收入路径，讨论时间线和变现模式。', source: 'V2EX', sourceEmoji: '💬', thumbGradient: ['#D2D8C8', '#B6BDA9'], thumbEmoji: '🖥️', savedAt: '昨天', savedOrder: 79 },
+  // 金句 quote
+  { id: 'col_quote_1', categoryId: 'quote', tagLabel: '书摘', title: '真正的信息过载不是太多，而是没有处理系统', summary: '摘自《卡片笔记写作法》，强调结构比数量更重要。', source: '读书摘录', sourceEmoji: '📖', thumbGradient: ['#D8CFC2', '#C4B8A2'], thumbEmoji: '✨', savedAt: '刚刚', savedOrder: 99 },
+  { id: 'col_quote_2', categoryId: 'quote', tagLabel: '金句', title: '慢就是快，稳就是赢——复利思维的底层逻辑', summary: '来自一个播客访谈，关于个人成长中的节奏感和长期主义。', source: '微博', sourceEmoji: '🟥', thumbGradient: ['#D4C8DA', '#B8ACBE'], thumbEmoji: '⏱️', savedAt: '昨天', savedOrder: 78 },
+  { id: 'col_quote_3', categoryId: 'quote', tagLabel: '观点', title: '一切工具都是认知的外化，选什么工具就是选什么思维方式', summary: '摘录自一篇关于 PKM 个人知识管理的英文文章。', source: '读书摘录', sourceEmoji: '📖', thumbGradient: ['#C7D7D5', '#AABDBA'], thumbEmoji: '🧠', savedAt: '3天前', savedOrder: 58 },
+  { id: 'col_quote_4', categoryId: 'quote', tagLabel: '书摘', title: '你读过的书最终会变成你本人', summary: '摘自博尔赫斯的访谈录，关于阅读与自我塑造的关系。', source: '读书摘录', sourceEmoji: '📖', thumbGradient: ['#D8CFBF', '#C0B095'], thumbEmoji: '📚', savedAt: '上周', savedOrder: 39 },
+  // 小说 novel
+  { id: 'col_novel_1', categoryId: 'novel', tagLabel: '网文', title: '诡秘之主：廷根篇重读笔记', summary: '整理早期伏笔、人物关系和世界观设定，方便后续回看。', source: '起点', sourceEmoji: '📖', thumbGradient: ['#CBC6D8', '#ADA6BE'], thumbEmoji: '🕯️', savedAt: '昨天', savedOrder: 77 },
+  { id: 'col_novel_2', categoryId: 'novel', tagLabel: '连载', title: '长夜余火最新章节：旧世界线索', summary: '章节里出现新的地名和组织暗线，后续可能影响主线推进。', source: '微信读书', sourceEmoji: '📗', thumbGradient: ['#C7D5CA', '#A9BAAD'], thumbEmoji: '🌌', savedAt: '刚刚', savedOrder: 98 },
+  { id: 'col_novel_3', categoryId: 'novel', tagLabel: '书评', title: '博尔赫斯短篇里的迷宫意象', summary: '摘录几个关于图书馆、镜子和无限分岔的段落。', source: '豆瓣阅读', sourceEmoji: '📚', thumbGradient: ['#D8CFBF', '#BFB095'], thumbEmoji: '🪞', savedAt: '3天前', savedOrder: 57 },
+  { id: 'col_novel_4', categoryId: 'novel', tagLabel: '书评', title: '《明朝那些事儿》为什么容易读进去', summary: '从叙事节奏和人物塑造角度分析历史通俗写作的吸引力。', source: '晋江', sourceEmoji: '🌿', thumbGradient: ['#D1D8C6', '#B5BEA6'], thumbEmoji: '🏮', savedAt: '上周', savedOrder: 38 },
+  // 视频 video
+  { id: 'col_video_1', categoryId: 'video', tagLabel: '教程视频', title: '从零搭建个人知识库 · 全流程演示', summary: '演示浏览器剪藏、标签整理和每周复盘的实际操作方式。', source: 'B站', sourceEmoji: '🅱️', thumbGradient: ['#3A4A5C', '#2A3744'], thumbEmoji: '🎬', savedAt: '刚刚', savedOrder: 97 },
+  { id: 'col_video_2', categoryId: 'video', tagLabel: '长视频', title: '信息架构入门：从卡片分类开始', summary: '通过电商和内容社区案例解释分类、标签与筛选的差异。', source: 'YouTube', sourceEmoji: '▶️', thumbGradient: ['#4A3F4D', '#352D38'], thumbEmoji: '🎓', savedAt: '昨天', savedOrder: 76 },
+  { id: 'col_video_3', categoryId: 'video', tagLabel: '长视频', title: '独立开发者如何维护长期项目', summary: '聊产品节奏、用户反馈和收入模型，适合做工具产品参考。', source: 'B站', sourceEmoji: '🅱️', thumbGradient: ['#4D4339', '#382F28'], thumbEmoji: '🎥', savedAt: '上周', savedOrder: 37 },
+  { id: 'col_video_4', categoryId: 'video', tagLabel: '影视片段', title: '《请回答1988》双门洞邻里相处片段', summary: '场景暖心，常拿来做产品情感共鸣设计的灵感参考。', source: '抖音', sourceEmoji: '🎵', thumbGradient: ['#3A4A5C', '#2A3744'], thumbEmoji: '📺', savedAt: '2小时前', savedOrder: 94 },
+  // 短剧 short_drama
+  { id: 'col_drama_1', categoryId: 'short_drama', tagLabel: '都市', title: '《CEO的替身新娘》第 1-10 集', summary: '女主误入豪门，身份反转剧情节奏快，适合下班解压追。', source: '抖音', sourceEmoji: '🎵', thumbGradient: ['#5C3A47', '#44282F'], thumbEmoji: '💍', savedAt: '刚刚', savedOrder: 96 },
+  { id: 'col_drama_2', categoryId: 'short_drama', tagLabel: '悬疑', title: '《消失的 48 小时》全集完结', summary: '主角失忆后发现自己卷入一场阴谋，反转多且结局出乎意料。', source: '快手', sourceEmoji: '⚡', thumbGradient: ['#3F3A5C', '#2D2A44'], thumbEmoji: '🔍', savedAt: '昨天', savedOrder: 75 },
+  { id: 'col_drama_3', categoryId: 'short_drama', tagLabel: '古装', title: '《摄政王的心尖宝》高能片段合集', summary: '剪辑版包含所有名场面，适合没时间追全集时快速过剧情。', source: '红果', sourceEmoji: '📺', thumbGradient: ['#5C4A3A', '#443628'], thumbEmoji: '👑', savedAt: '3天前', savedOrder: 56 },
+  { id: 'col_drama_4', categoryId: 'short_drama', tagLabel: '都市', title: '《我的老板是神仙》口碑爆款盘点', summary: '网友整理的高分短剧推荐，含简介和追看顺序建议。', source: '抖音', sourceEmoji: '🎵', thumbGradient: ['#5C3A47', '#44282F'], thumbEmoji: '🎭', savedAt: '上周', savedOrder: 36 },
+  // 音乐 music
+  { id: 'col_music_1', categoryId: 'music', tagLabel: '歌单', title: '适合深度工作的低速电子歌单', summary: '节奏稳定、歌词干扰少，适合作为写作和整理资料背景音。', source: '网易云', sourceEmoji: '🎵', thumbGradient: ['#C7D7D5', '#A7BDBA'], thumbEmoji: '🎼', savedAt: '昨天', savedOrder: 74 },
+  { id: 'col_music_2', categoryId: 'music', tagLabel: '播客', title: '和产品经理聊聊 AI 时代的信息整理', summary: '讨论收藏、检索和自动摘要如何改变个人知识工作流。', source: '小宇宙', sourceEmoji: '🎙️', thumbGradient: ['#D4C8DA', '#B5A7BE'], thumbEmoji: '🎧', savedAt: '刚刚', savedOrder: 93 },
+  { id: 'col_music_3', categoryId: 'music', tagLabel: '单曲', title: 'RADWIMPS《前前前世》完整版', summary: '电影《你的名字。》主题曲，收进来方便随时重听。', source: 'QQ音乐', sourceEmoji: '🟢', thumbGradient: ['#CBD6C8', '#AEBDA9'], thumbEmoji: '🎵', savedAt: '3天前', savedOrder: 55 },
+  { id: 'col_music_4', categoryId: 'music', tagLabel: '播客', title: '用户访谈前的提纲设计方法', summary: '讲开放问题、追问顺序和访谈后整理方式，可直接复用。', source: '得到', sourceEmoji: '🎧', thumbGradient: ['#D5C7C8', '#BDA9AB'], thumbEmoji: '📝', savedAt: '上周', savedOrder: 35 },
+]
+
+export const mockCategoryRecommends: CollectionCategoryRecommend[] = [
+  // 文章
+  { id: 'rec_article_1', categoryId: 'article', name: '深度长文精选', reason: '你常收藏 AI 与产品类文章，这个库每周精选更新', coverEmoji: '📰', coverColor: '#F5EFE8' },
+  { id: 'rec_article_2', categoryId: 'article', name: '少数派效率专题', reason: '和你已收藏的效率攻略风格高度吻合', coverEmoji: '✍️', coverColor: '#E8F0E8' },
+  { id: 'rec_article_3', categoryId: 'article', name: 'AI 产品观察周刊', reason: '基于你的 AI 行业收藏，这个订阅每周摘要', coverEmoji: '🤖', coverColor: '#E8EDF5' },
+  // 问答
+  { id: 'rec_qa_1', categoryId: 'qa', name: '知识工作者问答社区', reason: '你收藏的问答大多关于效率和知识管理，这里高度垂直', coverEmoji: '💬', coverColor: '#F5EDE8' },
+  { id: 'rec_qa_2', categoryId: 'qa', name: 'Reddit 精选中文翻译', reason: '你有多条 Reddit 收藏，这个库持续翻译高赞内容', coverEmoji: '🟠', coverColor: '#FFF3E8' },
+  // 金句
+  { id: 'rec_quote_1', categoryId: 'quote', name: '每日书摘精选', reason: '和你的金句收藏主题吻合，每天更新一条精华摘录', coverEmoji: '✨', coverColor: '#F5F0E8' },
+  { id: 'rec_quote_2', categoryId: 'quote', name: '产品人观点合集', reason: '你收藏了多条产品相关观点，这里汇聚同类内容', coverEmoji: '💡', coverColor: '#EEF5E8' },
+  { id: 'rec_quote_3', categoryId: 'quote', name: '哲学与人文摘录库', reason: '基于你收藏的博尔赫斯相关内容，推荐这个人文库', coverEmoji: '🌿', coverColor: '#E8F2F0' },
+  // 小说
+  { id: 'rec_novel_1', categoryId: 'novel', name: '高分完结小说榜', reason: '根据你的阅读记录，这些完结好评率很高', coverEmoji: '🏆', coverColor: '#F5EDE8' },
+  { id: 'rec_novel_2', categoryId: 'novel', name: '诡秘同类推荐库', reason: '你收藏了诡秘之主笔记，这里有同类世界观小说', coverEmoji: '🕯️', coverColor: '#EEEAF5' },
+  { id: 'rec_novel_3', categoryId: 'novel', name: '豆瓣高评分书单', reason: '和你收藏的书评风格契合，以文学性见长', coverEmoji: '📚', coverColor: '#E8EDF2' },
+  // 视频
+  { id: 'rec_video_1', categoryId: 'video', name: '产品设计教程合集', reason: '你收藏了多个信息架构和设计类教程，这里集中更新', coverEmoji: '🎓', coverColor: '#E8F0F5' },
+  { id: 'rec_video_2', categoryId: 'video', name: 'B 站独立开发精选', reason: '和你已收藏的独立开发视频主题匹配', coverEmoji: '🅱️', coverColor: '#F0E8F0' },
+  // 短剧
+  { id: 'rec_drama_1', categoryId: 'short_drama', name: '抖音短剧口碑榜', reason: '基于你的追剧记录，这个榜每周更新高分新剧', coverEmoji: '🎬', coverColor: '#F5E8EC' },
+  { id: 'rec_drama_2', categoryId: 'short_drama', name: '悬疑反转短剧合集', reason: '你收藏了悬疑类短剧，这里专门整理高口碑悬疑', coverEmoji: '🔍', coverColor: '#E8EEF5' },
+  { id: 'rec_drama_3', categoryId: 'short_drama', name: '古装甜宠精品库', reason: '根据你的收藏偏好，推荐这个古装甜宠专题库', coverEmoji: '👑', coverColor: '#F5F0E0' },
+  // 音乐
+  { id: 'rec_music_1', categoryId: 'music', name: '工作专注歌单精选', reason: '你收藏过多个 lo-fi 歌单，这里持续更新', coverEmoji: '🎵', coverColor: '#E8F0EE' },
+  { id: 'rec_music_2', categoryId: 'music', name: '科技播客中文合集', reason: '基于你的播客收藏，这个库汇聚同类高质量播客', coverEmoji: '🎙️', coverColor: '#EEE8F5' },
+  { id: 'rec_music_3', categoryId: 'music', name: '日系动漫音乐库', reason: '你收藏了前前前世等动漫曲目，推荐这个专题', coverEmoji: '🎼', coverColor: '#E8F0F5' },
 ]

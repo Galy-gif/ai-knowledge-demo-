@@ -89,7 +89,7 @@ export default function K18_AddFromScan() {
             onClick={handleSave}
             className="w-full py-3 bg-brand-orange text-white rounded-btn text-body font-medium"
           >
-            保存到兴趣库
+            保存到资料包
           </button>
         </div>
       )}

@@ -47,7 +47,7 @@ const DOCS: Record<string, { summary: string; content: string }> = {
 | Confluence | 企业协作文档 | 权限体系完善 | 搜索增强 | 弱 |
 | Perplexity | AI 搜索引擎 | 实时网页检索 | 核心能力 | 中等 |
 | Obsidian | 个人知识图谱 | 双向链接、本地化 | 插件依赖 | 弱 |
-| 飞书兴趣库 | 国内企业协作 | 与飞书套件联动 | 搜索 + 摘要 | 良好 |
+| 飞书资料包 | 国内企业协作 | 与飞书套件联动 | 搜索 + 摘要 | 良好 |
 
 **核心发现：**
 
@@ -68,7 +68,7 @@ const DOCS: Record<string, { summary: string; content: string }> = {
 ## 四、机会分析
 
 - **移动端优先**：市场中尚无一款真正以移动端为主场景设计的 AI 知识产品
-- **AI 溯源**：将 AI 回答与兴趣库文档精确关联，是高频决策用户的核心需求
+- **AI 溯源**：将 AI 回答与资料包文档精确关联，是高频决策用户的核心需求
 - **个人 + 团队双模**：无缝切换个人私有库与订阅团队库，降低信息孤岛风险`,
   },
   f5: {
@@ -114,7 +114,7 @@ const DOCS: Record<string, { summary: string; content: string }> = {
 
 - **AI 可溯源回答**：4.6 分，75% 表示愿意为此付费
 - **移动端优化**：4.4 分，主要诉求是快速捕捉和碎片化阅读
-- **多兴趣库联合检索**：4.1 分
+- **多资料包联合检索**：4.1 分
 - **划词追问**：3.9 分，在文档阅读场景尤为强烈
 - **批量导入工具**：3.7 分`,
   },
@@ -148,7 +148,7 @@ const DOCS: Record<string, { summary: string; content: string }> = {
 
 **习惯养成（4–30天）**：
 - 智能推送"今日待回顾"，基于遗忘曲线算法
-- 移动端 Widget，让兴趣库成为锁屏触手可及的工具
+- 移动端 Widget，让资料包成为锁屏触手可及的工具
 
 **深度绑定（30天+）**：
 - 开放 API，与 Slack、Notion、飞书深度集成
@@ -515,7 +515,7 @@ export default function K08_FileDetail() {
   const [bookmarked,      setBookmarked]      = useState(false)
   const [pendingText,     setPendingText]     = useState('')
   const [savePayload,     setSavePayload]     = useState<SaveSourceContent>({ title: file?.name ?? '文档保存', body: doc.content, type: 'document' })
-  const [saveSheetTitle,  setSaveSheetTitle]  = useState('添加到兴趣库')
+  const [saveSheetTitle,  setSaveSheetTitle]  = useState('添加到资料包')
   const [editingNote,     setEditingNote]     = useState(creatingNote)
   const selectionSaveCountRef = useRef(0)
 
@@ -555,7 +555,7 @@ export default function K08_FileDetail() {
     title: string,
     body: string,
     type: SaveSourceContent['type'] = 'document',
-    sheetTitle = '添加到兴趣库',
+    sheetTitle = '添加到资料包',
     metadata?: SaveSourceContent['metadata'],
   ) => {
     setSavePayload({ title, body, type, metadata })
@@ -859,7 +859,7 @@ export default function K08_FileDetail() {
             </p>
           </div>
           <p className="text-body text-ink-primary leading-relaxed mb-4">
-            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持兴趣库持续活跃和高价值的关键运营策略。
+            在知识管理产品语境下，该内容涉及<strong>内容生命周期管理</strong>的核心方法论。具体指：从内容创建、分类整理，到定期审查、过期清理的完整闭环，是保持资料包持续活跃和高价值的关键运营策略。
           </p>
           <div className="flex items-center gap-2">
             <button
@@ -905,7 +905,7 @@ export default function K08_FileDetail() {
         onClose={() => setShowKbSheet(false)}
         sourceContent={savePayload}
         title={saveSheetTitle}
-        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」兴趣库` : `已保存到「${kb.name}」`}
+        successToast={kb => savePayload.type.endsWith('_excerpt') ? `已保存到「${kb.name}」资料包` : `已保存到「${kb.name}」`}
       />
 
       <Toast />

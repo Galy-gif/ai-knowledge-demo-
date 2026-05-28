@@ -108,8 +108,8 @@ export default function M01_ProfileHome() {
             />
             <ListItem
               icon={Globe2}
-              label="已发布的兴趣库"
-              description="管理发布到兴趣圈子的兴趣库"
+              label="已发布的资料包"
+              description="管理发布到兴趣圈子的资料包"
               onClick={() => navigate('/coming-soon')}
             />
             <ListItem
@@ -133,8 +133,8 @@ export default function M01_ProfileHome() {
           <SectionCard>
             <ListItem
               icon={Globe2}
-              label="发现兴趣库"
-              description="浏览公开的兴趣库"
+              label="发现资料包"
+              description="浏览公开的资料包"
               onClick={() => navigate('/coming-soon')}
             />
             <ListItem

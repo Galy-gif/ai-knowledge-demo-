@@ -105,7 +105,7 @@ export default function T00_AppsHome() {
         <div className="px-5 pt-6 pb-3 flex items-start justify-between">
           <div>
             <h1 className="text-h1 text-ink-primary">我的小应用</h1>
-            <p className="text-caption text-ink-secondary mt-1">把兴趣库的内容变成专属小工具</p>
+            <p className="text-caption text-ink-secondary mt-1">把资料包的内容变成专属小工具</p>
           </div>
           <button
             type="button"

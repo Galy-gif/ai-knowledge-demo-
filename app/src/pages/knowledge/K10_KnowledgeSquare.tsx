@@ -196,7 +196,7 @@ export default function K10_KnowledgeSquare() {
 
         {isEmpty && (
           <div className="flex flex-col items-center py-16 text-center px-8">
-            <p className="text-body text-ink-secondary">这个分类下暂无兴趣库</p>
+            <p className="text-body text-ink-secondary">这个分类下暂无资料包</p>
             <p className="text-caption text-ink-placeholder mt-1">换个分类看看</p>
           </div>
         )}
@@ -224,7 +224,7 @@ export default function K10_KnowledgeSquare() {
           <div className="mb-6">
             <div className="px-4 py-3">
               <p className="text-[13px] font-semibold text-ink-primary">⭐ 你可能感兴趣</p>
-              <p className="text-[11px] text-ink-placeholder mt-0.5">根据你的兴趣库内容推荐</p>
+              <p className="text-[11px] text-ink-placeholder mt-0.5">根据你的资料包内容推荐</p>
             </div>
             {recommendedKbs.map(kb => (
               <KbCard

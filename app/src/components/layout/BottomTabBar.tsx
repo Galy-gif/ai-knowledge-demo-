@@ -3,7 +3,7 @@ import { LayoutGrid, BookOpen, User } from 'lucide-react'
 
 const tabs = [
   { label: '小应用', icon: LayoutGrid, path: '/apps' },
-  { label: '兴趣库', icon: BookOpen, path: '/knowledge' },
+  { label: '资料包', icon: BookOpen, path: '/knowledge' },
   { label: '我的', icon: User, path: '/profile' },
 ]
 

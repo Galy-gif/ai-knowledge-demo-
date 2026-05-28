@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserContext'
 
 function getSearchDomain(query: string) {
   const rules = [
-    { key: '兴趣库', slug: 'zhishiku' },
+    { key: '资料包', slug: 'zhishiku' },
     { key: '历史决策', slug: 'lishijuece' },
     { key: '竞品', slug: 'jingpin' },
     { key: '增长', slug: 'zengzhang' },
@@ -66,7 +66,7 @@ export default function Q06_WebSearchResults() {
         </div>
         {selectedKbNames.length > 0 && (
           <div className="flex items-center gap-1.5 mb-4 -mt-2 overflow-x-auto scrollbar-hide">
-            <span className="text-micro text-ink-placeholder flex-shrink-0">结合兴趣库</span>
+            <span className="text-micro text-ink-placeholder flex-shrink-0">结合资料包</span>
             {selectedKbNames.map(name => (
               <span key={name} className="text-micro px-2 py-0.5 bg-brand-orange-light text-brand-orange rounded-pill whitespace-nowrap flex-shrink-0">
                 {name}
