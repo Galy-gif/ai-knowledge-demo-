@@ -30,7 +30,7 @@ export default function T01_TaskMode() {
         {/* Header */}
         <div className="px-5 pt-5 pb-3">
           <div className="flex items-center gap-2 mb-1">
-            <button onClick={() => navigate('/ask')} className="p-1 -ml-2 text-ink-secondary">
+            <button onClick={() => navigate('/apps')} className="p-1 -ml-2 text-ink-secondary">
               <ChevronLeft size={24} />
             </button>
             <Zap size={20} className="text-brand-orange" />

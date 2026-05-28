@@ -35,6 +35,7 @@ import Q07_WebArticle from './pages/ask/Q07_WebArticle'
 import D01_DiscoverHome from './pages/discover/D01_DiscoverHome'
 
 // Task
+import T00_AppsHome from './pages/task/T00_AppsHome'
 import T01_TaskMode from './pages/task/T01_TaskMode'
 import T02_TaskResult from './pages/task/T02_TaskResult'
 import T03_GenerateConfirm from './pages/task/T03_GenerateConfirm'
@@ -90,6 +91,7 @@ export default function App() {
           <Route path="/discover" element={<D01_DiscoverHome />} />
 
           {/* Task / PWA */}
+          <Route path="/apps" element={<T00_AppsHome />} />
           <Route path="/ask/task-mode" element={<T01_TaskMode />} />
           <Route path="/ask/task-result" element={<T02_TaskResult />} />
           <Route path="/ask/task-generate-confirm" element={<T03_GenerateConfirm />} />
@@ -111,8 +113,8 @@ export default function App() {
           <Route path="/coming-soon" element={<ComingSoon />} />
 
           {/* Default */}
-          <Route path="/" element={<Navigate to="/ask" replace />} />
-          <Route path="*" element={<Navigate to="/ask" replace />} />
+          <Route path="/" element={<Navigate to="/apps" replace />} />
+          <Route path="*" element={<Navigate to="/apps" replace />} />
         </Routes>
         <MultiSelectActionBar />
       </PhoneFrame>

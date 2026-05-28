@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import { Search, Sparkles } from 'lucide-react'
 import TopHeader from '../../components/layout/TopHeader'
 import Toast from '../../components/common/Toast'
 import ConfirmDialog from '../../components/common/ConfirmDialog'
@@ -9,8 +9,13 @@ import { useKnowledge } from '../../context/KnowledgeContext'
 import { useUser } from '../../context/UserContext'
 import type { DiscoverKb } from '../../mock/data'
 
-const COMMON_CATS = ['推荐', '科技', '职场', '财经', '生活', '健康']
-const ALL_CATS = ['科技', '教育', '职场', '财经', '产业', '健康', '法律', '人文', '生活', '推荐']
+const ALL_CATS = ['推荐', '游戏', '美食', '旅行', '影视', '穿搭', '萌宠', '科技', '教育', '职场', '财经', '产业', '健康', '法律', '人文', '生活']
+const COMMON_CATS = ALL_CATS.slice(0, 10)
+const AI_REASONS: Record<number, string> = {
+  0: '你常收藏 AI 产品类文章，这个库每周更新行业观察',
+  1: '你最近关注用户研究，这里有完整的访谈方法论',
+  2: '根据你的阅读偏好，这个库的深度长文契合度高',
+}
 
 function formatCount(n: number): string {
   return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
@@ -88,22 +93,15 @@ export default function K10_KnowledgeSquare() {
   const { discoverKbs, subscribeDiscoverKb, unsubscribeDiscoverKb } = useKnowledge()
   const { showToast } = useUser()
   const [activeCat, setActiveCat] = useState('推荐')
-  const [extraCat, setExtraCat] = useState<string | null>(null)
   const [showMoreSheet, setShowMoreSheet] = useState(false)
-
-  const visibleCats = extraCat && !COMMON_CATS.includes(extraCat)
-    ? [...COMMON_CATS, extraCat]
-    : COMMON_CATS
 
   const handleSelectAllCat = (cat: string) => {
     setActiveCat(cat)
-    setExtraCat(COMMON_CATS.includes(cat) ? null : cat)
     setShowMoreSheet(false)
   }
 
   const handleCatClick = (cat: string) => {
     setActiveCat(cat)
-    if (COMMON_CATS.includes(cat)) setExtraCat(null)
   }
 
   const matchesCat = (kb: DiscoverKb) =>
@@ -111,6 +109,7 @@ export default function K10_KnowledgeSquare() {
 
   const hotKbs = discoverKbs.filter(kb => kb.section === 'hot' && matchesCat(kb))
   const recommendedKbs = discoverKbs.filter(kb => kb.section === 'recommended' && matchesCat(kb))
+  const aiPicks = discoverKbs.slice(0, 3)
   const isEmpty = hotKbs.length === 0 && recommendedKbs.length === 0
 
   const handleToggle = (kb: DiscoverKb, e: React.MouseEvent) => {
@@ -139,7 +138,7 @@ export default function K10_KnowledgeSquare() {
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {/* Category pills */}
         <div className="flex gap-2 px-4 py-3 overflow-x-auto scrollbar-hide">
-          {visibleCats.map(cat => (
+          {COMMON_CATS.map(cat => (
             <button
               key={cat}
               onClick={() => handleCatClick(cat)}
@@ -159,6 +158,41 @@ export default function K10_KnowledgeSquare() {
             更多 →
           </button>
         </div>
+
+        {aiPicks.length > 0 && (
+          <div className="mx-4 mt-1 mb-3 rounded-card-lg bg-gradient-to-b from-brand-orange-light to-white border border-brand-orange-mid/40 p-3">
+            <div className="flex items-center gap-1.5 mb-2.5 px-1">
+              <Sparkles size={16} className="text-brand-orange" />
+              <span className="text-card-title text-ink-primary">AI 为你推荐</span>
+              <span className="text-micro text-ink-placeholder">· 基于你的收藏</span>
+            </div>
+            <div className="space-y-2">
+              {aiPicks.map((kb, idx) => (
+                <button
+                  key={kb.id}
+                  onClick={() => navigate(`/knowledge/kb/${kb.id}`)}
+                  className="w-full flex items-center gap-3 rounded-card bg-white border border-line-base p-2.5 text-left active:bg-surface-card"
+                >
+                  <span
+                    className="w-10 h-10 rounded-card flex items-center justify-center text-[20px] flex-shrink-0"
+                    style={{ backgroundColor: kb.coverColor }}
+                  >
+                    {kb.coverEmoji}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-card-title text-ink-primary truncate">{kb.name}</p>
+                    <p className="text-micro text-brand-orange mt-0.5 line-clamp-1">
+                      💡 {AI_REASONS[idx] ?? '根据你的兴趣推荐'}
+                    </p>
+                  </div>
+                  <span className="flex-shrink-0 h-7 px-3 rounded-pill bg-brand-orange-light text-brand-orange text-[11px] font-medium flex items-center">
+                    查看
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isEmpty && (
           <div className="flex flex-col items-center py-16 text-center px-8">
