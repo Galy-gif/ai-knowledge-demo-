@@ -57,8 +57,8 @@ const MODE_META: Record<AskMode, {
   },
   task: {
     label: '任务模式',
-    desc: '一句话生成桌面轻应用',
-    placeholder: '描述一个想要的轻应用...',
+    desc: '一句话生成桌面小应用',
+    placeholder: '描述一个想要的小应用...',
     Icon: Zap,
     suggestions: [
       '帮我做一个竞品数据速查工具',
@@ -275,7 +275,7 @@ export default function Q01_AskHome() {
           {/* PWA templates */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] leading-5 font-semibold text-[#1A1A1A]">快速生成轻应用</h2>
+              <h2 className="text-[14px] leading-5 font-semibold text-[#1A1A1A]">快速生成小应用</h2>
               <div className="flex items-center gap-3">
                 <button
                   onClick={refreshTemplates}
@@ -286,7 +286,7 @@ export default function Q01_AskHome() {
                 </button>
                 <button
                   onClick={() => navigate('/pwa/templates')}
-                  aria-label="查看全部轻应用模板"
+                  aria-label="查看全部小应用模板"
                   className="flex h-5 w-5 items-center justify-center text-[#FF7A00]"
                 >
                   <ChevronRight size={16} />

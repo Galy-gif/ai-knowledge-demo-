@@ -25,6 +25,8 @@ const TEMPLATE_FILE_LISTS: Record<string, string[]> = {
   'fitness-planner': ['晨间拉伸 · 7 分钟 · 3 项动作', '上肢力量 · 25 分钟 · 6 项动作', '核心训练 · 13 分钟 · 4 项动作', '本周目标：4 天训练'],
   'fund-portfolio': ['易方达消费精选 · ¥34,500 (+2.3%)', '中欧医疗健康 · ¥18,720 (-0.8%)', '招商中证白酒 · ¥42,800 (+1.5%)', '兴全合宜 · ¥52,150 (+0.9%)'],
   'watchlist-helper': ['漫长的季节 · 第 8 集 / 12 集', '繁花 · 想看 · 推荐指数 9.2', '星际穿越 · 已看 · 评分 9.4', '电影深度评论 · 悬疑题材长评'],
+  'reading-shelf': ['AI Agent 浏览器趋势 · 少数派 · 8 分钟', '把稍后读变成每日输入系统 · 微信公众号', '从 RSS 到知识库的自动化流程 · 知乎', '本周阅读燃尽 · 完成率 43%'],
+  'doc-pack': ['LangGraph 状态机设计笔记 · 已处理', 'SWE-bench 排行解读 · 已处理', 'BrowserGym 任务集说明 · 待处理', 'PC 多标签 · 12 个资料'],
   'interview-bank': ['算法 · 二叉树遍历 · 已掌握', 'HR 面 · 职业规划 · 学习中', '项目 · 系统设计 · 新题', '行为 · 团队协作 · 学习中'],
   'travel-plan': ['第 1 天 · 大阪城公园 + 道顿堀', '第 2 天 · 奈良公园 + 春日大社', '第 3 天 · 清水寺 + 伏见稻荷', '预算规划 · ¥8,000 / 7 天'],
 }
@@ -77,7 +79,7 @@ export default function T05_DataSourceConfirm() {
       <div className="px-5 py-6 space-y-5">
         <div className="flex items-center gap-3 p-4 bg-green-50 rounded-card border border-green-100">
           <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
-          <p className="text-body text-green-700 font-medium">轻应用生成成功！</p>
+          <p className="text-body text-green-700 font-medium">小应用生成成功！</p>
         </div>
 
         <div className="bg-white rounded-card-lg border border-line-base overflow-hidden shadow-card">

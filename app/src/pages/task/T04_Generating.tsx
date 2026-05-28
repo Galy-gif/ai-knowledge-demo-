@@ -37,6 +37,20 @@ const TEMPLATE_STEPS: Record<string, Step[]> = {
     { label: '生成界面', desc: '设计追剧看板与评分视图' },
     { label: '完成部署', desc: '应用就绪' },
   ],
+  'reading-shelf': [
+    { label: '分析需求', desc: '理解你的阅读偏好与节奏' },
+    { label: '构建结构', desc: '搭建稍后读清单与进度框架' },
+    { label: '连接数据', desc: '对接「读书摘录」收藏内容' },
+    { label: '生成界面', desc: '设计阅读燃尽与推荐视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
+  'doc-pack': [
+    { label: '分析需求', desc: '理解你的资料聚合需求' },
+    { label: '构建结构', desc: '搭建多标签与主题归类框架' },
+    { label: '连接数据', desc: '聚合多标签页与收藏资料' },
+    { label: '生成界面', desc: '设计资料包与处理进度视图' },
+    { label: '完成部署', desc: '应用就绪' },
+  ],
   'interview-bank': [
     { label: '分析需求', desc: '理解你的备考需求' },
     { label: '构建结构', desc: '搭建题目与掌握度框架' },

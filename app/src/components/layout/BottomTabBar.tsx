@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { LayoutGrid, BookOpen, User } from 'lucide-react'
 
 const tabs = [
-  { label: '轻应用', icon: LayoutGrid, path: '/apps' },
+  { label: '小应用', icon: LayoutGrid, path: '/apps' },
   { label: '兴趣库', icon: BookOpen, path: '/knowledge' },
   { label: '我的', icon: User, path: '/profile' },
 ]

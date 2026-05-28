@@ -90,7 +90,7 @@ export default function T02_TaskResult() {
                 </div>
               )}
               <p className="text-body text-ink-secondary leading-relaxed">
-                我理解你想要一个能快速检索竞品数据的工具。基于你的工作资料库，我可以生成一个专属的轻应用：
+                我理解你想要一个能快速检索竞品数据的工具。基于你的工作资料库，我可以生成一个专属的小应用：
               </p>
 
               <div className="bg-white rounded-card border border-line-base p-4 space-y-2">
@@ -118,7 +118,7 @@ export default function T02_TaskResult() {
             className="w-full flex items-center justify-center gap-2 py-4 bg-brand-orange text-white rounded-btn text-body font-medium"
           >
             <Layers size={18} />
-            生成轻应用
+            生成小应用
           </button>
           <button
             onClick={() => navigate(-1)}

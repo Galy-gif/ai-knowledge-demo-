@@ -138,7 +138,7 @@ export default function DataSourceSelectorSheet({
       }
     >
       <div className="px-5 pt-2 pb-4">
-        <p className="text-caption text-ink-secondary mb-4 text-center">AI 将基于选中的兴趣库内容生成轻应用</p>
+        <p className="text-caption text-ink-secondary mb-4 text-center">AI 将基于选中的兴趣库内容生成小应用</p>
 
         {/* Personal KBs */}
         <p className="text-[13px] font-semibold text-ink-primary pb-2">个人兴趣库</p>

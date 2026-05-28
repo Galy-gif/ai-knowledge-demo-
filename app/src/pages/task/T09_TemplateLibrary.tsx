@@ -60,7 +60,7 @@ export default function T09_TemplateLibrary() {
             <button onClick={() => navigate(-1)} className="p-1 -ml-1 text-ink-secondary">
               <ChevronLeft size={24} />
             </button>
-            <h1 className="flex-1 text-center text-h2 text-ink-primary">轻应用模板库</h1>
+            <h1 className="flex-1 text-center text-h2 text-ink-primary">小应用模板库</h1>
             <button onClick={() => setShowSearch(v => !v)} className="p-1 text-ink-secondary">
               <Search size={20} />
             </button>

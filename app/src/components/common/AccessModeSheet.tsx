@@ -84,7 +84,7 @@ export default function AccessModeSheet({
       }
     >
       <div className="px-5 pt-3 pb-6">
-        <p className="text-caption text-ink-secondary text-center mb-5">选择如何使用这个轻应用</p>
+        <p className="text-caption text-ink-secondary text-center mb-5">选择如何使用这个小应用</p>
         <div className="space-y-2">
           {OPTIONS.map(({ id, Icon, label, desc }) => {
             const sel = draft.includes(id)

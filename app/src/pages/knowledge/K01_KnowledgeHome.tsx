@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useLayoutEffect, type PointerEvent as ReactPointerEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Crosshair, Compass, Plus, Sparkles } from 'lucide-react'
+import { Search, Crosshair, Compass, Plus } from 'lucide-react'
 import TabLayout from '../../components/layout/TabLayout'
 import { useWatch } from '../../context/WatchContext'
 import {
@@ -285,18 +285,6 @@ export default function K01_KnowledgeHome() {
         <div className="flex-1 overflow-y-auto scrollbar-hide bg-surface-card pb-20">
           {activeCategory === 'all' ? (
             <>
-              <div className="mx-4 mt-3 rounded-card bg-brand-orange-light border border-brand-orange-mid/40 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-brand-orange" />
-                  <span className="text-card-title text-ink-primary">
-                    AI 已为你整理 {mockCollectionItems.length} 条收藏
-                  </span>
-                </div>
-                <p className="text-caption text-ink-secondary mt-1">
-                  自动识别为 {mockCollectionCategories.length} 个内容类型，可按类型快速查找
-                </p>
-              </div>
-
               {mockCollectionCategories.map(category => {
                 const categoryItems = mockCollectionItems.filter(item => item.categoryId === category.id)
                 const previewItems = categoryItems.slice(0, 3)

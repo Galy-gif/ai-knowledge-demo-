@@ -461,11 +461,10 @@ interface HotelCard {
   name: string
   meta: string
   price: string
-  badge?: { label: string; color: string }
 }
 
 const HOTELS: HotelCard[] = [
-  { id: 'h1', emoji: '🏛️', name: '京都老町家民宿', meta: '祇园步行 5min · 评分 9.2', price: '¥1,800/晚', badge: { label: '⭐ AI 推荐', color: '#14B8A6' } },
+  { id: 'h1', emoji: '🏛️', name: '京都老町家民宿', meta: '祇园步行 5min · 评分 9.2', price: '¥1,800/晚' },
   { id: 'h2', emoji: '🏨', name: '大阪瑞吉酒店', meta: '难波附近 · 评分 9.0', price: '¥2,800/晚' },
   { id: 'h3', emoji: '🏯', name: '京都丽思卡尔顿', meta: '距清水寺 1.2km · 评分 8.9', price: '¥3,200/晚' },
 ]
@@ -574,14 +573,6 @@ function HotelCardItem({ hotel }: { hotel: HotelCard }) {
         </div>
         <p className="text-[14px] font-semibold" style={{ color: '#0F766E' }}>{hotel.price}</p>
       </div>
-      {hotel.badge && (
-        <span
-          className="absolute top-2 right-2 text-[10px] font-medium text-white px-1.5 py-0.5 rounded-md"
-          style={{ backgroundColor: hotel.badge.color }}
-        >
-          {hotel.badge.label}
-        </span>
-      )}
     </div>
   )
 }
@@ -867,6 +858,178 @@ function WatchlistForm() {
   )
 }
 
+// ── Form 7: Reading Shelf ────────────────────────────────────────────────────
+
+const READING_BARS = [34, 58, 42, 76, 50, 88, 62]
+const READING_LIST = [
+  { id: 'r1', title: 'AI Agent 浏览器趋势', source: '少数派', mins: 8 },
+  { id: 'r2', title: '把稍后读变成每日输入系统', source: '微信公众号', mins: 12 },
+  { id: 'r3', title: '从 RSS 到知识库的自动化流程', source: '知乎', mins: 10 },
+  { id: 'r4', title: '长文收藏为什么需要二次整理', source: '36氪', mins: 6 },
+  { id: 'r5', title: '个人阅读仪表盘搭建笔记', source: '博客专栏', mins: 9 },
+]
+
+function ReadingShelfForm() {
+  const navigate = useNavigate()
+  const { showToast } = useUser()
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-card p-4 text-white" style={{ background: 'linear-gradient(135deg, #FF8A33, #FF7A00)' }}>
+        <p className="text-micro opacity-80 mb-1">本周阅读燃尽</p>
+        <p className="text-[12px] leading-4 opacity-85 mb-3">待读 14 篇 · 已读 6 篇 · 完成率 43%</p>
+        <div className="h-2 rounded-full bg-white/30 overflow-hidden mb-4">
+          <div className="h-full rounded-full bg-white" style={{ width: '43%' }} />
+        </div>
+        <div className="flex items-end justify-between h-24 rounded-[12px] bg-white/15 px-3 py-3">
+          {READING_BARS.map((height, index) => (
+            <div key={index} className="flex flex-col items-center gap-1">
+              <div
+                className={`w-6 rounded-t-[8px] ${index % 2 === 0 ? 'bg-white' : 'bg-white/55'}`}
+                style={{ height }}
+              />
+              <span className="text-[9px] leading-none opacity-75">{['一', '二', '三', '四', '五', '六', '日'][index]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
+        <p className="text-micro text-ink-placeholder font-medium mb-2">今晚建议读 1 篇</p>
+        <p className="text-card-title text-ink-primary">《AI Agent 浏览器趋势》</p>
+        <p className="text-caption text-ink-secondary mt-0.5">预计 8 分钟 · 来自少数派</p>
+        <div className="mt-3 flex gap-2">
+          <button
+            onClick={() => navigate('/ask/web-article', { state: { title: 'AI Agent 浏览器趋势', site: '少数派' } })}
+            className="h-8 px-3 rounded-pill bg-brand-orange-light text-brand-orange text-[12px] font-medium"
+          >
+            打开原文
+          </button>
+          <button
+            onClick={() => showToast('已生成阅读卡片（mock）', 'success')}
+            className="h-8 px-3 rounded-pill bg-surface-card text-ink-secondary text-[12px] font-medium"
+          >
+            生成卡片
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+        <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
+          <p className="text-micro text-ink-placeholder font-medium">稍后读清单</p>
+        </div>
+        {READING_LIST.map((item, index) => (
+          <div key={item.id} className={`flex items-center gap-3 px-4 py-3 ${index !== READING_LIST.length - 1 ? 'border-b border-line-base' : ''}`}>
+            <div className="w-9 h-9 rounded-card bg-brand-orange-light flex items-center justify-center text-[18px] flex-shrink-0">📖</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-caption text-ink-primary font-medium truncate">{item.title}</p>
+              <p className="text-micro text-ink-placeholder mt-0.5">{item.source} · {item.mins} 分钟</p>
+            </div>
+            <button
+              onClick={() => showToast(`开始阅读：${item.title}（mock）`, 'success')}
+              className="h-7 px-2.5 rounded-pill bg-brand-orange text-white text-[11px] font-medium"
+            >
+              读
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Form 8: Document Pack ────────────────────────────────────────────────────
+
+const DOC_PACK_GROUPS = [
+  {
+    title: 'Agent 框架',
+    items: [
+      { title: 'LangGraph 状态机设计笔记', source: 'GitHub', status: '已处理' },
+      { title: 'AutoGen 多智能体协作示例', source: 'Docs', status: '已处理' },
+      { title: 'CrewAI 任务编排实践', source: '博客', status: '待处理' },
+    ],
+  },
+  {
+    title: '评测基准',
+    items: [
+      { title: 'SWE-bench 排行解读', source: '论文', status: '已处理' },
+      { title: 'BrowserGym 任务集说明', source: '官网', status: '待处理' },
+    ],
+  },
+  {
+    title: '应用案例',
+    items: [
+      { title: '客服 Agent 落地复盘', source: '微信公众号', status: '已处理' },
+      { title: '数据分析 Agent Demo', source: 'YouTube', status: '待处理' },
+    ],
+  },
+  {
+    title: '开源项目',
+    items: [
+      { title: 'open-interpreter 本地执行链路', source: 'GitHub', status: '已处理' },
+      { title: 'browser-use 自动化案例', source: 'GitHub', status: '待处理' },
+    ],
+  },
+]
+
+function DocPackForm() {
+  const { showToast } = useUser()
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-card border border-[#C7D2FE] p-4" style={{ backgroundColor: '#E0E7FF' }}>
+        <p className="text-card-title text-ink-primary">AI Agent 资料包</p>
+        <p className="text-caption text-ink-secondary mt-1">来自 PC 多标签 · 12 个资料 · 已处理 60%</p>
+        <div className="mt-3 h-2 rounded-full bg-white/70 overflow-hidden">
+          <div className="h-full rounded-full bg-[#6366F1]" style={{ width: '60%' }} />
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        {DOC_PACK_GROUPS.map(group => (
+          <div key={group.title} className="bg-white rounded-card border border-line-base shadow-card overflow-hidden">
+            <div className="px-4 py-2.5 bg-surface-card border-b border-line-base">
+              <p className="text-micro text-ink-placeholder font-medium">{group.title}</p>
+            </div>
+            {group.items.map((item, index) => (
+              <div key={item.title} className={`flex items-center gap-3 px-4 py-3 ${index !== group.items.length - 1 ? 'border-b border-line-base' : ''}`}>
+                <div className="w-8 h-8 rounded-card bg-[#E0E7FF] flex items-center justify-center text-[16px] flex-shrink-0">📄</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-caption text-ink-primary font-medium truncate">{item.title}</p>
+                  <p className="text-micro text-ink-placeholder mt-0.5">{item.source}</p>
+                </div>
+                <span className={`text-[10px] leading-4 px-2 rounded-pill ${
+                  item.status === '已处理' ? 'bg-brand-orange-light text-brand-orange' : 'bg-surface-card text-ink-secondary'
+                }`}>
+                  {item.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-card border border-line-base shadow-card p-4">
+        <AiTip text="已识别 4 个主题，可一键生成结构化提纲。" />
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            onClick={() => showToast('正在生成提纲（mock）', 'success')}
+            className="h-10 rounded-btn bg-brand-orange text-white text-body font-medium"
+          >
+            生成提纲
+          </button>
+          <button
+            onClick={() => showToast('已导出（mock）', 'success')}
+            className="h-10 rounded-btn bg-surface-card text-ink-secondary text-body font-medium"
+          >
+            导出合集
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function T07_AppRuntime() {
@@ -904,10 +1067,10 @@ export default function T07_AppRuntime() {
   if (!app) {
     return (
       <PageLayout>
-        <TopHeader title="轻应用" showBack />
+        <TopHeader title="小应用" showBack />
         <div className="flex flex-col items-center justify-center flex-1 px-8 text-center py-20">
           <div className="text-5xl mb-4">⚡</div>
-          <p className="text-body text-ink-secondary">轻应用不存在</p>
+          <p className="text-body text-ink-secondary">小应用不存在</p>
         </div>
       </PageLayout>
     )
@@ -917,6 +1080,12 @@ export default function T07_AppRuntime() {
 
   let form: React.ReactNode
   switch (app.runtimeType) {
+    case 'reading_shelf':
+      form = <ReadingShelfForm />
+      break
+    case 'doc_pack':
+      form = <DocPackForm />
+      break
     case 'data_dashboard':
       form = <DataDashboardForm />
       break

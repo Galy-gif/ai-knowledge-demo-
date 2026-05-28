@@ -36,7 +36,7 @@ export default function T01_TaskMode() {
             <Zap size={20} className="text-brand-orange" />
             <h1 className="text-h1 text-ink-primary">任务模式</h1>
           </div>
-          <p className="text-caption text-ink-secondary">描述需求，AI 帮你生成可用的轻应用</p>
+          <p className="text-caption text-ink-secondary">描述需求，AI 帮你生成可用的小应用</p>
           {selectedKbNames.length > 0 && (
             <div className="mt-2 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
               <span className="text-micro text-ink-placeholder flex-shrink-0">数据源</span>

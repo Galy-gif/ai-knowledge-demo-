@@ -15,6 +15,8 @@ const TEMPLATE_DEFAULT_KB_IDS: Record<string, string[]> = {
   'diet-log': ['kb_diet', 'kb_nutrition_lab'],
   'fitness-planner': ['kb_training', 'kb_iron_gym'],
   'watchlist-helper': ['kb_film'],
+  'reading-shelf': ['kb3'],
+  'doc-pack': ['kb_project_browser', 'kb_ai_agent'],
   'travel-plan': ['kb_travel_food'],
 }
 
@@ -22,6 +24,8 @@ const CUSTOM_REQ_PLACEHOLDERS: Record<string, string> = {
   'diet-log': '如：我想让它能扫描食物图片自动识别',
   'fitness-planner': '如：我希望它能根据心率自动推荐训练强度',
   'watchlist-helper': '如：希望能根据我的评分自动推荐相似剧集',
+  'reading-shelf': '如：希望每天早上推荐 1 篇最该读的文章',
+  'doc-pack': '如：希望按项目自动把资料分组归档',
   'travel-plan': '如：希望避开人多景点、想体验温泉',
 }
 const DEFAULT_CUSTOM_REQ_PLACEHOLDER = '如：我想让它具备 XX 功能'
@@ -235,7 +239,7 @@ export default function T03_GenerateConfirm() {
   const template = getPwaTemplateById(state?.templateId)
   const templateName = state?.templateName ?? template?.name ?? '资料速查工具'
   const templateIcon = state?.templateIcon ?? template?.icon ?? '📊'
-  const templateCoreFeatures = state?.templateCoreFeatures ?? template?.coreFeatures ?? 'AI 将基于以下配置为你生成专属轻应用'
+  const templateCoreFeatures = state?.templateCoreFeatures ?? template?.coreFeatures ?? 'AI 将基于以下配置为你生成专属小应用'
   const requirement = state?.requirement ?? template?.requirement ?? '帮我做一个竞品数据速查工具'
   const sourcePath: string | undefined = state?.sourcePath
   const sourceState = state?.sourceState

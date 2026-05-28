@@ -11,6 +11,8 @@ const ICON_BG: Record<RuntimeType, string> = {
   daily_tracker: '#EDE9FE',
   travel_planner: '#CCFBF1',
   watchlist: '#FFF1E6',
+  reading_shelf: '#FFEDD5',
+  doc_pack: '#E0E7FF',
 }
 
 export default function T08_MyApps() {
@@ -19,12 +21,12 @@ export default function T08_MyApps() {
 
   return (
     <PageLayout>
-      <TopHeader title="我的轻应用" showBack />
+      <TopHeader title="我的小应用" showBack />
       <div className="px-5 py-4 space-y-3">
         {apps.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
             <div className="text-5xl mb-4">⚡</div>
-            <p className="text-body text-ink-secondary mb-1">还没有轻应用</p>
+            <p className="text-body text-ink-secondary mb-1">还没有小应用</p>
             <p className="text-caption text-ink-placeholder mb-6">通过任务模式生成专属工具</p>
             <button onClick={() => navigate('/ask/task-mode')}
               className="px-6 py-3 bg-brand-orange text-white rounded-btn text-body font-medium">
@@ -58,7 +60,7 @@ export default function T08_MyApps() {
             <button onClick={() => navigate('/ask/task-mode')}
               className="w-full flex items-center justify-center gap-2 py-3.5 border-2 border-dashed border-line-base rounded-card text-brand-orange text-body">
               <Plus size={18} />
-              新建轻应用
+              新建小应用
             </button>
           </>
         )}

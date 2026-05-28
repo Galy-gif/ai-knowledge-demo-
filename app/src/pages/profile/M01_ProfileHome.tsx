@@ -114,7 +114,7 @@ export default function M01_ProfileHome() {
             />
             <ListItem
               icon={Layers}
-              label="我的轻应用"
+              label="我的小应用"
               badge={
                 /* 仅此处用橙色徽章 */
                 <span className="flex items-center gap-0.5 text-micro text-brand-orange font-medium bg-brand-orange-light px-2 py-0.5 rounded-pill">
