@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import PageLayout from '../../components/layout/PageLayout'
 import TopHeader from '../../components/layout/TopHeader'
@@ -100,30 +100,13 @@ export default function T04_Generating() {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [done, setDone] = useState(false)
+  const completedRef = useRef(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStep(prev => {
         if (prev >= steps.length - 1) {
           clearInterval(timer)
-          setDone(true)
-          if (resultAppId && (travelPreferences || customRequirement !== undefined)) {
-            updateApp(resultAppId, {
-              ...(travelPreferences ? { travelPreferences } : {}),
-              ...(customRequirement !== undefined ? { customRequirement } : {}),
-            })
-          }
-          setTimeout(() => navigate('/ask/task-datasource', {
-            replace: true,
-            state: {
-              requirement, templateId, templateName, templateIcon, templateCoreFeatures,
-              targetRuntimeType, resultAppName, resultAppId, resultMainColor,
-              selectedKbIds, selectedKbNames,
-              selectedFeatures, selectedAccessModes, customRequirement,
-              travelPreferences,
-              sourcePath, sourceState,
-            },
-          }), 1000)
           return prev
         }
         return prev + 1
@@ -131,6 +114,30 @@ export default function T04_Generating() {
     }, 1500)
     return () => clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    if (currentStep < steps.length - 1 || completedRef.current) return
+    completedRef.current = true
+    setDone(true)
+    if (resultAppId && (travelPreferences || customRequirement !== undefined)) {
+      updateApp(resultAppId, {
+        ...(travelPreferences ? { travelPreferences } : {}),
+        ...(customRequirement !== undefined ? { customRequirement } : {}),
+      })
+    }
+    const timer = setTimeout(() => navigate('/ask/task-datasource', {
+      replace: true,
+      state: {
+        requirement, templateId, templateName, templateIcon, templateCoreFeatures,
+        targetRuntimeType, resultAppName, resultAppId, resultMainColor,
+        selectedKbIds, selectedKbNames,
+        selectedFeatures, selectedAccessModes, customRequirement,
+        travelPreferences,
+        sourcePath, sourceState,
+      },
+    }), 1000)
+    return () => clearTimeout(timer)
+  }, [currentStep])
 
   const progress = Math.round((currentStep / (steps.length - 1)) * 100)
 

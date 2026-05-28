@@ -1,9 +1,10 @@
 import { useState, useMemo, useRef, useLayoutEffect, type PointerEvent as ReactPointerEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Crosshair, Compass, Plus, Sparkles, Check, ChevronRight, Play } from 'lucide-react'
+import { Search, Crosshair, Plus, Sparkles, Check, ChevronRight, Play } from 'lucide-react'
 import TabLayout from '../../components/layout/TabLayout'
 import BottomSheet from '../../components/ui/BottomSheet'
 import { useWatch } from '../../context/WatchContext'
+import { findMatchingPwaTemplate, getPwaTemplateById } from '../../mock/pwaTemplates'
 import {
   mockCollectionCategories,
   mockCollectionItems,
@@ -16,6 +17,14 @@ type CategoryFilter = 'all' | CollectionCategoryId
 const FAB_SIZE = 48
 const MARGIN = 16
 const DRAG_THRESHOLD = 4
+const CATEGORY_TEMPLATE_FALLBACK: Partial<Record<CollectionCategoryId, string>> = {
+  article: 'reading-shelf',
+  qa: 'reading-shelf',
+  novel: 'reading-shelf',
+  video: 'watchlist-helper',
+  short_drama: 'watchlist-helper',
+  music: 'doc-pack',
+}
 
 const ORG_OPTIONS: Array<{
   value: boolean
@@ -39,18 +48,13 @@ const ORG_OPTIONS: Array<{
   },
 ]
 
-function ContentCard({ item }: { item: CollectionItem }) {
+function ContentCard({ item, onGenerate }: { item: CollectionItem; onGenerate: (item: CollectionItem) => void }) {
   const isPoster = item.categoryId === 'video' || item.categoryId === 'short_drama'
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        // TODO: 后续接入全局收藏详情页。
-      }}
-      className="w-full rounded-card border border-line-base bg-white p-3 text-left shadow-card active:bg-surface-card"
-    >
+  const hideThumb = item.categoryId === 'article' || item.categoryId === 'qa'
+
+  const cardContent = (
       <div className="flex gap-3">
-        {isPoster ? (
+        {hideThumb ? null : isPoster ? (
           <div
             className="relative flex h-[72px] w-[54px] flex-shrink-0 items-center justify-center overflow-hidden rounded-card"
             style={{ background: `linear-gradient(135deg, ${item.thumbGradient[0]}, ${item.thumbGradient[1]})` }}
@@ -68,7 +72,7 @@ function ContentCard({ item }: { item: CollectionItem }) {
             {item.thumbEmoji}
           </div>
         )}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 pr-10">
           <p className="line-clamp-1 text-card-title text-ink-primary">{item.title}</p>
           <p className="mt-0.5 line-clamp-1 text-caption leading-[1.45] text-ink-secondary">{item.summary}</p>
           <div className="mt-1.5 flex items-center gap-2 text-micro text-ink-placeholder">
@@ -79,7 +83,28 @@ function ContentCard({ item }: { item: CollectionItem }) {
           </div>
         </div>
       </div>
-    </button>
+  )
+
+  return (
+    <div className="relative w-full rounded-card border border-line-base bg-white p-3 text-left shadow-card">
+      {item.url && (
+        <a
+          href={item.url}
+          className="absolute inset-0 z-0 rounded-card"
+          aria-label={`打开「${item.title}」原文`}
+        />
+      )}
+      <button
+        type="button"
+        aria-label={`基于「${item.title}」生成小应用`}
+        title="基于此内容生成小应用"
+        onClick={() => onGenerate(item)}
+        className="absolute right-2.5 top-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-brand-orange-mid/50 bg-brand-orange-light text-brand-orange shadow-[0_4px_12px_rgba(255,122,0,0.12)] active:scale-95 active:bg-[#FFE4D0]"
+      >
+        <Sparkles size={15} strokeWidth={2.2} />
+      </button>
+      <div className="relative z-10 pointer-events-none rounded-card">{cardContent}</div>
+    </div>
   )
 }
 
@@ -110,18 +135,68 @@ export default function K01_KnowledgeHome() {
   const [isFabDragging, setIsFabDragging] = useState(false)
   const [fabReady, setFabReady] = useState(false)
 
-  const categoryTabs = useMemo(
-    () => [{ id: 'all' as const, label: '全部' }, ...mockCollectionCategories],
+  const visibleCategories = useMemo(
+    () => mockCollectionCategories.filter(category => category.id !== 'quote'),
     []
   )
 
+  const visibleItems = useMemo(
+    () => mockCollectionItems.filter(item => item.categoryId !== 'quote'),
+    []
+  )
+
+  const categoryTabs = useMemo(
+    () => [{ id: 'all' as const, label: '全部' }, ...visibleCategories],
+    [visibleCategories]
+  )
+
   const filteredItems = useMemo(() => {
-    if (activeCategory === 'all') return mockCollectionItems
-    return mockCollectionItems.filter(item => item.categoryId === activeCategory)
-  }, [activeCategory])
+    if (activeCategory === 'all') return visibleItems
+    return visibleItems.filter(item => item.categoryId === activeCategory)
+  }, [activeCategory, visibleItems])
 
   const handleCategoryChange = (categoryId: CategoryFilter) => {
     setActiveCategory(categoryId)
+  }
+
+  const handleGenerateFromItem = (item: CollectionItem) => {
+    const matchText = `${item.title} ${item.summary} ${item.tagLabel} ${item.source}`
+    const fallbackTemplateId = CATEGORY_TEMPLATE_FALLBACK[item.categoryId] ?? 'doc-pack'
+    const template = findMatchingPwaTemplate(matchText) ?? getPwaTemplateById(fallbackTemplateId) ?? getPwaTemplateById('doc-pack')
+    const selectedFeatures = template?.defaultFeatures ?? template?.coreFeatures.split('、').map(feature => feature.trim()) ?? [
+      '内容速览',
+      '要点整理',
+      'AI 推荐',
+    ]
+    const resultAppName = template?.resultAppName ?? `${item.title.slice(0, 8)}助手`
+
+    navigate('/ask/task-generate-confirm', {
+      state: {
+        requirement: `基于「${item.title}」生成一个小应用，方便持续整理、查看和复用这条内容。`,
+        templateId: template?.id,
+        templateName: template?.name ?? '内容小应用',
+        templateIcon: template?.icon ?? item.thumbEmoji,
+        templateCoreFeatures: template?.coreFeatures ?? '内容速览、要点整理、AI 推荐',
+        targetRuntimeType: template?.targetRuntimeType,
+        resultAppName,
+        resultAppId: template?.resultAppId,
+        resultMainColor: template?.resultMainColor ?? 'orange',
+        selectedKbIds: [`collection:${item.id}`],
+        selectedKbNames: [item.title],
+        selectedFeatures,
+        customRequirement: `内容来源：${item.source}；类型：${item.tagLabel}；摘要：${item.summary}`,
+        sourcePath: '/knowledge',
+        sourceState: {
+          from: 'knowledge_content_card',
+          itemId: item.id,
+          categoryId: item.categoryId,
+          title: item.title,
+          summary: item.summary,
+          source: item.source,
+          tagLabel: item.tagLabel,
+        },
+      },
+    })
   }
 
   useLayoutEffect(() => {
@@ -204,14 +279,6 @@ export default function K01_KnowledgeHome() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  aria-label="发现广场"
-                  onClick={() => navigate('/knowledge/square')}
-                  className="flex h-8 w-8 items-center justify-center text-ink-secondary active:text-brand-orange"
-                >
-                  <Compass size={22} strokeWidth={1.8} />
-                </button>
-                <button
-                  type="button"
                   aria-label="蹲一蹲"
                   onClick={() => navigate('/watch/today')}
                   className="relative flex h-8 w-8 items-center justify-center text-ink-secondary active:text-brand-orange"
@@ -288,8 +355,8 @@ export default function K01_KnowledgeHome() {
             <Sparkles size={15} className="text-brand-orange flex-shrink-0" />
             <span className="text-caption text-ink-primary flex-1 min-w-0 truncate">
               {aiOrganize
-                ? `AI 自动整理中 · 已归类 ${mockCollectionItems.length} 条`
-                : `未启用整理 · 共 ${mockCollectionItems.length} 条收藏`}
+                ? `AI 自动整理中 · 已归类 ${visibleItems.length} 条`
+                : `未启用整理 · 共 ${visibleItems.length} 条收藏`}
             </span>
             <span className="text-micro text-brand-orange flex-shrink-0">切换 ›</span>
           </button>
@@ -299,8 +366,8 @@ export default function K01_KnowledgeHome() {
               {aiOrganize ? (
                 // AI 自动整理：按分类分组
                 <>
-                  {mockCollectionCategories.map(category => {
-                    const categoryItems = mockCollectionItems.filter(item => item.categoryId === category.id)
+                  {visibleCategories.map(category => {
+                    const categoryItems = visibleItems.filter(item => item.categoryId === category.id)
                     const previewItems = categoryItems.slice(0, 3)
                     if (previewItems.length === 0) return null
                     return (
@@ -316,11 +383,11 @@ export default function K01_KnowledgeHome() {
                               {categoryItems.length}
                             </span>
                           </span>
-                          <span className="text-caption text-ink-placeholder">查看全部 ›</span>
+                          <span className="text-caption text-ink-placeholder">›</span>
                         </button>
                         <div className="space-y-2.5 px-4">
                           {previewItems.map(item => (
-                            <ContentCard key={item.id} item={item} />
+                            <ContentCard key={item.id} item={item} onGenerate={handleGenerateFromItem} />
                           ))}
                         </div>
                         {(() => {
@@ -350,9 +417,9 @@ export default function K01_KnowledgeHome() {
               ) : (
                 // 不整理：按 savedOrder 倒序平铺
                 <div className="space-y-2.5 px-4 pt-1 pb-2">
-                  {[...mockCollectionItems]
+                  {[...visibleItems]
                     .sort((a, b) => b.savedOrder - a.savedOrder)
-                    .map(item => <ContentCard key={item.id} item={item} />)}
+                    .map(item => <ContentCard key={item.id} item={item} onGenerate={handleGenerateFromItem} />)}
                 </div>
               )}
             </>
@@ -364,7 +431,7 @@ export default function K01_KnowledgeHome() {
             <>
               <div className="space-y-2.5 px-4 py-3">
                 {filteredItems.map(item => (
-                  <ContentCard key={item.id} item={item} />
+                  <ContentCard key={item.id} item={item} onGenerate={handleGenerateFromItem} />
                 ))}
               </div>
               {(() => {
