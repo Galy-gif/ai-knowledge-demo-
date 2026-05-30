@@ -35,7 +35,7 @@ export default function PhoneFrame({ children }: { children: ReactNode }) {
           </div>
         </div>
         {/* Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div data-phone-content="true" className="relative flex-1 flex flex-col overflow-hidden">
           {children}
         </div>
       </div>

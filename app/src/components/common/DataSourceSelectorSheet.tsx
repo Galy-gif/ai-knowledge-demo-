@@ -125,15 +125,31 @@ export default function DataSourceSelectorSheet({
       title="选择数据源"
       titleAlign="center"
       titleClassName="text-[17px] leading-6 font-semibold text-ink-primary"
+      fullHeight
       headerLeft={
         <button onClick={onClose} className="text-[14px] text-ink-secondary">取消</button>
       }
       headerRight={
         <button
           onClick={handleComplete}
-          className={`text-[14px] font-medium ${canComplete ? 'text-brand-orange' : 'text-ink-placeholder'}`}
+          disabled={!canComplete}
+          aria-label={`完成选择，已选 ${draftIds.length} 个知识库`}
+          className={`flex items-center gap-1.5 rounded-pill py-1 pl-1 pr-0.5 text-[14px] font-medium transition-colors ${
+            canComplete
+              ? 'text-brand-orange active:bg-brand-orange/[0.08]'
+              : 'text-ink-placeholder cursor-default'
+          }`}
         >
-          完成
+          <span
+            className={`min-w-[18px] h-[18px] px-1 rounded-pill flex items-center justify-center text-[11px] leading-none font-semibold transition-colors ${
+              canComplete
+                ? 'bg-brand-orange-light text-brand-orange'
+                : 'bg-line-base text-ink-placeholder'
+            }`}
+          >
+            {draftIds.length}
+          </span>
+          <span>完成</span>
         </button>
       }
     >
@@ -172,7 +188,7 @@ export default function DataSourceSelectorSheet({
         </div>
 
         {/* Bottom count bar */}
-        <div className="flex items-center justify-between py-3 border-t border-line-base mb-3">
+        <div className="flex items-center justify-between py-3 border-t border-line-base">
           <p className="text-caption text-ink-secondary">{countLabel}</p>
           {draftIds.length > 0 && (
             <p className="text-caption text-ink-placeholder truncate max-w-[55%] text-right">
@@ -180,18 +196,6 @@ export default function DataSourceSelectorSheet({
             </p>
           )}
         </div>
-
-        <button
-          onClick={handleComplete}
-          disabled={!canComplete}
-          className={`w-full py-3.5 rounded-btn text-body font-medium transition-colors ${
-            canComplete
-              ? 'bg-brand-orange text-white'
-              : 'bg-[#FFE4D0] text-white cursor-default'
-          }`}
-        >
-          完成
-        </button>
       </div>
     </BottomSheet>
   )
